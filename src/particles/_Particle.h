@@ -2,6 +2,7 @@
 #define _PARTICLE_H
 
 #include <Eigen/Dense>
+#include <vector>
 
 template<class Observations>
 class _Particle
@@ -9,11 +10,15 @@ class _Particle
 	public:
 		_Particle()
 		{
+			mColor = std::vector<float>(4,1);
 			this->mCurrentLikelihood=0;
+			mIsVisible = true;
 		}
 		_Particle(_Particle& particle) //copy constructor
 		{
+			this->mColor = particle.mColor;
 			this->mCurrentLikelihood = particle.mCurrentLikelihood;
+			this->mIsVisible = particle.mIsVisible;
 		}
 		
 		virtual void sampleFromPrior() =0;
@@ -34,8 +39,27 @@ class _Particle
 			return mId;
 		}
 		
+		virtual void setColor(float R=1, float G=0, float B=1, float alpha=0.1)
+		{
+			mColor[0] = R;
+			mColor[1] = G;
+			mColor[2] = B;
+			mColor[3] = alpha;
+		}
+		
+		virtual void setVisible(bool visible)
+		{
+			mIsVisible = visible;
+		}
+		
+		virtual bool isVisible()
+		{
+			return mIsVisible;
+		}
+		
 		virtual _Particle<Observations>& operator =(const _Particle<Observations>& part)
 		{
+			this->mCurrentLikelihood = part.mCurrentLikelihood;
 		}
 		
 		//virtual _Particle<Observations> operator +(const _Particle<Observations>& part) const;
@@ -44,6 +68,8 @@ class _Particle
 	protected:
 		double mCurrentLikelihood;
 		int mId;
+		std::vector<float> mColor;
+		bool mIsVisible;
 };
 
 #endif

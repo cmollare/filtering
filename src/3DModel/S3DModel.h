@@ -182,20 +182,6 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		 */
 		void setColor(float R=1, float G=0, float B=1, float alpha=0.1);
 		
-		/*!
-		 * \fn void setVisible(bool visible)
-		 * \brief Make a model visible or unsvisible.
-		 * \param visible True if the model has to be visible.
-		 */
-		void setVisible(bool visible);
-		
-		/*!
-		 * \fn bool isVisible()
-		 * \brief Is the model visible ?
-		 * \return True if the model is visible.
-		 */
-		bool isVisible();
-		
 		void debug()//fonction temporaire
 		{
 			for (int i=0 ; i<mOrientationVec.size() ; i++)
@@ -210,7 +196,7 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		virtual void sampleFromPrior();
 		virtual void update();
 		virtual void esitmateLikelihood(std::vector<std::vector<double > > obs);
-		void mapJointToObs(std::map<std::string, std::string> jointNameToPosName);
+		void mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName);
 		
 	private:
 	
@@ -298,8 +284,6 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		std::map<std::string, int> mJointNameToPos; /*!< Name of the Joint to its position in the observation vector, -1 if there is no observation associated */
 		std::map<std::string, int> mJointNameToInt; /*!< Name of the Joint to its position in the orientation vector */
 		std::vector<std::string> mPosNames; /*!< Names of observations */
-		
-		bool mIsVisible; /*!< Is the model visible ? True if yes */
 };
 
 #endif

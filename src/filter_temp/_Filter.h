@@ -40,6 +40,8 @@ class _Filter : public _Stats
 		int mNbParticles;
 		Eigen::VectorXd mCurrentWeights;
 		std::vector<Particles*> mParticles;
+		Particles* mParticleMMSE;
+		Particles* mParticleMAP;
 		Observations mCurrentObservations;
 };
 
@@ -52,6 +54,11 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles)
 		mParticles.push_back(new Particles());
 		mParticles[i]->setId(i);
 	}
+	mParticleMMSE = new Particles();
+	mParticleMMSE->setId(mNbParticles);
+	
+	mParticleMAP = new Particles();
+	mParticleMAP->setId(mNbParticles+1);
 }
 
 template<class Particles, class Observations>
@@ -63,6 +70,12 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model)
 		mParticles.push_back(new Particles(model));
 		mParticles[i]->setId(i);
 	}
+	
+	mParticleMMSE = new Particles(model);
+	mParticleMMSE->setId(mNbParticles);
+	
+	mParticleMAP = new Particles(model);
+	mParticleMAP->setId(mNbParticles+1);
 }
 
 template<class Particles, class Observations>
@@ -72,6 +85,8 @@ _Filter<Particles, Observations>::~_Filter()
 	{
 		delete mParticles[i];
 	}
+	delete mParticleMMSE;
+	delete mParticleMAP;
 }
 
 template<class Particles, class Observations>

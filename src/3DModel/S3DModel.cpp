@@ -126,19 +126,11 @@ int S3DModel::getPartitionNumber()
 
 void S3DModel::setColor(float R, float G, float B, float alpha)
 {
+	_Particle<std::vector<std::vector<double > > >::setColor(R, G, B, alpha);
 	for(int i=0 ; i<=mNbJoints ; i++)
 	{
 		mIntToJoint[i]->setColor(R, G, B, alpha);
 	}
-}
-void S3DModel::setVisible(bool visible)
-{
-	mIsVisible = visible;
-}
-
-bool S3DModel::isVisible()
-{
-	return mIsVisible;
 }
 
 void S3DModel::sampleFromPrior()
@@ -153,8 +145,10 @@ void S3DModel::esitmateLikelihood(std::vector<std::vector<double > > obs)
 {
 }
 
-void S3DModel::mapJointToObs(std::map<std::string, std::string> jointNameToPosName)
+void S3DModel::mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName)
 {
+	mPosNames = posNames;
+	
 	vector<std::string> jtNames = this->getNameVec();
 	mJointNameToPosName = jointNameToPosName;
 	for (int i=0 ; i < jtNames.size() ; i++)

@@ -31,9 +31,6 @@ int main()
 	//******************************************
 	//*************INITIALISATION***************
 	//******************************************
-	int nbParticles = 10;
-	S3DModel *modilou= new S3DModel(model);
-	SIR<S3DModel, std::vector<std::vector<double> > > *lolilol = new SIR<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
 	
 	std::vector<S3DModel*> mods;//Initialisations of all models
 	for (int i=0 ; i<NBMODELS ; i++)
@@ -106,12 +103,19 @@ int main()
 	jtsToPos["AnkleLeft"] = "AnkleLeft";
 	jtsToPos["AnkleRight"] = "AnkleRight";//*/
 	
+	int nbParticles = 10;
+	S3DModel *modilou= new S3DModel(model);
+	modilou->mapJointToObs(fileParser->getJointNames(), jtsToPos);
+	SIR<S3DModel, std::vector<std::vector<double> > > *lolilol = new SIR<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
+	
 	
 	IKSolverPFOrient iksol(mods, fileParser->getJointNames(), frame);//Declaration of solver
 	iksol.mapJointToObs(jtsToPos);
 	iksol.initFilter();
 	viewer.init();
-	viewer.initModels(mods);
+	//viewer.initModels(mods);
+	std::vector<S3DModel*> particles = lolilol->getParticleVector();
+	viewer.initModels(particles);
 	viewer.initObservations(fileParser->getJointNames(), frame);
 	iksol.computeLikelihood();
 	
