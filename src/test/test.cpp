@@ -1,3 +1,6 @@
+
+#include "../Control.h"
+
 #include <iostream>
 #include <vector>
 #include "../3DModel/S3DModel.h"
@@ -119,8 +122,8 @@ int main()
 	viewer.initObservations(fileParser->getJointNames(), frame);
 	iksol.computeLikelihood();
 	
-	PartQRSFilter filter(mods, fileParser->getJointNames(), frame);
-	filter.mapJointToObs(jtsToPos);
+	//PartQRSFilter filter(mods, fileParser->getJointNames(), frame);
+	//filter.mapJointToObs(jtsToPos);
 	
 	//******************************************
 	//**********END INITIALISATION**************
@@ -165,17 +168,19 @@ int main()
 		}
 		else if (step == "InitFilter")
 		{
-			filter.initFilter();
+			//filter.initFilter();
+			lolilol->init(frame);
 			step = "Filter";
-			viewer.update(mods, frame);
+			std::vector<S3DModel*> particles = lolilol->getParticleVector();
+			viewer.update(particles, frame);
 			continuer = viewer.isRendering();
 		}
 		else if (step == "Filter")
 		{
 			frame = fileParser->getNextFrame();//Observation update
-			filter.step(frame);
-			viewer.update(mods, frame);
-			cin;
+			//filter.step(frame);
+			std::vector<S3DModel*> particles = lolilol->getParticleVector();
+			viewer.update(particles, frame);
 			continuer = viewer.isRendering();
 		}
 		else

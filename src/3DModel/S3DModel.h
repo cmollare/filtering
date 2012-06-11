@@ -6,6 +6,7 @@
  * 
  */
 
+#include "../Control.h"
 #include <iostream>
 #include <map>
 #include <Eigen/Dense>
@@ -197,6 +198,8 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		virtual void update();
 		virtual void esitmateLikelihood(std::vector<std::vector<double > > obs);
 		void mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName);
+		
+		virtual S3DModel& operator =(const S3DModel& part);
 		
 	private:
 	

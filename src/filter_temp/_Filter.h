@@ -53,12 +53,15 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles)
 	{
 		mParticles.push_back(new Particles());
 		mParticles[i]->setId(i);
+		mParticles[i]->setColor(1, 0, 1, 0.1);
 	}
 	mParticleMMSE = new Particles();
 	mParticleMMSE->setId(mNbParticles);
+	mParticleMMSE->setColor(0, 1, 0, 1);
 	
 	mParticleMAP = new Particles();
 	mParticleMAP->setId(mNbParticles+1);
+	mParticleMAP->setColor(1, 0, 0, 1);
 }
 
 template<class Particles, class Observations>
@@ -69,13 +72,16 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model)
 	{
 		mParticles.push_back(new Particles(model));
 		mParticles[i]->setId(i);
+		mParticles[i]->setColor(1, 0, 1, 0.1);
 	}
 	
 	mParticleMMSE = new Particles(model);
 	mParticleMMSE->setId(mNbParticles);
+	mParticleMMSE->setColor(0, 1, 0, 1);
 	
 	mParticleMAP = new Particles(model);
 	mParticleMAP->setId(mNbParticles+1);
+	mParticleMAP->setColor(1, 0, 0, 1);
 }
 
 template<class Particles, class Observations>
@@ -92,7 +98,11 @@ _Filter<Particles, Observations>::~_Filter()
 template<class Particles, class Observations>
 std::vector<Particles*> _Filter<Particles, Observations>::getParticleVector()
 {
-	return this->mParticles;
+	std::vector<Particles*> parts = this->mParticles;
+	parts.push_back(mParticleMMSE);
+	parts.push_back(mParticleMAP);
+	
+	return parts;
 }
 
 #endif

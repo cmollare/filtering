@@ -135,6 +135,102 @@ void S3DModel::setColor(float R, float G, float B, float alpha)
 
 void S3DModel::sampleFromPrior()
 {
+	#ifdef USE_QUATERNION
+		for (int j=0 ; j < mOrientationVec.size() ; j++)
+		{
+			mDefaultOrientationVec[j] = (*mOrientationVec[j]); // Base orientation becomes default orientation
+			mDefaultOffsetVec[j] = (*mOffsetVec[j]);  // Base offset becomes default offset
+			
+			Eigen::Quaterniond quat = mDefaultOrientationVec[j]; // Mean of orientations == default orientation
+			bool invalide = false;
+			Eigen::Vector3d offs = mDefaultOffsetVec[j].vector(); // Mean of offset == default offset
+			do
+			{
+				invalide = false;
+				if (mConstOrientVec[j] == ORIENT_CONST_FREE)
+				{
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);//A modifier suivant les contraintes
+				}
+				else if(mConstOrientVec[j] == ORIENT_CONST_TWIST)
+				{
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 0.1, 0.05);
+				}
+				else if(mConstOrientVec[j] == ORIENT_CONST_FLEX)
+				{
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 0.05);
+				}
+				else if(mConstOrientVec[j] == ORIENT_CONST_TFLEX)
+				{
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 0.1);
+				}
+				else if(mConstOrientVec[j] == ORIENT_CONST_BIFLEX)
+				{
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 1);
+				}
+				else if(mConstOrientVec[j] == ORIENT_CONST_FIXED)
+				{
+					(*mOrientationVec[j]) = (*mOrientationVec[j]);
+				}
+				else
+				{
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);
+				}
+				mOrientationVec[j]->normalize(); // NORMALIZATION STEP EXTREMELY IMPORTANT
+				
+				Eigen::Vector3d tempo;
+				if (mConstOffsetVec[j] == OFFSET_CONST_FREE)
+				{
+					tempo = Eigen::Vector3d(this->randn()*0.001, this->randn()*0.001, this->randn()*0.001) + offs;
+				}
+				else if (mConstOffsetVec[j] == OFFSET_CONST_BONE)
+				{
+
+					do
+					{
+						tempo = Eigen::Vector3d(this->randn(0.001), 0, 0) + offs;
+					}
+					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+				}
+				else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARXY)
+				{
+					int i=0;
+					do
+					{
+						tempo = Eigen::Vector3d(this->randn(0.001), this->randn(0.001), 0) + offs;
+					}
+					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+				}
+				else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARYZ)
+				{
+					do
+					{
+						tempo = Eigen::Vector3d(0, this->randn(0.001), this->randn(0.001)) + offs;
+					}
+					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+				}
+				else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARXZ)
+				{
+					do
+					{
+						tempo = Eigen::Vector3d(this->randn(0.001), 0, this->randn(0.001)) + offs;
+					}
+					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+				}
+				else if (mConstOffsetVec[j] == OFFSET_CONST_FIXED)
+				{
+					tempo = Eigen::Vector3d(0, 0, 0) + offs;
+				}
+				(*mOffsetVec[j])=Eigen::Translation3d(tempo);//A modifier suivant les contraintes
+
+				//To avoid infinite and NaN cases
+				invalide |= ((mOffsetVec[j]->x() == std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->y() == std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->z() == std::numeric_limits<double>::infinity()));
+				invalide |= ((mOffsetVec[j]->x() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->y() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->z() == -std::numeric_limits<double>::infinity()));
+				invalide |= ((mOffsetVec[j]->x() != mOffsetVec[j]->x()) || (mOffsetVec[j]->y() != mOffsetVec[j]->y()) || (mOffsetVec[j]->z() != mOffsetVec[j]->z()));
+				invalide |= (mOrientationVec[j]->w() != mOrientationVec[j]->w());
+			}
+			while(invalide);
+		}
+	#endif
 }
 
 void S3DModel::update()
@@ -175,6 +271,11 @@ void S3DModel::mapJointToObs(std::vector<std::string> posNames, std::map<std::st
 			cout << jtNames[i] <<" : No match found" << endl;
 		
 	}
+}
+
+S3DModel& S3DModel::operator =(const S3DModel& part)
+{
+	_Particle<std::vector<std::vector<double > > >::operator =(part);
 }
 
 void S3DModel::createMaps(vector<Joint*>& jts)
