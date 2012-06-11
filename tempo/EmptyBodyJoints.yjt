@@ -1,0 +1,48 @@
+---
+NbPoses: 0
+NbJoints: 19
+FirstIndex: 1
+BJointsNames:
+  - Pelvis
+  - LeftHip
+  - LeftKnee
+  - LeftAnkle
+  - LeftFoot
+  - RightHip
+  - RightKnee
+  - RightAnkle
+  - RightFoot
+  - Thorax
+  - LeftShoulder
+  - LeftElbow
+  - LeftWrist
+  - LeftHand
+  - RightShoulder
+  - RightElbow
+  - RightWrist
+  - RightHand
+  - Head
+BPartsColors:
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 0}
+  - {b: 0, g: 0, r: 255}
+  - {b: 0, g: 255, r: 0}
+  - {b: 255, g: 0, r: 0}
+***
+DataSizeBytes: 0
+CheckSumXor_32bits: 0x0
+***
