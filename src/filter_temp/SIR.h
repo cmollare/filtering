@@ -10,7 +10,10 @@ class SIR : public _Filter<Particles, Observations>
 		SIR(int nbParticles, Particles& model=NULL);
 		virtual ~SIR();
 		
-		virtual void init();
+		virtual void init(Observations& obs);
+		virtual void step(Observations& obs=NULL);
+		virtual void resample();
+		virtual void updateWeights();
 };
 
 #endif

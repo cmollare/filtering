@@ -28,3 +28,9 @@ _Filter<Particles, Observations>::~_Filter()
 		delete mParticles[i];
 	}
 }
+
+template<class Particles, class Observations>
+std::vector<Particles*> _Filter<Particles, Observations>::getParticleVector()
+{
+	return this->mParticles;
+}

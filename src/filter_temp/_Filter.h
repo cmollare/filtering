@@ -17,22 +17,29 @@
 #include "../3DModel/S3DModel.h"
 #include "../FileParsers/ResultParser.h"
 #include "../particles/_Particle.h"
+#include "../tools/_Stats.h"
 
 template<class Particles, class Observations>
-class _Filter
+class _Filter : public _Stats
 {
 	public:
 		_Filter(int nbParticles, Particles& model=NULL);
 		virtual ~_Filter();
 		
-		virtual void init() =0;
-		virtual void computeWeights() =0;
+		virtual void init(Observations& obs) =0;
+		virtual void step(Observations& obs=NULL) =0;
+		virtual void resample() =0;
+		virtual void updateWeights() =0;
 		virtual void computeMMSE() =0;
 		//virtual computeMAP() =0;
 		
+		std::vector<Particles*> getParticleVector();
+		
 	protected:
 		int mNbParticles;
-		std::vector<Particles*> mParticles;	
+		Eigen::VectorXd mCurrentWeights;
+		std::vector<Particles*> mParticles;
+		Observations mCurrentObservations;
 };
 
 #endif
