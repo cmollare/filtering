@@ -9,8 +9,15 @@
 class _Stats
 {
 	protected:
-		void initQMC();
+		double randUnif(double sup=1);
+		double randn(double sigma=1);
+		Eigen::Quaterniond sampleQuTEM(Eigen::Quaterniond mean, double sigma, double sigma1=1, double sigma2=1, double sigma3=1);
 		
+		//QRS functions
+		void initQMC();
+		void sampleQRS();
+		double quasiRandn(double sigma=1);
+		Eigen::Quaterniond sampleQuasiQuTEM(Eigen::Quaterniond mean, double sigma, double sigma1=1, double sigma2=1, double sigma3=1);
 		
 		//Quasi MonteCarlo
 		int mSeedQMC; /*!< Seed for QMC */

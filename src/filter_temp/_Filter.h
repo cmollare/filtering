@@ -15,18 +15,24 @@
 #include <map>
 #include <string>
 #include "../3DModel/S3DModel.h"
-//#include "sobol.h"
 #include "../FileParsers/ResultParser.h"
+#include "../particles/_Particle.h"
 
 template<class Particles>
 class _Filter
 {
 	public:
-		_Filter(int nbParticles, Particles* model=NULL);
+		_Filter(int nbParticles, Particles& model=NULL);
+		virtual ~_Filter();
 		
+		virtual void initFilter() =0;
 		virtual void computeWeights() =0;
 		virtual void computeMMSE() =0;
 		//virtual computeMAP() =0;
+		
+	protected:
+		int mNbParticles;
+		std::vector<_Particle*> mParticles;
 		
 };
 

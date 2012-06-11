@@ -6,7 +6,10 @@
 class _Particle
 {
 	public:
+		_Particle();
 		virtual void sampleFromPrior() =0;
+		
+		//_Particle operator +(const _Particle& part) const;
 	
 	protected:
 		
