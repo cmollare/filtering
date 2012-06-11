@@ -50,6 +50,7 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles)
 	for (int i=0 ; i<mNbParticles ; i++)
 	{
 		mParticles.push_back(new Particles());
+		mParticles[i]->setId(i);
 	}
 }
 
@@ -60,6 +61,7 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model)
 	for (int i=0 ; i<mNbParticles ; i++)
 	{
 		mParticles.push_back(new Particles(model));
+		mParticles[i]->setId(i);
 	}
 }
 

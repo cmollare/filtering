@@ -24,14 +24,26 @@ class _Particle
 			return this->mCurrentLikelihood;
 		}
 		
+		virtual void setId(int id)
+		{
+			mId = id;
+		}
+		
+		virtual int getId()
+		{
+			return mId;
+		}
+		
 		virtual _Particle<Observations>& operator =(const _Particle<Observations>& part)
 		{
 		}
+		
 		//virtual _Particle<Observations> operator +(const _Particle<Observations>& part) const;
 		//virtual _Particle<Observations>& operator +=(const _Particle<Observations>& part);
 	
 	protected:
 		double mCurrentLikelihood;
+		int mId;
 };
 
 #endif

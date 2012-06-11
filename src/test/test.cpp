@@ -32,13 +32,14 @@ int main()
 	//*************INITIALISATION***************
 	//******************************************
 	int nbParticles = 10;
-	S3DModel *modilou= new S3DModel(model, 15000);
+	S3DModel *modilou= new S3DModel(model);
 	SIR<S3DModel, std::vector<std::vector<double> > > *lolilol = new SIR<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
 	
 	std::vector<S3DModel*> mods;//Initialisations of all models
 	for (int i=0 ; i<NBMODELS ; i++)
 	{
-		mods.push_back(new S3DModel(model, i));
+		mods.push_back(new S3DModel(model));
+		mods[i]->setId(i);
 	}
 	
 	std::vector<std::vector<double> > frame = fileParser->getFirstFrame();

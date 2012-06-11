@@ -1,9 +1,8 @@
 #include "S3DModel.h"
 
-S3DModel::S3DModel(const Joint* jt, unsigned int id)
+S3DModel::S3DModel(const Joint* jt)
 {
 	mRootJoint = new Joint(*jt);
-	mId = id;
 	mNbJoints = -1;
 	mPartitionNumber = 0;
 	mIsVisible = true;
@@ -152,6 +151,36 @@ void S3DModel::update()
 
 void S3DModel::esitmateLikelihood(std::vector<std::vector<double > > obs)
 {
+}
+
+void S3DModel::mapJointToObs(std::map<std::string, std::string> jointNameToPosName)
+{
+	vector<std::string> jtNames = this->getNameVec();
+	mJointNameToPosName = jointNameToPosName;
+	for (int i=0 ; i < jtNames.size() ; i++)
+	{
+		bool found=false;
+		mJointNameToInt[jtNames[i]] = i;
+
+		for (int j=0 ; j<mPosNames.size() ; j++)
+		{
+			if(mJointNameToPosName[jtNames[i]] == mPosNames[j])
+			{
+				found = true;
+				mJointNameToPos[jtNames[i]]=j;
+				break;
+			}
+			else if (mJointNameToPosName[jtNames[i]] == "NULL")
+			{
+				found = true;
+				mJointNameToPos[jtNames[i]]=-1;
+				break;
+			}
+		}
+		if (!found)
+			cout << jtNames[i] <<" : No match found" << endl;
+		
+	}
 }
 
 void S3DModel::createMaps(vector<Joint*>& jts)

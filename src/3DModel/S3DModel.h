@@ -35,7 +35,7 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		 * \param jt Pointer on the model root Joint.
 		 * \param id Unique id of the model.
 		 */
-		S3DModel(const Joint* jt, unsigned int id=0);
+		S3DModel(const Joint* jt);
 		
 		/*!
 		 * \fn S3DModel(const S3DModel& model)
@@ -210,6 +210,7 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		virtual void sampleFromPrior();
 		virtual void update();
 		virtual void esitmateLikelihood(std::vector<std::vector<double > > obs);
+		void mapJointToObs(std::map<std::string, std::string> jointNameToPosName);
 		
 	private:
 	
@@ -274,7 +275,6 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		 */
 		void createPartitionMultimaps();
 		
-		unsigned int mId; /*!< id of the model */
 		Joint *mRootJoint; /*!< pointer on the root Joint */
 		
 		std::map<std::string, Joint*> mStringToJoint; /*!< mapping from Joints name to Joint pointers (for speed) */
@@ -293,6 +293,11 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		std::multimap<int, std::string> mOffsetPartToName; /*!< offset MultiMap from partition number to Joint name */
 		std::multimap<int, std::string> mOrientPartToName; /*!< orientation MultiMap from partition number to Joint name */
 		int mPartitionNumber; /*!< Number of partitions */
+		
+		std::map<std::string, std::string> mJointNameToPosName; /*!< Map between Joint Names file and animation file */
+		std::map<std::string, int> mJointNameToPos; /*!< Name of the Joint to its position in the observation vector, -1 if there is no observation associated */
+		std::map<std::string, int> mJointNameToInt; /*!< Name of the Joint to its position in the orientation vector */
+		std::vector<std::string> mPosNames; /*!< Names of observations */
 		
 		bool mIsVisible; /*!< Is the model visible ? True if yes */
 };
