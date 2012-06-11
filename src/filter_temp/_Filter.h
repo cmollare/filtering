@@ -18,22 +18,21 @@
 #include "../FileParsers/ResultParser.h"
 #include "../particles/_Particle.h"
 
-template<class Particles>
+template<class Particles, class Observations>
 class _Filter
 {
 	public:
 		_Filter(int nbParticles, Particles& model=NULL);
 		virtual ~_Filter();
 		
-		virtual void initFilter() =0;
+		virtual void init() =0;
 		virtual void computeWeights() =0;
 		virtual void computeMMSE() =0;
 		//virtual computeMAP() =0;
 		
 	protected:
 		int mNbParticles;
-		std::vector<_Particle*> mParticles;
-		
+		std::vector<Particles*> mParticles;	
 };
 
 #endif

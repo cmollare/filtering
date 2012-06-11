@@ -3,12 +3,14 @@
 
 #include "_Filter.h"
 
-template<class Particles>
-class SIR : public _Filter<Particles>
+template<class Particles, class Observations>
+class SIR : public _Filter<Particles, Observations>
 {
 	public:
 		SIR(int nbParticles, Particles& model=NULL);
 		virtual ~SIR();
+		
+		virtual void init();
 };
 
 #endif

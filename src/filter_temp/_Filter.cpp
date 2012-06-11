@@ -1,7 +1,7 @@
 #include "_Filter.h"
 
-template<class Particles>
-_Filter<Particles>::_Filter(int nbParticles, Particles& model)
+template<class Particles, class Observations>
+_Filter<Particles, Observations>::_Filter(int nbParticles, Particles& model)
 {
 	mNbParticles = nbParticles;
 	if (model != NULL)
@@ -20,8 +20,8 @@ _Filter<Particles>::_Filter(int nbParticles, Particles& model)
 	}
 }
 
-template<class Particles>
-_Filter<Particles>::~_Filter()
+template<class Particles, class Observations>
+_Filter<Particles, Observations>::~_Filter()
 {
 	for (int i=0 ; i<mNbParticles ; i++)
 	{
