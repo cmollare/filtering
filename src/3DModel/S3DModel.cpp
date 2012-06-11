@@ -151,6 +151,18 @@ bool S3DModel::isVisible()
 	return mIsVisible;
 }
 
+void S3DModel::sampleFromPrior()
+{
+}
+
+void S3DModel::update()
+{
+}
+
+void S3DModel::esitmateLikelihood(std::vector<std::vector<double > > obs)
+{
+}
+
 void S3DModel::createMaps(vector<Joint*>& jts)
 {
 	if (jts.size() > 0)

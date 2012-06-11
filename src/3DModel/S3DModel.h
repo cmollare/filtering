@@ -10,6 +10,8 @@
 #include <map>
 #include <Eigen/Dense>
 #include "Joint.h"
+#include "../particles/_Particle.h"
+#include "../tools/_Stats.h"
 
 /*!
  * \class S3DModel
@@ -19,7 +21,7 @@
  * This class also map some informations for efficiency.
  */
 
-class S3DModel
+class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 {
 	public:
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW	//For Eigen3
@@ -213,6 +215,11 @@ class S3DModel
 				cout << "****************" << endl;
 			}
 		}
+		
+		/* Functions derived from _Particle class */
+		virtual void sampleFromPrior();
+		virtual void update();
+		virtual void esitmateLikelihood(std::vector<std::vector<double > > obs);
 		
 	private:
 	
