@@ -9,7 +9,9 @@
 #include "../filter/PartFilter.h"
 #include "../filter/PartQRSFilter.h"
 
-#define NBMODELS 100
+#include "../filter_temp/SIR.h"
+
+#define NBMODELS 5
 
 using namespace std;
 
@@ -29,6 +31,9 @@ int main()
 	//******************************************
 	//*************INITIALISATION***************
 	//******************************************
+	int nbParticles = 10;
+	S3DModel *modilou= new S3DModel(model, 15000);
+	SIR<S3DModel, std::vector<std::vector<double> > > *lolilol = new SIR<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
 	
 	std::vector<S3DModel*> mods;//Initialisations of all models
 	for (int i=0 ; i<NBMODELS ; i++)

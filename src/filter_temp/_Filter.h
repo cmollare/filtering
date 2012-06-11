@@ -23,14 +23,15 @@ template<class Particles, class Observations>
 class _Filter : public _Stats
 {
 	public:
-		_Filter(int nbParticles, Particles& model=NULL);
+		_Filter(int& nbParticles);
+		_Filter(int& nbParticles, Particles& model);
 		virtual ~_Filter();
 		
 		virtual void init(Observations& obs) =0;
 		virtual void step(Observations& obs=NULL) =0;
 		virtual void resample() =0;
 		virtual void updateWeights() =0;
-		virtual void computeMMSE() =0;
+		//virtual void computeMMSE() =0;
 		//virtual computeMAP() =0;
 		
 		std::vector<Particles*> getParticleVector();
@@ -43,22 +44,22 @@ class _Filter : public _Stats
 };
 
 template<class Particles, class Observations>
-_Filter<Particles, Observations>::_Filter(int nbParticles, Particles& model)
+_Filter<Particles, Observations>::_Filter(int& nbParticles)
 {
 	mNbParticles = nbParticles;
-	if (model != NULL)
+	for (int i=0 ; i<mNbParticles ; i++)
 	{
-		for (int i=0 ; i<mNbParticles ; i++)
-		{
-			mParticles.push_back(new Particles(model));
-		}
+		mParticles.push_back(new Particles());
 	}
-	else
+}
+
+template<class Particles, class Observations>
+_Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model)
+{
+	mNbParticles = nbParticles;
+	for (int i=0 ; i<mNbParticles ; i++)
 	{
-		for (int i=0 ; i<mNbParticles ; i++)
-		{
-			mParticles.push_back(new Particles());
-		}
+		mParticles.push_back(new Particles(model));
 	}
 }
 

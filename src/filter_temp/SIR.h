@@ -7,7 +7,8 @@ template<class Particles, class Observations>
 class SIR : public _Filter<Particles, Observations>
 {
 	public:
-		SIR(int nbParticles, Particles& model=NULL);
+		SIR(int& nbParticles);
+		SIR(int& nbParticles, Particles& model);
 		virtual ~SIR();
 		
 		virtual void init(Observations& obs);
@@ -17,7 +18,12 @@ class SIR : public _Filter<Particles, Observations>
 };
 
 template<class Particles, class Observations>
-SIR<Particles, Observations>::SIR(int nbParticles, Particles& model) : _Filter<Particles, Observations>(nbParticles, model)
+SIR<Particles, Observations>::SIR(int& nbParticles) : _Filter<Particles, Observations>(nbParticles)
+{
+}
+
+template<class Particles, class Observations>
+SIR<Particles, Observations>::SIR(int& nbParticles, Particles& model) : _Filter<Particles, Observations>(nbParticles, model)
 {
 }
 
@@ -29,7 +35,7 @@ SIR<Particles, Observations>::~SIR()
 template<class Particles, class Observations>
 void SIR<Particles, Observations>::init(Observations& obs)
 {
-	this->mCurrentObservation = obs;
+	this->mCurrentObservations = obs;
 	
 	this->mCurrentWeights.setConstant(this->mNbParticles, 1, 1./this->mNbParticles); // Initialisation of weight at 1/N
 	
@@ -47,7 +53,7 @@ void SIR<Particles, Observations>::step(Observations& obs)
 	for (int i=0 ; i<this->mNbParticles ; i++)
 	{
 		this->mParticles[i]->update();
-		this->mParticles[i]->estimateLikelihood(this->mCurrentObservations);
+		this->mParticles[i]->esitmateLikelihood(this->mCurrentObservations);
 	}
 }
 

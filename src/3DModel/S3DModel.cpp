@@ -1,14 +1,5 @@
 #include "S3DModel.h"
 
-S3DModel::S3DModel(int id)
-{
-	mId = id;
-	mRootJoint = NULL;
-	mNbJoints = -1;
-	mPartitionNumber = 0;
-	mIsVisible = true;
-}
-
 S3DModel::S3DModel(const Joint* jt, unsigned int id)
 {
 	mRootJoint = new Joint(*jt);

@@ -27,16 +27,6 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW	//For Eigen3
 		
 		/*!
-		 * \fn S3DModel(int id)
-		 * \brief S3DModel constructor
-		 * 
-		 * This constructor create a single empty Joint.
-		 * 
-		 * \param id Unique id of the model.
-		 */
-		S3DModel(int id);
-		
-		/*!
 		 * \fn S3DModel(const Joint* jt, unsigned int id=0)
 		 * \brief S3DModel constructor
 		 * 
