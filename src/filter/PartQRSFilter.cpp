@@ -15,7 +15,7 @@ void PartQRSFilter::initFilter()
 	mCurrentDistances.resize(mModels.size(), 1); // Initialisation of distance vector
 	mCurrentLikelihood.resize(mModels.size(), 1); // Initialisation of likelihood vector
 	
-	mPartitionNumber = mModels[0]->getPartitionNumber();
+	mPartitionNumber = mModels[0]->getNumberOfPartitions();
 	for (int i=0 ; i<mModels.size() ; i++)
 	{
 		mModels[i]->setColor(1, 0, 1, 0.1);

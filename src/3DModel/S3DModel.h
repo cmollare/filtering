@@ -167,13 +167,6 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		std::multimap<int, std::string> getOrientPartitionMultimap();
 		
 		/*!
-		 * \fn int getPartitionNumber()
-		 * \brief get the number of partitions (useful for PartFilter only)
-		 * \return The number of partitions.
-		 */
-		int getPartitionNumber();
-		
-		/*!
 		 * \fn void setColor(float R=1, float G=0, float B=1, float alpha=0.1)
 		 * \brief Change the color of a model.
 		 * \param R Red component.
@@ -196,8 +189,10 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		/* Functions derived from _Particle class */
 		virtual void sampleFromPrior();
 		virtual void updateAll();
+		virtual void updatePart(int partition);
 		virtual void update(int partition=-1);
 		virtual void esitmateLikelihoodAll(std::vector<std::vector<double > >& obs);
+		virtual void esitmateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition);
 		virtual void esitmateLikelihood(std::vector<std::vector<double > >& obs, int partition=-1);
 		void mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName);
 		

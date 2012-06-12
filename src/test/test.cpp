@@ -13,6 +13,8 @@
 #include "../filter/PartQRSFilter.h"
 
 #include "../filter_temp/SIR.h"
+#include "../filter_temp/Partitionned.h"
+#include "../filter_temp/PartitionnedMMSE.h"
 
 using namespace std;
 
@@ -107,7 +109,7 @@ int main()
 	int nbParticles = NBMODELS;
 	S3DModel *modilou= new S3DModel(model);
 	modilou->mapJointToObs(fileParser->getJointNames(), jtsToPos);
-	SIR<S3DModel, std::vector<std::vector<double> > > *lolilol = new SIR<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
+	PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
 	std::vector<S3DModel*> particles = lolilol->getParticleVector();
 	
 	IKSolverPFOrient iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver

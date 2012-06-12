@@ -4,6 +4,8 @@
 /*!
  * \file _Filter.h
  */
+ 
+#include "../Control.h"
 
 #include <iostream>
 #include <stdio.h>

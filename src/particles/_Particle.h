@@ -13,12 +13,14 @@ class _Particle
 			mColor = std::vector<float>(4,1);
 			this->mCurrentLikelihood=0;
 			mIsVisible = true;
+			mNumberOfPartitions=0;
 		}
-		_Particle(_Particle& particle) //copy constructor
+		_Particle(const _Particle& particle) //copy constructor
 		{
 			this->mColor = particle.mColor;
 			this->mCurrentLikelihood = particle.mCurrentLikelihood;
 			this->mIsVisible = particle.mIsVisible;
+			this->mNumberOfPartitions = particle.mNumberOfPartitions;
 		}
 		
 		virtual void update(int partition=-1) =0;
@@ -69,12 +71,19 @@ class _Particle
 		virtual void normalize()
 		{
 		}
+		
+		virtual int getNumberOfPartitions()
+		{
+			return mNumberOfPartitions;
+		}
 	
 	protected:
 		double mCurrentLikelihood;
 		int mId;
 		std::vector<float> mColor;
 		bool mIsVisible;
+		
+		int mNumberOfPartitions;
 };
 
 #endif
