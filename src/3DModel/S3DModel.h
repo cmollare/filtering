@@ -195,11 +195,17 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		
 		/* Functions derived from _Particle class */
 		virtual void sampleFromPrior();
-		virtual void update();
-		virtual void esitmateLikelihood(std::vector<std::vector<double > > obs);
+		virtual void updateAll();
+		virtual void update(int partition=-1);
+		virtual void esitmateLikelihoodAll(std::vector<std::vector<double > >& obs);
+		virtual void esitmateLikelihood(std::vector<std::vector<double > >& obs, int partition=-1);
 		void mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName);
 		
 		virtual S3DModel& operator =(const S3DModel& part);
+		virtual S3DModel& operator +=(const S3DModel& part);
+		virtual void normalize();
+		
+		friend S3DModel operator *(const double& a, const S3DModel& b);
 		
 	private:
 	
@@ -288,5 +294,7 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		std::map<std::string, int> mJointNameToInt; /*!< Name of the Joint to its position in the orientation vector */
 		std::vector<std::string> mPosNames; /*!< Names of observations */
 };
+
+S3DModel operator *(const double& a, const S3DModel& b);
 
 #endif

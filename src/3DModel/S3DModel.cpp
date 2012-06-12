@@ -23,6 +23,10 @@ S3DModel::S3DModel(const S3DModel& model)
 	mNbJoints = -1;
 	mPartitionNumber = 0;
 	mIsVisible = model.mIsVisible;
+	mJointNameToPosName = model.mJointNameToPosName;
+	mJointNameToPos = model.mJointNameToPos;
+	mJointNameToInt = model.mJointNameToInt;
+	mPosNames = model.mPosNames;
 	createMaps();
 	createOrientationVec();
 	createOffsetVec();
@@ -233,12 +237,151 @@ void S3DModel::sampleFromPrior()
 	#endif
 }
 
-void S3DModel::update()
+void S3DModel::updateAll()
 {
+	#ifdef USE_QUATERNION
+	
+	for (int j=0 ; j < mOrientationVec.size() ; j++)
+	{
+		mDefaultOrientationVec[j] = (*mOrientationVec[j]); // Base orientation becomes default orientation
+		mDefaultOffsetVec[j] = (*mOffsetVec[j]);  // Base offset becomes default offset
+			
+		Eigen::Quaterniond quat = mDefaultOrientationVec[j]; // Mean of orientations == default orientation
+		bool invalide = false;
+		Eigen::Vector3d offs = mDefaultOffsetVec[j].vector(); // Mean of offset == default offset
+		do
+		{
+			invalide = false;
+			if (mConstOrientVec[j] == ORIENT_CONST_FREE)
+			{
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);//A modifier suivant les contraintes
+			}
+			else if(mConstOrientVec[j] == ORIENT_CONST_TWIST)
+			{
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 0.1, 0.05);
+			}
+			else if(mConstOrientVec[j] == ORIENT_CONST_FLEX)
+			{
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 0.05);
+			}
+			else if(mConstOrientVec[j] == ORIENT_CONST_TFLEX)
+			{
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 0.1);
+			}
+			else if(mConstOrientVec[j] == ORIENT_CONST_BIFLEX)
+			{
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 1);
+			}
+			else if(mConstOrientVec[j] == ORIENT_CONST_FIXED)
+			{
+				(*mOrientationVec[j]) = (*mOrientationVec[j]);
+			}
+			else
+			{
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);
+			}
+			mOrientationVec[j]->normalize(); // NORMALIZATION STEP EXTREMELY IMPORTANT
+			
+			Eigen::Vector3d tempo;
+			if (mConstOffsetVec[j] == OFFSET_CONST_FREE)
+			{
+				tempo = Eigen::Vector3d(this->randn()*0.001, this->randn()*0.001, this->randn()*0.001) + offs;
+			}
+			else if (mConstOffsetVec[j] == OFFSET_CONST_BONE)
+			{
+					
+				do
+				{
+					tempo = Eigen::Vector3d(this->randn(0.001), 0, 0) + offs;
+				}
+				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+			}
+			else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARXY)
+			{
+				int i=0;
+				do
+				{
+					tempo = Eigen::Vector3d(this->randn(0.001), this->randn(0.001), 0) + offs;
+				}
+				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+			}
+			else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARYZ)
+			{
+				do
+				{
+					tempo = Eigen::Vector3d(0, this->randn(0.001), this->randn(0.001)) + offs;
+				}
+				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+			}
+			else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARXZ)
+			{
+				do
+				{
+					tempo = Eigen::Vector3d(this->randn(0.001), 0, this->randn(0.001)) + offs;
+				}
+				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+			}
+			else if (mConstOffsetVec[j] == OFFSET_CONST_FIXED)
+			{
+				tempo = Eigen::Vector3d(0, 0, 0) + offs;
+			}
+			(*mOffsetVec[j])=Eigen::Translation3d(tempo);//A modifier suivant les contraintes
+
+			//To avoid infinite and NaN cases
+			invalide |= ((mOffsetVec[j]->x() == std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->y() == std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->z() == std::numeric_limits<double>::infinity()));
+			invalide |= ((mOffsetVec[j]->x() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->y() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->z() == -std::numeric_limits<double>::infinity()));
+			invalide |= ((mOffsetVec[j]->x() != mOffsetVec[j]->x()) || (mOffsetVec[j]->y() != mOffsetVec[j]->y()) || (mOffsetVec[j]->z() != mOffsetVec[j]->z()));
+			invalide |= (mOrientationVec[j]->w() != mOrientationVec[j]->w());
+		}
+		while(invalide);
+	}
+	
+	#endif
 }
 
-void S3DModel::esitmateLikelihood(std::vector<std::vector<double > > obs)
+void S3DModel::update(int partition)
 {
+	if (partition==-1)
+	{
+		this->updateAll();
+	}
+	else
+	{
+	}
+}
+
+void S3DModel::esitmateLikelihoodAll(std::vector<std::vector<double > >& obs)
+{
+	std::map<std::string, int>::iterator it;
+	double distance=0;
+	for (it = mJointNameToPos.begin() ; it != mJointNameToPos.end() ; it++)
+	{
+		if ((*it).second != -1)
+		{
+			double distTemp=0;
+			// Mahalanobis distance
+			Eigen::Vector3d jtPos = this->getJoint((*it).first)->getXYZVect();
+			Eigen::Vector3d jtObs(obs[(*it).second][1], obs[(*it).second][2], obs[(*it).second][3]);
+			Eigen::Vector3d diff = jtPos - jtObs;
+			Eigen::Matrix3d cov;
+			cov.setIdentity();
+			distTemp = diff.transpose()*(cov*diff);
+			distTemp = sqrt(distTemp);
+			distance += distTemp;
+		}
+	}
+	mCurrentLikelihood = exp(-abs(distance));
+}
+
+void S3DModel::esitmateLikelihood(std::vector<std::vector<double > >& obs, int partition)
+{
+	if (partition==-1)
+	{
+		this->esitmateLikelihoodAll(obs);
+	}
+	else
+	{
+	}
 }
 
 void S3DModel::mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName)
@@ -276,6 +419,39 @@ void S3DModel::mapJointToObs(std::vector<std::string> posNames, std::map<std::st
 S3DModel& S3DModel::operator =(const S3DModel& part)
 {
 	_Particle<std::vector<std::vector<double > > >::operator =(part);
+	for (int j=0 ; j < this->mOrientationVec.size() ; j++)
+	{
+		(*this->mOrientationVec[j])=(*(part.mOrientationVec[j]));
+		(*this->mOffsetVec[j])=(*(part.mOffsetVec[j]));
+	}
+}
+
+S3DModel& S3DModel::operator +=(const S3DModel& part)
+{
+	#ifdef USE_QUATERNION
+	for (int i=0 ; i < this->mOrientationVec.size() ; i++)
+	{
+		Eigen::Vector3d tempo = mOffsetVec[i]->vector();
+
+		Eigen::Vector3d offs = part.mOffsetVec[i]->vector();
+		tempo += offs;
+		
+		this->mOrientationVec[i]->w() += part.mOrientationVec[i]->w();
+		this->mOrientationVec[i]->x() += part.mOrientationVec[i]->x();
+		this->mOrientationVec[i]->y() += part.mOrientationVec[i]->y();
+		this->mOrientationVec[i]->z() += part.mOrientationVec[i]->z();
+		
+		(*mOffsetVec[i]) = Eigen::Translation3d(tempo);
+	}
+	#endif
+}
+
+void S3DModel::normalize()
+{
+	for (int i=0 ; i < mOrientationVec.size() ; i++)
+	{
+		mOrientationVec[i]->normalize();
+	}
 }
 
 void S3DModel::createMaps(vector<Joint*>& jts)
@@ -374,4 +550,29 @@ void S3DModel::createPartitionMultimaps()
 	}
 }
 
+S3DModel operator *(const double& a, const S3DModel& b)
+{
+	S3DModel model(b);
+	
+	#ifdef USE_QUATERNION
+	for (int i=0 ; i < model.mOrientationVec.size() ; i++)
+	{
+		std::vector<double> quat(4, 0);
 
+		Eigen::Vector3d tempo = model.mOffsetVec[i]->vector();
+		Eigen::Vector3d offs = b.mOffsetVec[i]->vector();
+		
+		tempo = a*offs;
+		quat[0] = a*b.mOrientationVec[i]->w();
+		quat[1] = a*b.mOrientationVec[i]->x();
+		quat[2] = a*b.mOrientationVec[i]->y();
+		quat[3] = a*b.mOrientationVec[i]->z();
+		
+		(*model.mOrientationVec[i]) = Eigen::Quaterniond(quat[0], quat[1], quat[2], quat[3]);
+
+		(*model.mOffsetVec[i]) = Eigen::Translation3d(tempo);
+	}
+	#endif
+	
+	return model;
+}

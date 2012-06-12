@@ -28,10 +28,10 @@ class _Filter : public _Stats
 		virtual ~_Filter();
 		
 		virtual void init(Observations& obs) =0;
-		virtual void step(Observations& obs=NULL) =0;
+		virtual void step(Observations& obs) =0;
 		virtual void resample() =0;
 		virtual void updateWeights() =0;
-		//virtual void computeMMSE() =0;
+		virtual void estimateMMSE() =0;
 		//virtual computeMAP() =0;
 		
 		std::vector<Particles*> getParticleVector();
@@ -100,7 +100,7 @@ std::vector<Particles*> _Filter<Particles, Observations>::getParticleVector()
 {
 	std::vector<Particles*> parts = this->mParticles;
 	parts.push_back(mParticleMMSE);
-	parts.push_back(mParticleMAP);
+	//parts.push_back(mParticleMAP);
 	
 	return parts;
 }

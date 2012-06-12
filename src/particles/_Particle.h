@@ -21,9 +21,8 @@ class _Particle
 			this->mIsVisible = particle.mIsVisible;
 		}
 		
-		virtual void sampleFromPrior() =0;
-		virtual void update() =0;
-		virtual void esitmateLikelihood(Observations obs) =0;
+		virtual void update(int partition=-1) =0;
+		virtual void esitmateLikelihood(Observations& obs, int partition=-1) =0;
 		virtual double getLikelihood()
 		{
 			return this->mCurrentLikelihood;
@@ -62,8 +61,14 @@ class _Particle
 			this->mCurrentLikelihood = part.mCurrentLikelihood;
 		}
 		
-		//virtual _Particle<Observations> operator +(const _Particle<Observations>& part) const;
-		//virtual _Particle<Observations>& operator +=(const _Particle<Observations>& part);
+		virtual _Particle<Observations>& operator +=(const _Particle<Observations>& part)
+		{
+			cout << "Warning : operator += have to be overloaded !" << endl;
+		}
+		
+		virtual void normalize()
+		{
+		}
 	
 	protected:
 		double mCurrentLikelihood;

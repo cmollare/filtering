@@ -14,8 +14,6 @@
 
 #include "../filter_temp/SIR.h"
 
-#define NBMODELS 5
-
 using namespace std;
 
 int main()
@@ -106,18 +104,18 @@ int main()
 	jtsToPos["AnkleLeft"] = "AnkleLeft";
 	jtsToPos["AnkleRight"] = "AnkleRight";//*/
 	
-	int nbParticles = 10;
+	int nbParticles = NBMODELS;
 	S3DModel *modilou= new S3DModel(model);
 	modilou->mapJointToObs(fileParser->getJointNames(), jtsToPos);
 	SIR<S3DModel, std::vector<std::vector<double> > > *lolilol = new SIR<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
+	std::vector<S3DModel*> particles = lolilol->getParticleVector();
 	
-	
-	IKSolverPFOrient iksol(mods, fileParser->getJointNames(), frame);//Declaration of solver
+	IKSolverPFOrient iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
 	iksol.mapJointToObs(jtsToPos);
 	iksol.initFilter();
 	viewer.init();
 	//viewer.initModels(mods);
-	std::vector<S3DModel*> particles = lolilol->getParticleVector();
+	
 	viewer.initModels(particles);
 	viewer.initObservations(fileParser->getJointNames(), frame);
 	iksol.computeLikelihood();
@@ -178,6 +176,7 @@ int main()
 		else if (step == "Filter")
 		{
 			frame = fileParser->getNextFrame();//Observation update
+			lolilol->step(frame);
 			//filter.step(frame);
 			std::vector<S3DModel*> particles = lolilol->getParticleVector();
 			viewer.update(particles, frame);
