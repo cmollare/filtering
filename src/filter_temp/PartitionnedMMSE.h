@@ -66,8 +66,6 @@ void PartitionnedMMSE<Particles, Observations>::step(Observations& obs)
 		{
 			this->mParticles[i]->update(l);
 			this->mParticles[i]->esitmateLikelihood(this->mCurrentObservations, l);
-			if (l==mNumberOfPartitions)
-				cout << this->mParticles[i]->getLikelihood() << endl;
 		}
 		this->updateWeights();
 		this->resample();

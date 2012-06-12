@@ -85,7 +85,7 @@ BJoints:
      Orientation:
         Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
         Dof: Free
-        Partition: 3
+        Partition: 4
         
    - Joint: ElbowRight
      Parent: ShoulderRight

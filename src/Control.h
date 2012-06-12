@@ -7,6 +7,6 @@
 #define TEMPO 0.05
 #define TEMP 0.8
 
-#define NBMODELS 100
+#define NBMODELS 50
 
 #endif
