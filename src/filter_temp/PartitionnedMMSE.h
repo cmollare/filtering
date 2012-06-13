@@ -15,7 +15,6 @@ class PartitionnedMMSE : public _Filter<Particles, Observations>
 		virtual void step(Observations& obs);
 		virtual void resample();
 		virtual void updateWeights();
-		virtual void estimateMMSE();
 		
 	protected:
 		int mNumberOfPartitions;
@@ -65,7 +64,7 @@ void PartitionnedMMSE<Particles, Observations>::step(Observations& obs)
 		for (int i=0 ; i<this->mNbParticles ; i++)
 		{
 			this->mParticles[i]->update(l);
-			this->mParticles[i]->esitmateLikelihood(this->mCurrentObservations, l);
+			this->mParticles[i]->estimateLikelihood(this->mCurrentObservations, l);
 		}
 		this->updateWeights();
 		this->resample();
@@ -78,6 +77,7 @@ void PartitionnedMMSE<Particles, Observations>::resample()
 	double invNbSamp = 1./this->mNbParticles;
 	
 	this->estimateMMSE();
+	this->mParticleMMSE->estimateLikelihood(this->mCurrentObservations, 1);
 	for (int j=0 ; j<this->mNbParticles ; j++)
 	{
 		*this->mParticles[j] = *this->mParticleMMSE; //Careful ! do not equalize particle adresses !
@@ -96,19 +96,6 @@ void PartitionnedMMSE<Particles, Observations>::updateWeights()
 	}
 	
 	this->mCurrentWeights=this->mCurrentWeights/sum;
-}
-
-template<class Particles, class Observations>
-void PartitionnedMMSE<Particles, Observations>::estimateMMSE()
-{
-	*this->mParticleMMSE = (this->mCurrentWeights[0]*(*this->mParticles[0]));
-	
-	for (int i=1 ; i<this->mNbParticles ; i++)
-	{
-		*this->mParticleMMSE += (this->mCurrentWeights[i]*(*this->mParticles[i]));
-	}
-	
-	this->mParticleMMSE->normalize();
 }
 
 #endif

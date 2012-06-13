@@ -19,9 +19,9 @@
  */
 typedef struct SOffset
 {
-	vector<double> Mean; /*!< Position of the Joint relative to its parent */
+	std::vector<double> Mean; /*!< Position of the Joint relative to its parent */
 	std::string Dof; /*!< Constraint on the local offset of the Joint */
-	vector<std::string> SignConst; /*!< Constraint on offset sign */
+	std::vector<std::string> SignConst; /*!< Constraint on offset sign */
 	int Partition; /*!< Partition number of offset */
 }SOffset;
 
@@ -66,7 +66,7 @@ typedef struct SYmdFile
 	std::string NbPoses; /*!< Nb of poses in the ymd file (for mixed format) */
 	std::string NbJoints; /*!< Nb of Joints in the ymd file */
 	std::string FirstIndex; /*!< First index (not implemented yet) */
-	vector<SBJoints, Eigen::aligned_allocator<SBJoints> > BJoints; /*!< vector of SBJoints structure : contains all Joints of the ymd file */
+	std::vector<SBJoints, Eigen::aligned_allocator<SBJoints> > BJoints; /*!< vector of SBJoints structure : contains all Joints of the ymd file */
 }SYmdFile;
 
 /*!
@@ -137,7 +137,7 @@ void operator>> (const YAML::Node& node, SYmdFile& YmdFile);
  * \param node Node to extract from.
  * \param BJoints Where to store the result.
  */
-void operator>> (const YAML::Node& node, vector<SBJoints, Eigen::aligned_allocator<SBJoints> >& BJoints);
+void operator>> (const YAML::Node& node, std::vector<SBJoints, Eigen::aligned_allocator<SBJoints> >& BJoints);
 
 
 /*!
@@ -170,7 +170,7 @@ void operator>> (const YAML::Node& node, Eigen::Quaterniond& quat);
  * \param node Node to extract from.
  * \param Offset Where to store the result.
  */
-void operator>> (const YAML::Node& node, vector<double>& Offset);
+void operator>> (const YAML::Node& node, std::vector<double>& Offset);
 
 
 /*!
@@ -179,6 +179,6 @@ void operator>> (const YAML::Node& node, vector<double>& Offset);
  * \param node Node to extract from.
  * \param SignConst Vector of sign constraints.
  */
-void operator>> (const YAML::Node& node, vector<std::string>& SignConst);
+void operator>> (const YAML::Node& node, std::vector<std::string>& SignConst);
 
 #endif

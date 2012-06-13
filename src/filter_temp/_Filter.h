@@ -33,7 +33,7 @@ class _Filter : public _Stats
 		virtual void step(Observations& obs) =0;
 		virtual void resample() =0;
 		virtual void updateWeights() =0;
-		virtual void estimateMMSE() =0;
+		virtual void estimateMMSE();
 		//virtual computeMAP() =0;
 		
 		std::vector<Particles*> getParticleVector();
@@ -41,7 +41,7 @@ class _Filter : public _Stats
 	protected:
 		int mNbParticles;
 		Eigen::VectorXd mCurrentWeights;
-		std::vector<Particles*> mParticles;
+		Particles** mParticles;
 		Particles* mParticleMMSE;
 		Particles* mParticleMAP;
 		Observations mCurrentObservations;
@@ -51,9 +51,10 @@ template<class Particles, class Observations>
 _Filter<Particles, Observations>::_Filter(int& nbParticles) : _Stats()
 {
 	mNbParticles = nbParticles;
-	for (int i=0 ; i<mNbParticles ; i++)
+	mParticles = new Particles*[mNbParticles];
+	for (int i=0 ; i<this->mNbParticles ; i++)
 	{
-		mParticles.push_back(new Particles());
+		mParticles[i] = new Particles();
 		mParticles[i]->setId(i);
 		mParticles[i]->setColor(1, 0, 1, 0.1);
 	}
@@ -70,9 +71,10 @@ template<class Particles, class Observations>
 _Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model) : _Stats()
 {
 	mNbParticles = nbParticles;
+	mParticles = new Particles*[mNbParticles];
 	for (int i=0 ; i<mNbParticles ; i++)
 	{
-		mParticles.push_back(new Particles(model));
+		mParticles[i] = new Particles(model);
 		mParticles[i]->setId(i);
 		mParticles[i]->setColor(1, 0, 1, 0.1);
 	}
@@ -100,11 +102,22 @@ _Filter<Particles, Observations>::~_Filter()
 template<class Particles, class Observations>
 std::vector<Particles*> _Filter<Particles, Observations>::getParticleVector()
 {
-	std::vector<Particles*> parts = this->mParticles;
+	std::vector<Particles*> parts;
+	for (int i=0 ; i<mNbParticles ; i++)
+	{
+		 parts.push_back(this->mParticles[i]);
+	}
 	parts.push_back(mParticleMMSE);
 	//parts.push_back(mParticleMAP);
 	
 	return parts;
 }
+
+template<class Particles, class Observations>
+void _Filter<Particles, Observations>::estimateMMSE()
+{
+	this->mParticleMMSE->estimateMMSE(mCurrentWeights, mParticles, mNbParticles);
+}
+
 
 #endif

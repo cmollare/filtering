@@ -3,12 +3,16 @@
 
 #include <iostream>
 #include <vector>
-#include "../3DModel/S3DModel.h"
+
+#include "../viewer/S3DViewer.h"
+
 #include "../FileParsers/YamlBodyJoint.h"
 #include "../FileParsers/FileParser.h"
-#include "../viewer/S3DViewer.h"
-#include "../solver/IKSolverPF.h"
+
 #include "../solver/IKSolverPFOrient.h"
+
+#include "../3DModel/S3DModel.h"
+#include "../3DModel/S3DModelQRS.h"
 
 #include "../filter_temp/SIR.h"
 #include "../filter_temp/Partitionned.h"
@@ -28,19 +32,11 @@ int main()
 	
 	Joint* model = ymlBJ.getModel();//temporary model
 	
-	S3DViewer viewer;//Declaration of viewer
-	viewer.setOptions(true, false, true);
 	
 	//******************************************
 	//*************INITIALISATION***************
 	//******************************************
 	
-	/*std::vector<S3DModel*> mods;//Initialisations of all models
-	for (int i=0 ; i<NBMODELS ; i++)
-	{
-		mods.push_back(new S3DModel(model));
-		mods[i]->setId(i);
-	}*/
 	
 	std::vector<std::vector<double> > frame = fileParser->getFirstFrame();
 	std::map<std::string, std::string> jtsToPos; //A mettre dans un fichier
@@ -107,23 +103,37 @@ int main()
 	jtsToPos["AnkleRight"] = "AnkleRight";//*/
 	
 	int nbParticles = NBMODELS;
-	S3DModel *mods= new S3DModel(model);
-	mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
-	PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
-	std::vector<S3DModel*> particles = lolilol->getParticleVector();
 	
-	IKSolverPFOrient iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
+	#ifdef QRS
+		S3DViewer<S3DModelQRS> viewer;//Declaration of viewer
+		viewer.setOptions(true, false, true);
+	
+		S3DModelQRS *mods= new S3DModelQRS(model);
+		mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
+		PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *mods);
+		std::vector<S3DModelQRS*> particles = lolilol->getParticleVector();
+		
+		IKSolverPFOrient<S3DModelQRS> iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
+	#else
+		S3DViewer<S3DModel> viewer;//Declaration of viewer
+		viewer.setOptions(true, false, true);
+		
+		S3DModel *mods= new S3DModel(model);
+		mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
+		PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+		std::vector<S3DModel*> particles = lolilol->getParticleVector();
+		
+		IKSolverPFOrient<S3DModel> iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
+	#endif
+	
 	iksol.mapJointToObs(jtsToPos);
 	iksol.initFilter();
 	viewer.init();
-	//viewer.initModels(mods);
 	
 	viewer.initModels(particles);
 	viewer.initObservations(fileParser->getJointNames(), frame);
 	iksol.computeLikelihood();
 	
-	//PartQRSFilter filter(mods, fileParser->getJointNames(), frame);
-	//filter.mapJointToObs(jtsToPos);
 	
 	//******************************************
 	//**********END INITIALISATION**************
@@ -168,10 +178,9 @@ int main()
 		}
 		else if (step == "InitFilter")
 		{
-			//filter.initFilter();
 			lolilol->init(frame);
 			step = "Filter";
-			std::vector<S3DModel*> particles = lolilol->getParticleVector();
+
 			viewer.update(particles, frame);
 			continuer = viewer.isRendering();
 		}
@@ -179,8 +188,7 @@ int main()
 		{
 			frame = fileParser->getNextFrame();//Observation update
 			lolilol->step(frame);
-			//filter.step(frame);
-			std::vector<S3DModel*> particles = lolilol->getParticleVector();
+
 			viewer.update(particles, frame);
 			continuer = viewer.isRendering();
 		}
@@ -191,10 +199,6 @@ int main()
 		}
 	}
 	
-	/*for (int i=0 ; i<NBMODELS ; i++)
-	{
-		delete mods[i];
-	}*/
 	delete lolilol;
 	delete mods;
 	delete fileParser;

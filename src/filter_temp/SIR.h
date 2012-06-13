@@ -15,7 +15,6 @@ class SIR : public _Filter<Particles, Observations>
 		virtual void step(Observations& obs);
 		virtual void resample();
 		virtual void updateWeights();
-		virtual void estimateMMSE();
 };
 
 /* ********************************************************* */
@@ -58,7 +57,7 @@ void SIR<Particles, Observations>::step(Observations& obs)
 	for (int i=0 ; i<this->mNbParticles ; i++)
 	{
 		this->mParticles[i]->update();
-		this->mParticles[i]->esitmateLikelihood(this->mCurrentObservations);
+		this->mParticles[i]->estimateLikelihood(this->mCurrentObservations);
 	}
 	this->updateWeights();
 	this->estimateMMSE();
@@ -103,22 +102,6 @@ void SIR<Particles, Observations>::updateWeights()
 	}
 	
 	this->mCurrentWeights=this->mCurrentWeights/sum;
-}
-
-template<class Particles, class Observations>
-void SIR<Particles, Observations>::estimateMMSE()
-{
-	*this->mParticleMMSE = (this->mCurrentWeights[0]*(*this->mParticles[0]));
-	
-	for (int i=1 ; i<this->mNbParticles ; i++)
-	{
-		*this->mParticleMMSE += (this->mCurrentWeights[i]*(*this->mParticles[i]));
-	}
-	
-	for (int i=1 ; i<this->mNbParticles ; i++)
-	{
-		this->mParticleMMSE->normalize();
-	}
 }
 
 #endif

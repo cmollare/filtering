@@ -62,14 +62,14 @@ void FileParser::readFile(int number)
 	}
 }
 
-vector<vector<double> > &FileParser::getFirstFrame()
+std::vector<std::vector<double> > &FileParser::getFirstFrame()
 {
 	mNextFrame=1;
 
 	return mVideoSequence[0];
 }
 
-vector<vector<double> > &FileParser::getNextFrame()
+std::vector<std::vector<double> > &FileParser::getNextFrame()
 {
 	int currentFrame=mNextFrame;
 	mNextFrame++;
@@ -79,7 +79,7 @@ vector<vector<double> > &FileParser::getNextFrame()
 	return mVideoSequence[currentFrame];
 }
 
-vector<vector<double> > &FileParser::getCurrentFrame()
+std::vector<std::vector<double> > &FileParser::getCurrentFrame()
 {
 	int currentFrame=mNextFrame;
 	if (currentFrame<0)
@@ -88,7 +88,7 @@ vector<vector<double> > &FileParser::getCurrentFrame()
 	return mVideoSequence[currentFrame];
 }
 
-vector<std::string> FileParser::getJointNames()
+std::vector<std::string> FileParser::getJointNames()
 {
 	return mJointNames;
 }

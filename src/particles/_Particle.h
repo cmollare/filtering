@@ -24,7 +24,12 @@ class _Particle
 		}
 		
 		virtual void update(int partition=-1) =0;
-		virtual void esitmateLikelihood(Observations& obs, int partition=-1) =0;
+		virtual void estimateLikelihood(Observations& obs, int partition=-1) =0;
+		
+		virtual void estimateMMSE(Eigen::VectorXd& weights, _Particle** particles, int nbParticles)
+		{
+		}
+		
 		virtual double getLikelihood()
 		{
 			return this->mCurrentLikelihood;
@@ -61,15 +66,6 @@ class _Particle
 		virtual _Particle<Observations>& operator =(const _Particle<Observations>& part)
 		{
 			this->mCurrentLikelihood = part.mCurrentLikelihood;
-		}
-		
-		virtual _Particle<Observations>& operator +=(const _Particle<Observations>& part)
-		{
-			cout << "Warning : operator += have to be overloaded !" << endl;
-		}
-		
-		virtual void normalize()
-		{
 		}
 		
 		virtual int getNumberOfPartitions()

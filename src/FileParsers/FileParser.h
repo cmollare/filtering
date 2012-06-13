@@ -43,29 +43,29 @@ class FileParser
 		 * \brief get first set of observations.
 		 * \return vector of 3D points.
 		 */
-		vector<vector<double> > &getFirstFrame();
+		std::vector<std::vector<double> > &getFirstFrame();
 		
 		/*!
 		 * \fn vector<vector<double> > &getNextFrame()
 		 * \brief get next set of observations.
 		 * \return vector of 3D points.
 		 */
-		vector<vector<double> > &getNextFrame();
+		std::vector<std::vector<double> > &getNextFrame();
 		
 		/*!
 		 * \fn vector<vector<double> > &getCurrentFrame()
 		 * \brief get current set of observations.
 		 * \return vector of 3D points.
 		 */
-		vector<vector<double> > &getCurrentFrame();
-		vector<std::string> getJointNames();
+		std::vector<std::vector<double> > &getCurrentFrame();
+		std::vector<std::string> getJointNames();
 		
 	private:
 		std::string mPath; /*!< Path to files' folder */
 		std::string mFileBeg; /*!< Beginning of files' names */
 		int mMaxFileNumber; /*!< Number of files */
-		vector<vector<vector<double> > > mVideoSequence; /*!< Video sequence : all observations */
-		vector<std::string> mJointNames; /*!< Name of observations */
+		std::vector<std::vector<std::vector<double> > > mVideoSequence; /*!< Video sequence : all observations */
+		std::vector<std::string> mJointNames; /*!< Name of observations */
 		int mNextFrame; /*!< Index of next frame */
 };
 

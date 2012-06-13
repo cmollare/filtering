@@ -22,7 +22,7 @@
  * This class also map some informations for efficiency.
  */
 
-class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
+class S3DModel : public _Particle<std::vector<std::vector<double > > >, public _Stats
 {
 	public:
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW	//For Eigen3
@@ -191,18 +191,16 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		virtual void updateAll();
 		virtual void updatePart(int partition);
 		virtual void update(int partition=-1);
-		virtual void esitmateLikelihoodAll(std::vector<std::vector<double > >& obs);
-		virtual void esitmateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition);
-		virtual void esitmateLikelihood(std::vector<std::vector<double > >& obs, int partition=-1);
+		virtual void estimateLikelihoodAll(std::vector<std::vector<double > >& obs);
+		virtual void estimateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition);
+		virtual void estimateLikelihood(std::vector<std::vector<double > >& obs, int partition=-1);
+		virtual void estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles);
+		
 		void mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName);
 		
 		virtual S3DModel& operator =(const S3DModel& part);
-		virtual S3DModel& operator +=(const S3DModel& part);
-		virtual void normalize();
 		
-		friend S3DModel operator *(const double& a, const S3DModel& b);
-		
-	private:
+	protected:
 	
 		/*!
 		 * \fn void createMaps(vector<Joint*>& jts)
@@ -289,7 +287,5 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, _Stats
 		std::map<std::string, int> mJointNameToInt; /*!< Name of the Joint to its position in the orientation vector */
 		std::vector<std::string> mPosNames; /*!< Names of observations */
 };
-
-S3DModel operator *(const double& a, const S3DModel& b);
 
 #endif

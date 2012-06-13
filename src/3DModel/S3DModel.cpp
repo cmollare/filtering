@@ -15,7 +15,6 @@ S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double >
 	createPartitionMultimaps();
 	//std::cout << "S3DModel : model index successfully created !" << std::endl;
 	
-	this->initStatsTool((mNbJoints+1)*6);
 }
 
 S3DModel::S3DModel(const S3DModel& model) : _Particle<std::vector<std::vector<double > > >(model)
@@ -481,7 +480,7 @@ void S3DModel::update(int partition)
 	}
 }
 
-void S3DModel::esitmateLikelihoodAll(std::vector<std::vector<double > >& obs)
+void S3DModel::estimateLikelihoodAll(std::vector<std::vector<double > >& obs)
 {
 	std::map<std::string, int>::iterator it;
 	double distance=0;
@@ -504,7 +503,7 @@ void S3DModel::esitmateLikelihoodAll(std::vector<std::vector<double > >& obs)
 	mCurrentLikelihood = exp(-abs(distance));
 }
 
-void S3DModel::esitmateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition)
+void S3DModel::estimateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition)
 {
 	#ifdef USE_QUATERNION
 	
@@ -536,15 +535,38 @@ void S3DModel::esitmateLikelihoodPart(std::vector<std::vector<double > >& obs, i
 	#endif
 }
 
-void S3DModel::esitmateLikelihood(std::vector<std::vector<double > >& obs, int partition)
+void S3DModel::estimateLikelihood(std::vector<std::vector<double > >& obs, int partition)
 {
 	if (partition==-1)
 	{
-		this->esitmateLikelihoodAll(obs);
+		this->estimateLikelihoodAll(obs);
 	}
 	else
 	{
-		this->esitmateLikelihoodPart(obs, partition);
+		this->estimateLikelihoodPart(obs, partition);
+	}
+}
+
+void S3DModel::estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles)
+{
+	std::vector<Eigen::Quaterniond*, Eigen::aligned_allocator<Eigen::Quaterniond*> > orient = this->getOrientationVec();
+	std::vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > offset = this->getOffsetVector();
+	for (int i=0 ; i<orient.size() ; i++)
+	{
+		std::vector<double> quat(4, 0);
+		Eigen::Vector3d tempo(0, 0, 0);
+		for (int j=0 ; j<nbParticles ; j++)
+		{
+			Eigen::Vector3d offs = particles[j]->getOffsetVector()[i]->vector();
+			tempo += weights[j]*offs;
+			quat[0] += weights[j]*particles[j]->getOrientationVec()[i]->w();
+			quat[1] += weights[j]*particles[j]->getOrientationVec()[i]->x();
+			quat[2] += weights[j]*particles[j]->getOrientationVec()[i]->y();
+			quat[3] += weights[j]*particles[j]->getOrientationVec()[i]->z();
+		}
+		(*orient[i]) = Eigen::Quaterniond(quat[0], quat[1], quat[2], quat[3]);
+		orient[i]->normalize();
+		(*offset[i]) = Eigen::Translation3d(tempo);
 	}
 }
 
@@ -587,34 +609,6 @@ S3DModel& S3DModel::operator =(const S3DModel& part)
 	{
 		(*this->mOrientationVec[j])=(*(part.mOrientationVec[j]));
 		(*this->mOffsetVec[j])=(*(part.mOffsetVec[j]));
-	}
-}
-
-S3DModel& S3DModel::operator +=(const S3DModel& part)
-{
-	#ifdef USE_QUATERNION
-	for (int i=0 ; i < this->mOrientationVec.size() ; i++)
-	{
-		Eigen::Vector3d tempo = mOffsetVec[i]->vector();
-
-		Eigen::Vector3d offs = part.mOffsetVec[i]->vector();
-		tempo += offs;
-		
-		this->mOrientationVec[i]->w() += part.mOrientationVec[i]->w();
-		this->mOrientationVec[i]->x() += part.mOrientationVec[i]->x();
-		this->mOrientationVec[i]->y() += part.mOrientationVec[i]->y();
-		this->mOrientationVec[i]->z() += part.mOrientationVec[i]->z();
-		
-		(*mOffsetVec[i]) = Eigen::Translation3d(tempo);
-	}
-	#endif
-}
-
-void S3DModel::normalize()
-{
-	for (int i=0 ; i < mOrientationVec.size() ; i++)
-	{
-		mOrientationVec[i]->normalize();
 	}
 }
 
@@ -712,31 +706,4 @@ void S3DModel::createPartitionMultimaps()
 				mNumberOfPartitions = orientPart;
 		}
 	}
-}
-
-S3DModel operator *(const double& a, const S3DModel& b)
-{
-	S3DModel model(b);
-	
-	#ifdef USE_QUATERNION
-	for (int i=0 ; i < model.mOrientationVec.size() ; i++)
-	{
-		std::vector<double> quat(4, 0);
-
-		Eigen::Vector3d tempo = model.mOffsetVec[i]->vector();
-		Eigen::Vector3d offs = b.mOffsetVec[i]->vector();
-		
-		tempo = a*offs;
-		quat[0] = a*b.mOrientationVec[i]->w();
-		quat[1] = a*b.mOrientationVec[i]->x();
-		quat[2] = a*b.mOrientationVec[i]->y();
-		quat[3] = a*b.mOrientationVec[i]->z();
-		
-		(*model.mOrientationVec[i]) = Eigen::Quaterniond(quat[0], quat[1], quat[2], quat[3]);
-
-		(*model.mOffsetVec[i]) = Eigen::Translation3d(tempo);
-	}
-	#endif
-	
-	return model;
 }

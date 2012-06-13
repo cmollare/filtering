@@ -4,6 +4,9 @@
 #define USE_QUATERNION //For quaternion sampling
 //#define USE_EULER
 
+#define QRS
+
+#define TEMP3 0.05
 #define TEMPO 0.05
 #define TEMP 0.8
 
