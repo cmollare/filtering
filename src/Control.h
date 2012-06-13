@@ -6,7 +6,7 @@
 
 #define QRS
 
-#define TEMP3 0.05
+#define TEMP3 0.1
 #define TEMPO 0.05
 #define TEMP 0.8
 

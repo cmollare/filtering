@@ -35,6 +35,11 @@ class _Particle
 			return this->mCurrentLikelihood;
 		}
 		
+		virtual void setLikelihood(double likelihood)
+		{
+			this->mCurrentLikelihood = likelihood;
+		}
+		
 		virtual void setId(int id)
 		{
 			mId = id;

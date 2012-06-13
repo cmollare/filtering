@@ -122,6 +122,134 @@ void S3DModelQRS::sampleFromPrior()
 
 void S3DModelQRS::updatePart(int partition)
 {
+	this->sampleQRS();
+			std::multimap<int, std::string>::iterator itOff = mOffsetPartToName.find(partition);
+			std::multimap<int, std::string>::iterator itOrient = mOrientPartToName.find(partition);
+			
+			//Quaternion sampling
+			for (itOrient = mOrientPartToName.equal_range(partition).first ; itOrient != mOrientPartToName.equal_range(partition).second ; ++itOrient)
+			{
+				double variance; // To delete
+				variance=1;
+				int pos = mJointNameToInt[(*itOrient).second];// Retrieve position of the Joint in orientation vectors
+				
+
+				bool invalide = false;
+				//Eigen::Quaterniond quat = mDefaultOrientationVec[i][pos];
+				Eigen::Quaterniond quat = (*mOrientationVec[pos]); // Mean orientation is the previous orientation
+				
+				do
+				{
+					invalide = false;
+					if (mConstOrientVec[pos] == ORIENT_CONST_FREE)
+					{
+						(*mOrientationVec[pos])=this->sampleQuasiQuTEM(quat, TEMP3*2, 1, 1, 1);//A modifier suivant les contraintes
+					}
+					else if(mConstOrientVec[pos] == ORIENT_CONST_TWIST)
+					{
+						(*mOrientationVec[pos])=this->sampleQuasiQuTEM(quat, TEMP3*variance, 0.5, 0.1, 0.05);
+					}
+					else if(mConstOrientVec[pos] == ORIENT_CONST_FLEX)
+					{
+						(*mOrientationVec[pos])=this->sampleQuasiQuTEM(quat, TEMP3, 0.1, 1, 0.05);
+					}
+					else if(mConstOrientVec[pos] == ORIENT_CONST_TFLEX)
+					{
+						(*mOrientationVec[pos])=this->sampleQuasiQuTEM(quat, TEMP3, 1, 1, 0.1);
+					}
+					else if(mConstOrientVec[pos] == ORIENT_CONST_BIFLEX)
+					{
+						(*mOrientationVec[pos])=this->sampleQuasiQuTEM(quat, TEMP3, 0.1, 1, 1);
+					}
+					else if(mConstOrientVec[pos] == ORIENT_CONST_FIXED)
+					{
+						(*mOrientationVec[pos]) = (*mOrientationVec[pos]);
+					}
+					else
+					{
+						(*mOrientationVec[pos])=this->sampleQuasiQuTEM(quat, TEMP3*variance, 1, 1, 1);
+					}
+					mOrientationVec[pos]->normalize();
+					
+					invalide |= (mOrientationVec[pos]->w() != mOrientationVec[pos]->w());
+				}
+				while(invalide);
+			}// End of quaternion sampling
+			
+			
+			// Offset sampling
+			for (itOff = mOffsetPartToName.equal_range(partition).first ; itOff != mOffsetPartToName.equal_range(partition).second ; ++itOff)
+			{
+				
+				int pos = mJointNameToInt[(*itOff).second];// Retrieve position of the Joint in offset vectors
+				
+				Eigen::Vector3d offs;
+				if (mConstOffsetVec[pos] == OFFSET_CONST_FREE)
+				{
+					offs = mOffsetVec[pos]->vector(); // For Free dof, mean is the previous offset
+				}
+				else
+				{
+					offs = mDefaultOffsetVec[pos].vector(); // Mean offset for bones and planar DOF is the default offset
+				}
+				
+				bool invalide = false;
+				
+				do
+				{
+					invalide = false;
+					
+					Eigen::Vector3d tempo;
+					if (mConstOffsetVec[pos] == OFFSET_CONST_FREE)
+					{
+						tempo = Eigen::Vector3d(this->quasiRandn()*0.05, this->quasiRandn()*0.05, this->quasiRandn()*0.05) + offs;
+					}
+					else if (mConstOffsetVec[pos] == OFFSET_CONST_BONE)
+					{
+
+						do
+						{
+							tempo = Eigen::Vector3d(this->quasiRandn(0.001), 0, 0) + offs;
+						}
+						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
+					}
+					else if (mConstOffsetVec[pos] == OFFSET_CONST_PLANARXY)
+					{
+						do
+						{
+							tempo = Eigen::Vector3d(this->quasiRandn(0.01), this->quasiRandn(0.01), 0) + offs;
+						}
+						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
+					}
+					else if (mConstOffsetVec[pos] == OFFSET_CONST_PLANARYZ)
+					{
+						do
+						{
+							tempo = Eigen::Vector3d(0, this->quasiRandn(0.01), this->quasiRandn(0.01)) + offs;
+						}
+						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
+					}
+					else if (mConstOffsetVec[pos] == OFFSET_CONST_PLANARXZ)
+					{
+						do
+						{
+							tempo = Eigen::Vector3d(this->quasiRandn(0.01), 0, this->quasiRandn(0.01)) + offs;
+						}
+						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
+					}
+					else if (mConstOffsetVec[pos] == OFFSET_CONST_FIXED)
+					{
+						tempo = Eigen::Vector3d(0, 0, 0) + offs;
+					}
+					(*mOffsetVec[pos])=Eigen::Translation3d(tempo);//A modifier suivant les contraintes
+
+					//To avoid infinite and NaN cases
+					invalide |= ((mOffsetVec[pos]->x() == std::numeric_limits<double>::infinity()) || (mOffsetVec[pos]->y() == std::numeric_limits<double>::infinity()) || (mOffsetVec[pos]->z() == std::numeric_limits<double>::infinity()));
+					invalide |= ((mOffsetVec[pos]->x() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[pos]->y() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[pos]->z() == -std::numeric_limits<double>::infinity()));
+					invalide |= ((mOffsetVec[pos]->x() != mOffsetVec[pos]->x()) || (mOffsetVec[pos]->y() != mOffsetVec[pos]->y()) || (mOffsetVec[pos]->z() != mOffsetVec[pos]->z()));
+				}
+				while(invalide);
+			}// End of offset sampling
 }
 
 void S3DModelQRS::estimateMMSE(Eigen::VectorXd& weights, S3DModelQRS** particles, int nbParticles)

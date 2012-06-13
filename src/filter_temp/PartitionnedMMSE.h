@@ -77,7 +77,7 @@ void PartitionnedMMSE<Particles, Observations>::resample()
 	double invNbSamp = 1./this->mNbParticles;
 	
 	this->estimateMMSE();
-	this->mParticleMMSE->estimateLikelihood(this->mCurrentObservations, 1);
+	this->mParticleMMSE->setLikelihood(1.);
 	for (int j=0 ; j<this->mNbParticles ; j++)
 	{
 		*this->mParticles[j] = *this->mParticleMMSE; //Careful ! do not equalize particle adresses !
