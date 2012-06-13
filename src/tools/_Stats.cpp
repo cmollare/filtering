@@ -1,5 +1,63 @@
 #include "_Stats.h"
 
+int _Stats::mNbInstances = 0;
+bool _Stats::mIsInitialized = false;
+int _Stats::mSeedQMC = ((int)time(NULL))%2000000;
+int _Stats::mNbEchantillonsUnite;
+int _Stats::mNbEchantillons;
+double *_Stats::mGaussCDFInv;
+double *_Stats::mGaussPDF;
+double *_Stats::mGaussCDF;
+double _Stats::mBorneMin;
+double _Stats::mBorneMax;
+double _Stats::mPasUnite;
+double _Stats::mPas;
+		
+float *_Stats::mVectorQMC;
+int _Stats::mDimQMCVec;
+int _Stats::mIndexQMC;
+
+_Stats::_Stats()
+{
+	mNbInstances++;
+}
+
+void _Stats::initStatsTool(int dim)
+{
+	if (!mIsInitialized && mNbInstances>0)
+	{
+		srand (time(NULL));
+		
+		//Init QMC
+		mNbEchantillonsUnite = 101;
+		mPasUnite = 1.0/(mNbEchantillonsUnite-1);
+		mBorneMin = -5;
+		mBorneMax = 5;
+		mNbEchantillons = 101;
+		mPas = (mBorneMax-mBorneMin)/(mNbEchantillons-1);
+		mGaussCDFInv = new double [mNbEchantillonsUnite];
+		mGaussPDF = new double[mNbEchantillons];
+		mGaussCDF = new double[mNbEchantillons];
+		mDimQMCVec = dim;//mModels[0]->getNumberJoint()*6;
+		mVectorQMC = new float[mDimQMCVec];
+		
+		initQMC();
+		
+		mIsInitialized=true;
+	}
+}
+
+_Stats::~_Stats()
+{
+	if(mNbInstances == 1 && mIsInitialized)
+	{
+		delete[] mGaussCDFInv;
+		delete[] mGaussPDF;
+		delete[] mGaussCDF;
+		delete[] mVectorQMC;
+	}
+	mNbInstances--;
+}
 
 double _Stats::randUnif(double sup)
 {

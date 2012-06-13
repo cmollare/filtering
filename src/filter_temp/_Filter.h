@@ -48,7 +48,7 @@ class _Filter : public _Stats
 };
 
 template<class Particles, class Observations>
-_Filter<Particles, Observations>::_Filter(int& nbParticles)
+_Filter<Particles, Observations>::_Filter(int& nbParticles) : _Stats()
 {
 	mNbParticles = nbParticles;
 	for (int i=0 ; i<mNbParticles ; i++)
@@ -67,7 +67,7 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles)
 }
 
 template<class Particles, class Observations>
-_Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model)
+_Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model) : _Stats()
 {
 	mNbParticles = nbParticles;
 	for (int i=0 ; i<mNbParticles ; i++)

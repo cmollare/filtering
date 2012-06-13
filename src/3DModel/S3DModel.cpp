@@ -1,6 +1,6 @@
 #include "S3DModel.h"
 
-S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double > > >()
+S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double > > >(), _Stats()
 {
 	mRootJoint = new Joint(*jt);
 	mNbJoints = -1;
@@ -14,6 +14,8 @@ S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double >
 	createDefaultVecs();
 	createPartitionMultimaps();
 	//std::cout << "S3DModel : model index successfully created !" << std::endl;
+	
+	this->initStatsTool((mNbJoints+1)*6);
 }
 
 S3DModel::S3DModel(const S3DModel& model) : _Particle<std::vector<std::vector<double > > >(model)

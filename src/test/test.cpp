@@ -9,17 +9,17 @@
 #include "../viewer/S3DViewer.h"
 #include "../solver/IKSolverPF.h"
 #include "../solver/IKSolverPFOrient.h"
-#include "../filter/PartFilter.h"
-#include "../filter/PartQRSFilter.h"
 
 #include "../filter_temp/SIR.h"
 #include "../filter_temp/Partitionned.h"
 #include "../filter_temp/PartitionnedMMSE.h"
+#include "../tools/_Stats.h"
 
 using namespace std;
 
 int main()
 {
+	
 	YamlBodyJoint ymlBJ("../Model_simple.ymd");//Yaml parser
 	ymlBJ.createModel();
 	
@@ -35,12 +35,12 @@ int main()
 	//*************INITIALISATION***************
 	//******************************************
 	
-	std::vector<S3DModel*> mods;//Initialisations of all models
+	/*std::vector<S3DModel*> mods;//Initialisations of all models
 	for (int i=0 ; i<NBMODELS ; i++)
 	{
 		mods.push_back(new S3DModel(model));
 		mods[i]->setId(i);
-	}
+	}*/
 	
 	std::vector<std::vector<double> > frame = fileParser->getFirstFrame();
 	std::map<std::string, std::string> jtsToPos; //A mettre dans un fichier
@@ -107,9 +107,9 @@ int main()
 	jtsToPos["AnkleRight"] = "AnkleRight";//*/
 	
 	int nbParticles = NBMODELS;
-	S3DModel *modilou= new S3DModel(model);
-	modilou->mapJointToObs(fileParser->getJointNames(), jtsToPos);
-	PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *modilou);
+	S3DModel *mods= new S3DModel(model);
+	mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
+	PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
 	std::vector<S3DModel*> particles = lolilol->getParticleVector();
 	
 	IKSolverPFOrient iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
@@ -163,7 +163,7 @@ int main()
 				iksol.save();
 				step = "InitFilter";
 			}
-			viewer.update(mods, frame);
+			viewer.update(particles, frame);
 			continuer = viewer.isRendering();
 		}
 		else if (step == "InitFilter")
@@ -191,11 +191,12 @@ int main()
 		}
 	}
 	
-	for (int i=0 ; i<NBMODELS ; i++)
+	/*for (int i=0 ; i<NBMODELS ; i++)
 	{
 		delete mods[i];
-	}
-	
+	}*/
+	delete lolilol;
+	delete mods;
 	delete fileParser;
 
 	cout << "Program ended successfully !!!" << endl;
