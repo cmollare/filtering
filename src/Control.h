@@ -4,12 +4,17 @@
 #define USE_QUATERNION //For quaternion sampling
 //#define USE_EULER
 
-#define QRS
+//#define QRS //Comment to disable QRS
 
-#define TEMP3 0.1
-#define TEMPO 0.05
-#define TEMP 0.8
+#define PART_MMSE
 
-#define NBMODELS 50
+//variances (a modifier)
+#define TEMP3 0.2 //partQRS
+#define TEMPO 0.2 //prior + PF
+#define TEMP 0.2 //update partionned
+
+#define NBMODELS 100 //Nb particles
+
+#define SAVE_MATLAB //To save curves
 
 #endif

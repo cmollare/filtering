@@ -16,7 +16,6 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "../3DModel/S3DModel.h"
 #include "../FileParsers/ResultParser.h"
 #include "../particles/_Particle.h"
 #include "../tools/_Stats.h"
@@ -45,6 +44,10 @@ class _Filter : public _Stats
 		Particles* mParticleMMSE;
 		Particles* mParticleMAP;
 		Observations mCurrentObservations;
+		
+		#ifdef SAVE_MATLAB
+		ResultParser *mResParser; //For Matlab results
+		#endif
 };
 
 template<class Particles, class Observations>
@@ -65,6 +68,10 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles) : _Stats()
 	mParticleMAP = new Particles();
 	mParticleMAP->setId(mNbParticles+1);
 	mParticleMAP->setColor(1, 0, 0, 1);
+	
+	#ifdef SAVE_MATLAB
+	mResParser = new ResultParser("../output/");
+	#endif
 }
 
 template<class Particles, class Observations>
@@ -86,6 +93,10 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model) : 
 	mParticleMAP = new Particles(model);
 	mParticleMAP->setId(mNbParticles+1);
 	mParticleMAP->setColor(1, 0, 0, 1);
+	
+	#ifdef SAVE_MATLAB
+	mResParser = new ResultParser("../output/");
+	#endif
 }
 
 template<class Particles, class Observations>
@@ -95,8 +106,13 @@ _Filter<Particles, Observations>::~_Filter()
 	{
 		delete mParticles[i];
 	}
+	delete[] mParticles;
 	delete mParticleMMSE;
 	delete mParticleMAP;
+	
+	#ifdef SAVE_MATLAB
+	delete mResParser;
+	#endif
 }
 
 template<class Particles, class Observations>
@@ -117,6 +133,10 @@ template<class Particles, class Observations>
 void _Filter<Particles, Observations>::estimateMMSE()
 {
 	this->mParticleMMSE->estimateMMSE(mCurrentWeights, mParticles, mNbParticles);
+	
+	#ifdef SAVE_MATLAB
+		this->mParticleMMSE->saveResults(mResParser);
+	#endif
 }
 
 

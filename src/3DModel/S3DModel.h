@@ -196,6 +196,8 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, public _
 		virtual void estimateLikelihood(std::vector<std::vector<double > >& obs, int partition=-1);
 		virtual void estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles);
 		
+		virtual void saveResults(ResultParser* resParser);
+		
 		void mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName);
 		
 		virtual S3DModel& operator =(const S3DModel& part);

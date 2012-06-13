@@ -23,11 +23,14 @@ using namespace std;
 
 int main()
 {
+	srand (time(NULL));
 	
 	YamlBodyJoint ymlBJ("../Model_simple.ymd");//Yaml parser
 	ymlBJ.createModel();
 	
-	FileParser *fileParser = new FileParser("../skel/", "skel_", 795);//Animation file parser
+	int nbFrames = 795;
+	FileParser *fileParser = new FileParser("../skel/", "skel_", nbFrames);//Animation file parser
+	//int nbFrames = 1150;
 	//FileParser *fileParser = new FileParser("../skel2/", "skel_", 1150);//Animation file parser
 	
 	Joint* model = ymlBJ.getModel();//temporary model
@@ -110,7 +113,11 @@ int main()
 	
 		S3DModelQRS *mods= new S3DModelQRS(model);
 		mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
+		#ifdef PART_MMSE
 		PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *mods);
+		#else
+		Partitionned<S3DModelQRS, std::vector<std::vector<double> > > *lolilol = new Partitionned<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *mods);
+		#endif
 		std::vector<S3DModelQRS*> particles = lolilol->getParticleVector();
 		
 		IKSolverPFOrient<S3DModelQRS> iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
@@ -120,7 +127,11 @@ int main()
 		
 		S3DModel *mods= new S3DModel(model);
 		mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
+		#ifdef PART_MMSE
 		PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > > *lolilol = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+		#else
+		Partitionned<S3DModel, std::vector<std::vector<double> > > *lolilol = new Partitionned<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+		#endif
 		std::vector<S3DModel*> particles = lolilol->getParticleVector();
 		
 		IKSolverPFOrient<S3DModel> iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
@@ -180,7 +191,7 @@ int main()
 		{
 			lolilol->init(frame);
 			step = "Filter";
-
+			nbFrames--;
 			viewer.update(particles, frame);
 			continuer = viewer.isRendering();
 		}
@@ -188,8 +199,18 @@ int main()
 		{
 			frame = fileParser->getNextFrame();//Observation update
 			lolilol->step(frame);
+			nbFrames--;
 
 			viewer.update(particles, frame);
+			if (nbFrames==0)
+			{
+				step="End";
+				cout << "End of sequence" << endl;
+			}
+			continuer = viewer.isRendering();
+		}
+		else if (step == "End")
+		{
 			continuer = viewer.isRendering();
 		}
 		else

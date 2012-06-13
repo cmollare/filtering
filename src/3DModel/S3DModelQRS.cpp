@@ -254,6 +254,8 @@ void S3DModelQRS::updatePart(int partition)
 
 void S3DModelQRS::estimateMMSE(Eigen::VectorXd& weights, S3DModelQRS** particles, int nbParticles)
 {
+	mObservations = particles[0]->getCurrentObservations();
+	
 	std::vector<Eigen::Quaterniond*, Eigen::aligned_allocator<Eigen::Quaterniond*> > orient = this->getOrientationVec();
 	std::vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > offset = this->getOffsetVector();
 	for (int i=0 ; i<orient.size() ; i++)

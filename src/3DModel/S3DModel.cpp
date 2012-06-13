@@ -537,6 +537,7 @@ void S3DModel::estimateLikelihoodPart(std::vector<std::vector<double > >& obs, i
 
 void S3DModel::estimateLikelihood(std::vector<std::vector<double > >& obs, int partition)
 {
+	mObservations = obs;
 	if (partition==-1)
 	{
 		this->estimateLikelihoodAll(obs);
@@ -549,6 +550,8 @@ void S3DModel::estimateLikelihood(std::vector<std::vector<double > >& obs, int p
 
 void S3DModel::estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles)
 {
+	mObservations = particles[0]->getCurrentObservations();
+	
 	std::vector<Eigen::Quaterniond*, Eigen::aligned_allocator<Eigen::Quaterniond*> > orient = this->getOrientationVec();
 	std::vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > offset = this->getOffsetVector();
 	for (int i=0 ; i<orient.size() ; i++)
@@ -567,6 +570,25 @@ void S3DModel::estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int 
 		(*orient[i]) = Eigen::Quaterniond(quat[0], quat[1], quat[2], quat[3]);
 		orient[i]->normalize();
 		(*offset[i]) = Eigen::Translation3d(tempo);
+	}
+}
+
+void S3DModel::saveResults(ResultParser* resParser)
+{
+	std::map<std::string, int>::iterator it;
+	
+	std::vector<Eigen::Quaterniond*, Eigen::aligned_allocator<Eigen::Quaterniond*> > orient = this->getOrientationVec();
+	std::vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > offset = this->getOffsetVector();
+	
+	for (it=mJointNameToInt.begin() ; it!=mJointNameToInt.end() ; it++)
+	{
+		Eigen::Vector3d pos = this->getJoint((*it).first)->getXYZVect();
+		resParser->saveJoint("Joint_" + (*it).first, pos, *offset[(*it).second], *orient[(*it).second]);
+	}
+	
+	for (int i=0 ; i<mPosNames.size() ; i++)
+	{
+		resParser->saveObs("Obs_" + mPosNames[i], mObservations[i]);
 	}
 }
 

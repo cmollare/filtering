@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include "../FileParsers/ResultParser.h"
 
 template<class Observations>
 class _Particle
@@ -21,10 +22,14 @@ class _Particle
 			this->mCurrentLikelihood = particle.mCurrentLikelihood;
 			this->mIsVisible = particle.mIsVisible;
 			this->mNumberOfPartitions = particle.mNumberOfPartitions;
+			this->mObservations = particle.mObservations;
 		}
 		
 		virtual void update(int partition=-1) =0;
 		virtual void estimateLikelihood(Observations& obs, int partition=-1) =0;
+		virtual void saveResults(ResultParser* resParser)
+		{
+		}
 		
 		virtual void estimateMMSE(Eigen::VectorXd& weights, _Particle** particles, int nbParticles)
 		{
@@ -71,11 +76,17 @@ class _Particle
 		virtual _Particle<Observations>& operator =(const _Particle<Observations>& part)
 		{
 			this->mCurrentLikelihood = part.mCurrentLikelihood;
+			this->mObservations = part.mObservations;
 		}
 		
 		virtual int getNumberOfPartitions()
 		{
 			return mNumberOfPartitions;
+		}
+		
+		virtual Observations& getCurrentObservations()
+		{
+			return mObservations;
 		}
 	
 	protected:
@@ -85,6 +96,7 @@ class _Particle
 		bool mIsVisible;
 		
 		int mNumberOfPartitions;
+		Observations mObservations;
 };
 
 #endif

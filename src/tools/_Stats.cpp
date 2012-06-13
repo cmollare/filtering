@@ -26,7 +26,6 @@ void _Stats::initStatsTool(int dim)
 {
 	if (!mIsInitialized && mNbInstances>0)
 	{
-		srand (time(NULL));
 		
 		//Init QMC
 		mNbEchantillonsUnite = 101;

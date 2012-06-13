@@ -1,5 +1,7 @@
 #include "ResultParser.h"
 
+using namespace std;
+
 ResultParser::ResultParser(std::string path)
 {
 	mPath = path;
@@ -13,7 +15,7 @@ void ResultParser::saveObs(std::string name, std::vector<double> position)
 {
 	std::string fileName = mPath + name + ".txt";
 	std::fstream file(fileName.c_str(), std::fstream::out | std::fstream::app);
-	
+
 	for (int i=0 ; i<position.size() ; i++)
 		file << position[i] << " ";
 	file << std::endl;
