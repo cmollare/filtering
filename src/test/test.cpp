@@ -14,9 +14,9 @@
 #include "../3DModel/S3DModel.h"
 #include "../3DModel/S3DModelQRS.h"
 
-#include "../filter_temp/SIR.h"
-#include "../filter_temp/Partitionned.h"
-#include "../filter_temp/PartitionnedMMSE.h"
+#include "../filter/SIR.h"
+#include "../filter/Partitionned.h"
+#include "../filter/PartitionnedMMSE.h"
 #include "../tools/_Stats.h"
 
 using namespace std;
