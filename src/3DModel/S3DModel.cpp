@@ -149,23 +149,23 @@ void S3DModel::sampleFromPrior()
 				invalide = false;
 				if (mConstOrientVec[j] == ORIENT_CONST_FREE)
 				{
-					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);//A modifier suivant les contraintes
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 1);//A modifier suivant les contraintes
 				}
 				else if(mConstOrientVec[j] == ORIENT_CONST_TWIST)
 				{
-					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 0.1, 0.05);
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 0.1, 0.05);
 				}
 				else if(mConstOrientVec[j] == ORIENT_CONST_FLEX)
 				{
-					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 0.05);
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 0.1, 1, 0.05);
 				}
 				else if(mConstOrientVec[j] == ORIENT_CONST_TFLEX)
 				{
-					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 0.1);
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 0.1);
 				}
 				else if(mConstOrientVec[j] == ORIENT_CONST_BIFLEX)
 				{
-					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 1);
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 0.1, 1, 1);
 				}
 				else if(mConstOrientVec[j] == ORIENT_CONST_FIXED)
 				{
@@ -173,7 +173,7 @@ void S3DModel::sampleFromPrior()
 				}
 				else
 				{
-					(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);
+					(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 1);
 				}
 				mOrientationVec[j]->normalize(); // NORMALIZATION STEP EXTREMELY IMPORTANT
 				
@@ -255,23 +255,23 @@ void S3DModel::updateAll()
 			invalide = false;
 			if (mConstOrientVec[j] == ORIENT_CONST_FREE)
 			{
-				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);//A modifier suivant les contraintes
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 1);//A modifier suivant les contraintes
 			}
 			else if(mConstOrientVec[j] == ORIENT_CONST_TWIST)
 			{
-				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 0.1, 0.05);
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 0.1, 0.05);
 			}
 			else if(mConstOrientVec[j] == ORIENT_CONST_FLEX)
 			{
-				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 0.05);
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 0.1, 1, 0.05);
 			}
 			else if(mConstOrientVec[j] == ORIENT_CONST_TFLEX)
 			{
-				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 0.1);
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 0.1);
 			}
 			else if(mConstOrientVec[j] == ORIENT_CONST_BIFLEX)
 			{
-				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 0.1, 1, 1);
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 0.1, 1, 1);
 			}
 			else if(mConstOrientVec[j] == ORIENT_CONST_FIXED)
 			{
@@ -279,7 +279,7 @@ void S3DModel::updateAll()
 			}
 			else
 			{
-				(*mOrientationVec[j])=this->sampleQuTEM(quat, TEMPO, 1, 1, 1);
+				(*mOrientationVec[j])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 1);
 			}
 			mOrientationVec[j]->normalize(); // NORMALIZATION STEP EXTREMELY IMPORTANT
 			
@@ -349,8 +349,7 @@ void S3DModel::updatePart(int partition)
 		//Quaternion sampling
 		for (itOrient = mOrientPartToName.equal_range(partition).first ; itOrient != mOrientPartToName.equal_range(partition).second ; ++itOrient)
 		{
-			double variance; // To delete
-			variance=1;
+
 			int pos = mJointNameToInt[(*itOrient).second];// Retrieve position of the Joint in orientation vectors
 				
 
@@ -362,23 +361,23 @@ void S3DModel::updatePart(int partition)
 				invalide = false;
 				if (mConstOrientVec[pos] == ORIENT_CONST_FREE)
 				{
-					(*mOrientationVec[pos])=this->sampleQuTEM(quat, TEMP*2, 1, 1, 1);//A modifier suivant les contraintes
+					(*mOrientationVec[pos])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 1);//A modifier suivant les contraintes
 				}
 				else if(mConstOrientVec[pos] == ORIENT_CONST_TWIST)
 				{
-					(*mOrientationVec[pos])=this->sampleQuTEM(quat, TEMP*variance, 0.5, 0.1, 0.05);
+					(*mOrientationVec[pos])=this->sampleQuTEM(quat, VARQUATERNION, 0.5, 0.1, 0.05);
 				}
 				else if(mConstOrientVec[pos] == ORIENT_CONST_FLEX)
 				{
-					(*mOrientationVec[pos])=this->sampleQuTEM(quat, TEMP, 0.1, 1, 0.05);
+					(*mOrientationVec[pos])=this->sampleQuTEM(quat, VARQUATERNION, 0.1, 1, 0.05);
 				}
 				else if(mConstOrientVec[pos] == ORIENT_CONST_TFLEX)
 				{
-					(*mOrientationVec[pos])=this->sampleQuTEM(quat, TEMP, 1, 1, 0.1);
+					(*mOrientationVec[pos])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 0.1);
 				}
 				else if(mConstOrientVec[pos] == ORIENT_CONST_BIFLEX)
 				{
-					(*mOrientationVec[pos])=this->sampleQuTEM(quat, TEMP, 0.1, 1, 1);
+					(*mOrientationVec[pos])=this->sampleQuTEM(quat, VARQUATERNION, 0.1, 1, 1);
 				}
 				else if(mConstOrientVec[pos] == ORIENT_CONST_FIXED)
 				{
@@ -386,7 +385,7 @@ void S3DModel::updatePart(int partition)
 				}
 				else
 				{
-					(*mOrientationVec[pos])=this->sampleQuTEM(quat, TEMP*variance, 1, 1, 1);
+					(*mOrientationVec[pos])=this->sampleQuTEM(quat, VARQUATERNION, 1, 1, 1);
 				}
 				mOrientationVec[pos]->normalize();
 				

@@ -8,15 +8,13 @@
 
 #define PART_MMSE
 
-//variances (a modifier)
-#define TEMP3 0.2 //partQRS
-#define TEMPO 0.2 //prior + PF
-#define TEMP 0.2 //update partionned
+//Variances
+#define VARQUATERNION 0.2 //variance for quaternions
 
-#define VAROFFSET 0.01
-#define VAROFFSETFREE 0.1
+#define VAROFFSET 0.01 //variance for offset
+#define VAROFFSETFREE 0.1 //variance for offset with Free dof
 
-#define EVOLVEOFFSET
+#define EVOLVEOFFSET //Enable offset filtering
 
 #define NBMODELS 100 //Nb particles
 
