@@ -69,6 +69,9 @@ void PartitionnedMMSE<Particles, Observations>::step(Observations& obs)
 		this->updateWeights();
 		this->resample();
 	}
+	
+	this->saveResults();
+	
 }
 
 template<class Particles, class Observations>

@@ -34,6 +34,7 @@ class _Filter : public _Stats
 		virtual void updateWeights() =0;
 		virtual void estimateMMSE();
 		//virtual computeMAP() =0;
+		virtual void saveResults();
 		
 		std::vector<Particles*> getParticleVector();
 		
@@ -134,6 +135,14 @@ void _Filter<Particles, Observations>::estimateMMSE()
 {
 	this->mParticleMMSE->estimateMMSE(mCurrentWeights, mParticles, mNbParticles);
 	
+	//#ifdef SAVE_MATLAB
+	//	this->mParticleMMSE->saveResults(mResParser);
+	//#endif
+}
+
+template<class Particles, class Observations>
+void _Filter<Particles, Observations>::saveResults()
+{
 	#ifdef SAVE_MATLAB
 		this->mParticleMMSE->saveResults(mResParser);
 	#endif

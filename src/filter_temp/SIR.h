@@ -62,6 +62,9 @@ void SIR<Particles, Observations>::step(Observations& obs)
 	this->updateWeights();
 	this->estimateMMSE();
 	this->resample();
+
+	this->saveResults();
+
 }
 
 template<class Particles, class Observations>
