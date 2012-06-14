@@ -180,14 +180,14 @@ void S3DModel::sampleFromPrior()
 				Eigen::Vector3d tempo;
 				if (mConstOffsetVec[j] == OFFSET_CONST_FREE)
 				{
-					tempo = Eigen::Vector3d(this->randn()*0.001, this->randn()*0.001, this->randn()*0.001) + offs;
+					tempo = Eigen::Vector3d(this->randn()*VAROFFSETFREE, this->randn()*VAROFFSETFREE, this->randn()*VAROFFSETFREE) + offs;
 				}
 				else if (mConstOffsetVec[j] == OFFSET_CONST_BONE)
 				{
 
 					do
 					{
-						tempo = Eigen::Vector3d(this->randn(0.001), 0, 0) + offs;
+						tempo = Eigen::Vector3d(this->randn(VAROFFSET), 0, 0) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -196,7 +196,7 @@ void S3DModel::sampleFromPrior()
 					int i=0;
 					do
 					{
-						tempo = Eigen::Vector3d(this->randn(0.001), this->randn(0.001), 0) + offs;
+						tempo = Eigen::Vector3d(this->randn(VAROFFSET), this->randn(VAROFFSET), 0) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -204,7 +204,7 @@ void S3DModel::sampleFromPrior()
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(0, this->randn(0.001), this->randn(0.001)) + offs;
+						tempo = Eigen::Vector3d(0, this->randn(VAROFFSET), this->randn(VAROFFSET)) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -212,7 +212,7 @@ void S3DModel::sampleFromPrior()
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(this->randn(0.001), 0, this->randn(0.001)) + offs;
+						tempo = Eigen::Vector3d(this->randn(VAROFFSET), 0, this->randn(VAROFFSET)) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -244,7 +244,12 @@ void S3DModel::updateAll()
 			
 		Eigen::Quaterniond quat = mDefaultOrientationVec[j]; // Mean of orientations == default orientation
 		bool invalide = false;
+		
+		#ifndef EVOLVEOFFSET
 		Eigen::Vector3d offs = mDefaultOffsetVec[j].vector(); // Mean of offset == default offset
+		#else
+		Eigen::Vector3d offs = mOffsetVec[j]->vector(); // Mean of offset == default offset
+		#endif
 		do
 		{
 			invalide = false;
@@ -281,14 +286,14 @@ void S3DModel::updateAll()
 			Eigen::Vector3d tempo;
 			if (mConstOffsetVec[j] == OFFSET_CONST_FREE)
 			{
-				tempo = Eigen::Vector3d(this->randn()*0.001, this->randn()*0.001, this->randn()*0.001) + offs;
+				tempo = Eigen::Vector3d(this->randn()*VAROFFSETFREE, this->randn()*VAROFFSETFREE, this->randn()*VAROFFSETFREE) + offs;
 			}
 			else if (mConstOffsetVec[j] == OFFSET_CONST_BONE)
 			{
 					
 				do
 				{
-					tempo = Eigen::Vector3d(this->randn(0.001), 0, 0) + offs;
+					tempo = Eigen::Vector3d(this->randn(VAROFFSET), 0, 0) + offs;
 				}
 				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 			}
@@ -297,7 +302,7 @@ void S3DModel::updateAll()
 				int i=0;
 				do
 				{
-					tempo = Eigen::Vector3d(this->randn(0.001), this->randn(0.001), 0) + offs;
+					tempo = Eigen::Vector3d(this->randn(VAROFFSET), this->randn(VAROFFSET), 0) + offs;
 				}
 				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 			}
@@ -305,7 +310,7 @@ void S3DModel::updateAll()
 			{
 				do
 				{
-					tempo = Eigen::Vector3d(0, this->randn(0.001), this->randn(0.001)) + offs;
+					tempo = Eigen::Vector3d(0, this->randn(VAROFFSET), this->randn(VAROFFSET)) + offs;
 				}
 				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 			}
@@ -313,7 +318,7 @@ void S3DModel::updateAll()
 			{
 				do
 				{
-					tempo = Eigen::Vector3d(this->randn(0.001), 0, this->randn(0.001)) + offs;
+					tempo = Eigen::Vector3d(this->randn(VAROFFSET), 0, this->randn(VAROFFSET)) + offs;
 				}
 				while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 			}
@@ -398,6 +403,7 @@ void S3DModel::updatePart(int partition)
 			int pos = mJointNameToInt[(*itOff).second];// Retrieve position of the Joint in offset vectors
 			
 			Eigen::Vector3d offs;
+			#ifndef EVOLVEOFFSET
 			if (mConstOffsetVec[pos] == OFFSET_CONST_FREE)
 			{
 				offs = mOffsetVec[pos]->vector(); // For Free dof, mean is the previous offset
@@ -406,6 +412,9 @@ void S3DModel::updatePart(int partition)
 			{
 				offs = mDefaultOffsetVec[pos].vector(); // Mean offset for bones and planar DOF is the default offset
 			}
+			#else
+				offs = mOffsetVec[pos]->vector();
+			#endif
 			
 			bool invalide = false;
 			
@@ -416,14 +425,14 @@ void S3DModel::updatePart(int partition)
 				Eigen::Vector3d tempo;
 				if (mConstOffsetVec[pos] == OFFSET_CONST_FREE)
 				{
-					tempo = Eigen::Vector3d(this->randn()*0.05, this->randn()*0.05, this->randn()*0.05) + offs;
+					tempo = Eigen::Vector3d(this->randn()*VAROFFSETFREE, this->randn()*VAROFFSETFREE, this->randn()*VAROFFSETFREE) + offs;
 				}
 				else if (mConstOffsetVec[pos] == OFFSET_CONST_BONE)
 				{
 
 					do
 					{
-						tempo = Eigen::Vector3d(this->randn(0.001), 0, 0) + offs;
+						tempo = Eigen::Vector3d(this->randn(VAROFFSET), 0, 0) + offs;
 					}
 					while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 				}
@@ -431,7 +440,7 @@ void S3DModel::updatePart(int partition)
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(this->randn(0.01), this->randn(0.01), 0) + offs;
+						tempo = Eigen::Vector3d(this->randn(VAROFFSET), this->randn(VAROFFSET), 0) + offs;
 					}
 					while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 				}
@@ -439,7 +448,7 @@ void S3DModel::updatePart(int partition)
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(0, this->randn(0.01), this->randn(0.01)) + offs;
+						tempo = Eigen::Vector3d(0, this->randn(VAROFFSET), this->randn(VAROFFSET)) + offs;
 					}
 					while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 				}
@@ -447,7 +456,7 @@ void S3DModel::updatePart(int partition)
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(this->randn(0.01), 0, this->randn(0.01)) + offs;
+						tempo = Eigen::Vector3d(this->randn(VAROFFSET), 0, this->randn(VAROFFSET)) + offs;
 					}
 					while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 				}

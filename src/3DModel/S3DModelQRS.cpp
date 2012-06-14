@@ -64,7 +64,7 @@ void S3DModelQRS::sampleFromPrior()
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(this->quasiRandn()*0.001, this->quasiRandn()*0.001, this->quasiRandn()*0.001) + offs;
+						tempo = Eigen::Vector3d(this->quasiRandn()*VAROFFSETFREE, this->quasiRandn()*VAROFFSETFREE, this->quasiRandn()*VAROFFSETFREE) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -73,7 +73,7 @@ void S3DModelQRS::sampleFromPrior()
 
 					do
 					{
-						tempo = Eigen::Vector3d(this->quasiRandn(0.001), 0, 0) + offs;
+						tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), 0, 0) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -82,7 +82,7 @@ void S3DModelQRS::sampleFromPrior()
 					int i=0;
 					do
 					{
-						tempo = Eigen::Vector3d(this->quasiRandn(0.001), this->quasiRandn(0.001), 0) + offs;
+						tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), this->quasiRandn(VAROFFSET), 0) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -90,7 +90,7 @@ void S3DModelQRS::sampleFromPrior()
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(0, this->quasiRandn(0.001), this->quasiRandn(0.001)) + offs;
+						tempo = Eigen::Vector3d(0, this->quasiRandn(VAROFFSET), this->quasiRandn(VAROFFSET)) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -98,7 +98,7 @@ void S3DModelQRS::sampleFromPrior()
 				{
 					do
 					{
-						tempo = Eigen::Vector3d(this->quasiRandn(0.001), 0, this->quasiRandn(0.001)) + offs;
+						tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), 0, this->quasiRandn(VAROFFSET)) + offs;
 					}
 					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
 				}
@@ -184,6 +184,7 @@ void S3DModelQRS::updatePart(int partition)
 				int pos = mJointNameToInt[(*itOff).second];// Retrieve position of the Joint in offset vectors
 				
 				Eigen::Vector3d offs;
+				#ifndef EVOLVEOFFSET
 				if (mConstOffsetVec[pos] == OFFSET_CONST_FREE)
 				{
 					offs = mOffsetVec[pos]->vector(); // For Free dof, mean is the previous offset
@@ -192,6 +193,9 @@ void S3DModelQRS::updatePart(int partition)
 				{
 					offs = mDefaultOffsetVec[pos].vector(); // Mean offset for bones and planar DOF is the default offset
 				}
+				#else
+					offs = mOffsetVec[pos]->vector();
+				#endif
 				
 				bool invalide = false;
 				
@@ -202,14 +206,14 @@ void S3DModelQRS::updatePart(int partition)
 					Eigen::Vector3d tempo;
 					if (mConstOffsetVec[pos] == OFFSET_CONST_FREE)
 					{
-						tempo = Eigen::Vector3d(this->quasiRandn()*0.05, this->quasiRandn()*0.05, this->quasiRandn()*0.05) + offs;
+						tempo = Eigen::Vector3d(this->quasiRandn()*VAROFFSETFREE, this->quasiRandn()*VAROFFSETFREE, this->quasiRandn()*VAROFFSETFREE) + offs;
 					}
 					else if (mConstOffsetVec[pos] == OFFSET_CONST_BONE)
 					{
 
 						do
 						{
-							tempo = Eigen::Vector3d(this->quasiRandn(0.001), 0, 0) + offs;
+							tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), 0, 0) + offs;
 						}
 						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 					}
@@ -217,7 +221,7 @@ void S3DModelQRS::updatePart(int partition)
 					{
 						do
 						{
-							tempo = Eigen::Vector3d(this->quasiRandn(0.01), this->quasiRandn(0.01), 0) + offs;
+							tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), this->quasiRandn(VAROFFSET), 0) + offs;
 						}
 						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 					}
@@ -225,7 +229,7 @@ void S3DModelQRS::updatePart(int partition)
 					{
 						do
 						{
-							tempo = Eigen::Vector3d(0, this->quasiRandn(0.01), this->quasiRandn(0.01)) + offs;
+							tempo = Eigen::Vector3d(0, this->quasiRandn(VAROFFSET), this->quasiRandn(VAROFFSET)) + offs;
 						}
 						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 					}
@@ -233,7 +237,7 @@ void S3DModelQRS::updatePart(int partition)
 					{
 						do
 						{
-							tempo = Eigen::Vector3d(this->quasiRandn(0.01), 0, this->quasiRandn(0.01)) + offs;
+							tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), 0, this->quasiRandn(VAROFFSET)) + offs;
 						}
 						while(!this->getJoint(mNameVec[pos])->checkValidity(tempo));
 					}

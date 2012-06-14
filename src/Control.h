@@ -13,6 +13,11 @@
 #define TEMPO 0.2 //prior + PF
 #define TEMP 0.2 //update partionned
 
+#define VAROFFSET 0.01
+#define VAROFFSETFREE 0.1
+
+#define EVOLVEOFFSET
+
 #define NBMODELS 100 //Nb particles
 
 #define SAVE_MATLAB //To save curves
