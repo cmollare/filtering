@@ -28,6 +28,18 @@ file(
     src/*
 )
 
+set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-msse3")
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse3")
+#set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-msse2")
+#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse2")
+#set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-msse")
+#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse")
+#set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-march=")
+#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-march=")
+#set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-mfpmath=sse")
+#set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-mfpmath=sse")
+
+
 # Déclaration de l'exécutable
 add_executable(
     filtering

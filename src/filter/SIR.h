@@ -85,6 +85,11 @@ void SIR<Particles, Observations>::resample()
 		while(u>cdf[i])
 		{
 			i++;
+			if (i>=this->mNbParticles)
+			{
+				i=this->mNbParticles-1;
+				break;
+			}
 		}
 		
 		*this->mParticles[j] = *this->mParticles[i]; //Careful ! do not equalize particle adresses !

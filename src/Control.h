@@ -4,23 +4,24 @@
 #define USE_QUATERNION 0//For quaternion sampling
 #define USE_EULER 1
 
-#define SAMPLING USE_QUATERNION
+#define SAMPLING USE_QUATERNION //Kind of sampling
 
 
 
-//#define QRS //Comment to disable QRS
-#define PART_MMSE
+#define QRS //Comment to disable QRS
+//#define PART_MMSE
 
 //Variances
 #define VARQUATERNION 0.2 //variance for quaternions
-#define VAREULER 0.2
+#define VAREULER 0.2 //variance for euler angles
 
 #define VAROFFSET 0.01 //variance for offset
 #define VAROFFSETFREE 0.1 //variance for offset with Free dof
+//End variance definitions
 
 #define EVOLVEOFFSET //Enable offset filtering
 
-#define NBMODELS 100 //Nb particles
+#define NBMODELS 2000 //Nb particles
 
 #define SAVE_MATLAB //To save curves
 
