@@ -59,6 +59,16 @@ void Config::printConf()
 	cout << "***********************************************************" << endl;
 }
 
+std::string Config::getFilterType()
+{
+	return _typeFilter;
+}
+
+int Config::getParticleNumber()
+{
+	return _nbParticles;
+}
+
 bool Config::confOk()
 {
 	return _confok;

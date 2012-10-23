@@ -15,6 +15,8 @@ class Config
 		void printHelp();
 		void printConf();
 		bool confOk();
+		std::string getFilterType();
+		int getParticleNumber();
 		
 	protected:
 		bool _confok;
