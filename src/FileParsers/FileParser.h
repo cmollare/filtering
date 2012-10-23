@@ -11,6 +11,8 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include "../tools/_Stats.h"
+#include "../Control.h"
 
 using namespace std;
 
@@ -59,6 +61,8 @@ class FileParser
 		 */
 		std::vector<std::vector<double> > &getCurrentFrame();
 		std::vector<std::string> getJointNames();
+		
+		double noise(double sigma);
 		
 	private:
 		std::string mPath; /*!< Path to files' folder */

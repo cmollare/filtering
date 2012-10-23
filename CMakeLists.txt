@@ -30,6 +30,9 @@ file(
 
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-msse3")
 set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse3")
+#set (CMAKE_CXX_FLAGS "-m32")
+#set (CMAKE_C_FLAGS "-m32")
+#set(CMAKE_MODULE_LINKER_FLAGS -m32)
 #set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-msse2")
 #set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-msse2")
 #set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-msse")
@@ -50,7 +53,7 @@ target_link_libraries(
     filtering
 	OgreMain
 	OIS
-	yaml-cpp
+	libyaml-cpp.a
 )
 
 

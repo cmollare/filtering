@@ -5,6 +5,7 @@
 #include <Eigen/Dense>
 #include <iostream>
 #include <vector>
+#include <time.h>
 
 class _Stats
 {

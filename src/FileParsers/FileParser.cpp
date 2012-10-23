@@ -44,9 +44,20 @@ void FileParser::readFile(int number)
 				joint.push_back(1);
 			else
 				joint.push_back(0);
+				
+			#ifdef NOISE
+			x+= (double) this->noise(0.02)*0.02;
+			y+= (double) this->noise(0.02)*0.02;
+			z+= (double) this->noise(0.02)*0.02;
+			
 			joint.push_back(x);
 			joint.push_back(y);
 			joint.push_back(z);
+			#else
+			joint.push_back(x);
+			joint.push_back(y);
+			joint.push_back(z);
+			#endif
 			
 			frame.push_back(joint);
 			//cout << "name : " << joint[0] << " x : " << joint[1] << " y : " << joint[2] << " z : " << joint[3] << " tracked : " << tracked << endl;//*/
@@ -91,4 +102,23 @@ std::vector<std::vector<double> > &FileParser::getCurrentFrame()
 std::vector<std::string> FileParser::getJointNames()
 {
 	return mJointNames;
+}
+
+double FileParser::noise(double sigma)
+{
+	double U1, U2, X, Y;
+	do
+	{
+		int U1int = rand()%10001;
+		double U1 = (double)U1int / 10001.;
+		int U2int = rand()%10001;
+		double U2 = (double)U2int / 10001.;
+		
+		X = sqrt(-2*log(U1))*cos(2*3.14*U2);
+		Y = sqrt(-2*log(U1))*sin(2*3.14*U2);
+		X *= sigma;
+		Y *= sigma;
+	}
+	while(X != X);
+	return X;
 }

@@ -1,5 +1,5 @@
-prefix=/home/cmollare/Documents/librari
-exec_prefix=/home/cmollare/Documents/librari
+prefix=/home/cmollare/Documents/libraries/yaml-install
+exec_prefix=/home/cmollare/Documents/libraries/yaml-install
 libdir=${prefix}/lib
 includedir=${prefix}/include
 

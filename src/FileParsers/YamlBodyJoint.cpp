@@ -55,7 +55,7 @@ void YamlBodyJoint::createModel()
 				cout << "Check yaml file" << endl;
 			}
 		}
-		cout << "*******Skeleton constructed*******" << endl;
+		cout << "*******Skeleton built*******" << endl;
 	}
 	else
 	{

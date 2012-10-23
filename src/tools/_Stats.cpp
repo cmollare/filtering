@@ -27,6 +27,7 @@ void _Stats::initStatsTool(int dim)
 	if (!mIsInitialized && mNbInstances>0)
 	{
 		
+		
 		//Init QMC
 		mNbEchantillonsUnite = 101;
 		mPasUnite = 1.0/(mNbEchantillonsUnite-1);
@@ -60,8 +61,8 @@ _Stats::~_Stats()
 
 double _Stats::randUnif(double sup)
 {
-	int Uint = rand()%10001;
-	double U = (double)Uint / 10001.;
+	int Uint = rand()%10000 + 1;
+	double U = (double)Uint / 10000.;
 	U*=sup;
 	return U;
 }
