@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <time.h>
+#include <map>
 
 #include "../viewer/S3DViewer.h"
 
@@ -20,10 +21,18 @@
 #include "../filter/PartitionnedMMSE.h"
 #include "../tools/_Stats.h"
 
+#include "Config.h"
+
 using namespace std;
 
-int main()
+int main(int argc, char ** argv)
 {
+	
+	Config env(argc, argv);
+	
+	if (env.confOk())
+	{
+	
 	srand (time(NULL));
 	
 	YamlBodyJoint ymlBJ("../Model_simple.ymd");//Yaml parser
@@ -184,5 +193,10 @@ int main()
 	delete fileParser;
 
 	cout << "Program ended successfully !!!" << endl;
+	}
+	else
+	{
+		env.printHelp();
+	}
 	return 0;
 }
