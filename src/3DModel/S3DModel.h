@@ -166,6 +166,8 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, public _
 		 */
 		std::multimap<int, std::string> getOrientPartitionMultimap();
 		
+		std::map<std::string, int> getJointToIntMap();//To get the map
+		
 		/*!
 		 * \fn void setColor(float R=1, float G=0, float B=1, float alpha=0.1)
 		 * \brief Change the color of a model.

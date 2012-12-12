@@ -1,5 +1,5 @@
 
-#include "../Control.h"
+/*#include "../Control.h"
 
 #include <iostream>
 #include <vector>
@@ -21,11 +21,31 @@
 #include "../filter/PartitionnedMMSE.h"
 #include "../tools/_Stats.h"
 
-#include "Config.h"
+#include "Config.h"*/
+
+#include "FilterInt.h"
 
 using namespace std;
 
+
 int main(int argc, char ** argv)
+{
+	FilterInt filter(argc, argv);
+	
+	if (filter.isEnvOk())
+	{
+		int nbFrames = 795;
+		FileParser *fileParser = new FileParser("../skel/", "skel_", nbFrames);//Animation file parser
+		
+		filter.init(fileParser->getFirstFrame(), fileParser->getJointNames());
+		
+		filter.update(fileParser->getNextFrame());
+		
+	}
+	return 0;
+}
+
+/*int main(int argc, char ** argv)
 {
 	
 	Config env(argc, argv);
@@ -56,7 +76,7 @@ int main(int argc, char ** argv)
 	std::map<std::string, std::string> jtsToPos; //A mettre dans un fichier
 	
 	
-	//*	
+	//
 	jtsToPos["Spine"] = "Spine";
 	jtsToPos["Head"] = "Head";
 	jtsToPos["ShoulderCenter"] = "ShoulderCenter";
@@ -72,7 +92,7 @@ int main(int argc, char ** argv)
 	jtsToPos["KneeLeft"] = "KneeLeft";
 	jtsToPos["KneeRight"] = "KneeRight";
 	jtsToPos["AnkleLeft"] = "AnkleLeft";
-	jtsToPos["AnkleRight"] = "AnkleRight";//*/
+	jtsToPos["AnkleRight"] = "AnkleRight";//
 	
 	
 	
@@ -87,17 +107,17 @@ int main(int argc, char ** argv)
 		
 		S3DModel *mods= new S3DModel(model);
 		mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
-		_Filter<S3DModel, std::vector<std::vector<double> > > *lolilol;
+		_Filter<S3DModel, std::vector<std::vector<double> > > *filter;
 		
 		if (filterType.compare("partMMSE") == 0)
 		{
-			lolilol = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
 		}
 		else if (filterType.compare("part") == 0)
 		{
-			lolilol = new Partitionned<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new Partitionned<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
 		}
-		std::vector<S3DModel*> particles = lolilol->getParticleVector();
+		std::vector<S3DModel*> particles = filter->getParticleVector();
 		
 		IKSolverPFOrient<S3DModel> iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
 		
@@ -126,7 +146,7 @@ int main(int argc, char ** argv)
 			}
 			else if (step == "InitFilter")
 			{
-				lolilol->init(frame);
+				filter->init(frame);
 				step = "Filter";
 				nbFrames--;
 				viewer.update(particles, frame);
@@ -135,7 +155,7 @@ int main(int argc, char ** argv)
 			else if (step == "Filter")
 			{
 				frame = fileParser->getNextFrame();//Observation update
-				lolilol->step(frame);
+				filter->step(frame);
 				nbFrames--;
 
 				viewer.update(particles, frame);
@@ -157,7 +177,7 @@ int main(int argc, char ** argv)
 			}
 		}
 		
-		delete lolilol;
+		delete filter;
 		delete mods;
 		delete fileParser;
 	}
@@ -169,16 +189,16 @@ int main(int argc, char ** argv)
 		S3DModelQRS *mods= new S3DModelQRS(model);
 		mods->mapJointToObs(fileParser->getJointNames(), jtsToPos);
 		
-		_Filter<S3DModelQRS, std::vector<std::vector<double> > > *lolilol;
+		_Filter<S3DModelQRS, std::vector<std::vector<double> > > *filter;
 		if (filterType.compare("partMMSEQRS") == 0)
 		{
-			lolilol = new PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *mods);
 		}
 		else if (filterType.compare("partQRS") == 0)
 		{
-			lolilol = new Partitionned<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new Partitionned<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *mods);
 		}
-		std::vector<S3DModelQRS*> particles = lolilol->getParticleVector();
+		std::vector<S3DModelQRS*> particles = filter->getParticleVector();
 		
 		IKSolverPFOrient<S3DModelQRS> iksol(particles, fileParser->getJointNames(), frame);//Declaration of solver
 		
@@ -207,7 +227,7 @@ int main(int argc, char ** argv)
 			}
 			else if (step == "InitFilter")
 			{
-				lolilol->init(frame);
+				filter->init(frame);
 				step = "Filter";
 				nbFrames--;
 				viewer.update(particles, frame);
@@ -216,7 +236,7 @@ int main(int argc, char ** argv)
 			else if (step == "Filter")
 			{
 				frame = fileParser->getNextFrame();//Observation update
-				lolilol->step(frame);
+				filter->step(frame);
 				nbFrames--;
 
 				viewer.update(particles, frame);
@@ -238,7 +258,7 @@ int main(int argc, char ** argv)
 			}
 		}
 		
-		delete lolilol;
+		delete filter;
 		delete mods;
 		delete fileParser;
 	}
@@ -251,4 +271,5 @@ int main(int argc, char ** argv)
 		env.printHelp();
 	}
 	return 0;
-}
+}*/
+

@@ -1,5 +1,10 @@
 #include "FileParser.h"
 
+FileParser::FileParser(const std::string& path)
+{
+	mPath = path;
+}
+
 FileParser::FileParser(std::string path, std::string fileBeg, int number)
 {
 	mPath = path;
@@ -99,7 +104,7 @@ std::vector<std::vector<double> > &FileParser::getCurrentFrame()
 	return mVideoSequence[currentFrame];
 }
 
-std::vector<std::string> FileParser::getJointNames()
+std::vector<std::string>& FileParser::getJointNames()
 {
 	return mJointNames;
 }

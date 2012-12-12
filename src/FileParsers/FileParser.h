@@ -24,6 +24,8 @@ class FileParser
 {
 	public:
 		
+		FileParser(const std::string& path); //constructor for YjtParser
+		
 		/*!
 		 * \fn FileParser(std::string path, std::string fileBeg, int number)
 		 * \brief Constructor of the FileParser class.
@@ -60,7 +62,7 @@ class FileParser
 		 * \return vector of 3D points.
 		 */
 		std::vector<std::vector<double> > &getCurrentFrame();
-		std::vector<std::string> getJointNames();
+		std::vector<std::string>& getJointNames();
 		
 		double noise(double sigma);
 		

@@ -124,6 +124,11 @@ std::multimap<int, std::string> S3DModel::getOrientPartitionMultimap()
 	return mOrientPartToName;
 }
 
+std::map<std::string, int> S3DModel::getJointToIntMap()
+{
+	return mJointNameToInt;
+}
+
 void S3DModel::setColor(float R, float G, float B, float alpha)
 {
 	_Particle<std::vector<std::vector<double > > >::setColor(R, G, B, alpha);
