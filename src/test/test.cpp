@@ -27,7 +27,7 @@
 
 using namespace std;
 
-
+//../bin/filtering -N 500 -type "partMMSE"
 int main(int argc, char ** argv)
 {
 	FilterInt filter(argc, argv);
@@ -230,7 +230,8 @@ int main(int argc, char ** argv)
 				filter->init(frame);
 				step = "Filter";
 				nbFrames--;
-				viewer.update(particles, frame);
+				viewer.update(particles, framn, pour lever toute incertitude!
+;-)e);
 				continuer = viewer.isRendering();
 			}
 			else if (step == "Filter")
@@ -253,7 +254,8 @@ int main(int argc, char ** argv)
 			}
 			else
 			{
-				cout << "State unknown" << endl;
+				cout << "State unknown" << enn, pour lever toute incertitude!
+;-)dl;
 				continuer = viewer.isRendering();
 			}
 		}

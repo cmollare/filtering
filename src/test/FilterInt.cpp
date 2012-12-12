@@ -199,6 +199,7 @@ std::vector<std::vector<double> > FilterInt::getPosture()
 	
 	if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
 	{
+		//filter->getParticleVector().back() => get last particle = MMSE estimate of filter
 		orient = filter->getParticleVector().back()->getOrientationVec();
 		offset = filter->getParticleVector().back()->getOffsetVector();
 		map = filter->getParticleVector().back()->getJointToIntMap();//Mapping between joint names and index in vector
@@ -232,13 +233,13 @@ std::vector<std::vector<double> > FilterInt::getPosture()
 		for (it=map.begin() ; it!=map.end() ; it++)
 		{
 			Eigen::Vector3d pos = filter->getParticleVector().back()->getJoint((*it).first)->getXYZVect();
-			posture[(*it).second].push_back(pos[0]);
+			posture[(*it).second].push_back(pos[0]);//position 3D
 			posture[(*it).second].push_back(pos[1]);
 			posture[(*it).second].push_back(pos[2]);
-			posture[(*it).second].push_back(offset[(*it).second]->x());
+			posture[(*it).second].push_back(offset[(*it).second]->x());//offset d'un joint par rapport à son parent
 			posture[(*it).second].push_back(offset[(*it).second]->y());
 			posture[(*it).second].push_back(offset[(*it).second]->z());
-			posture[(*it).second].push_back(orient[(*it).second]->w());
+			posture[(*it).second].push_back(orient[(*it).second]->w());//orientation des joints
 			posture[(*it).second].push_back(orient[(*it).second]->x());
 			posture[(*it).second].push_back(orient[(*it).second]->y());
 			posture[(*it).second].push_back(orient[(*it).second]->z());
