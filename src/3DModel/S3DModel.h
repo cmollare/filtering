@@ -195,7 +195,7 @@ class S3DModel : public _Particle, public _Stats
 		virtual void update(int partition=-1);
 		virtual void estimateLikelihoodAll(std::vector<std::vector<double > >& obs);
 		virtual void estimateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition);
-		virtual void estimateLikelihood(std::vector<std::vector<double > >& obs, int partition=-1);
+		virtual void estimateLikelihood(_Observation& obs, int partition=-1);
 		virtual void estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles);
 		
 		virtual void saveResults(ResultParser* resParser);

@@ -3,10 +3,9 @@
 
 #include <Eigen/Dense>
 #include <vector>
-#include "_Observation.h"
 #include "../FileParsers/ResultParser.h"
+#include "../particles/_Observation.h"
 
-//template<class Observations>
 class _Particle
 {
 	public:

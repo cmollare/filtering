@@ -45,7 +45,7 @@ int _Particle::getId()
 	return mId;
 }
 
-void _Particle::setColor(float R=1, float G=0, float B=1, float alpha=0.1)
+void _Particle::setColor(float R, float G, float B, float alpha)
 {
 	mColor[0] = R;
 	mColor[1] = G;
@@ -67,6 +67,8 @@ _Particle& _Particle::operator =(const _Particle& part)
 {
 	this->mCurrentLikelihood = part.mCurrentLikelihood;
 	this->mObservations = part.mObservations;
+	
+	return *this;
 }
 
 int _Particle::getNumberOfPartitions()

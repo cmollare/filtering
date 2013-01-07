@@ -875,16 +875,16 @@ void S3DModel::estimateLikelihoodPart(std::vector<std::vector<double > >& obs, i
 		
 }
 
-void S3DModel::estimateLikelihood(std::vector<std::vector<double > >& obs, int partition)
+void S3DModel::estimateLikelihood(_Observation& obs, int partition)
 {
 	mObservations = obs;
 	if (partition==-1)
 	{
-		this->estimateLikelihoodAll(obs);
+		this->estimateLikelihoodAll(obs.getObservation());
 	}
 	else
 	{
-		this->estimateLikelihoodPart(obs, partition);
+		this->estimateLikelihoodPart(obs.getObservation(), partition);
 	}
 }
 
@@ -928,7 +928,7 @@ void S3DModel::saveResults(ResultParser* resParser)
 	
 	for (int i=0 ; i<mPosNames.size() ; i++)
 	{
-		resParser->saveObs("Obs_" + mPosNames[i], mObservations[i]);
+		resParser->saveObs("Obs_" + mPosNames[i], mObservations.getObservation()[i]);
 	}
 }
 
@@ -966,12 +966,14 @@ void S3DModel::mapJointToObs(std::vector<std::string> posNames, std::map<std::st
 
 S3DModel& S3DModel::operator =(const S3DModel& part)
 {
-	_Particle<std::vector<std::vector<double > > >::operator =(part);
+	_Particle::operator =(part);
 	for (int j=0 ; j < this->mOrientationVec.size() ; j++)
 	{
 		(*this->mOrientationVec[j])=(*(part.mOrientationVec[j]));
 		(*this->mOffsetVec[j])=(*(part.mOffsetVec[j]));
 	}
+	
+	return *this;
 }
 
 void S3DModel::createMaps(vector<Joint*>& jts)
