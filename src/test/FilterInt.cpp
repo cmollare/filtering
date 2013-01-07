@@ -1,6 +1,7 @@
 #include "FilterInt.h"
 
-FilterInt::FilterInt(int argc, char ** argv)
+template<class Observations>
+FilterInt<Observations>::FilterInt(int argc, char ** argv)
 {
 	_env = new Config(argc, argv);
 	
@@ -20,7 +21,8 @@ FilterInt::FilterInt(int argc, char ** argv)
 	modsQRS=NULL;
 }
 
-FilterInt::~FilterInt()
+template<class Observations>
+FilterInt<Observations>::~FilterInt()
 {
 	if (filter) delete filter;
 	if (filterQRS) delete filterQRS;
@@ -30,7 +32,8 @@ FilterInt::~FilterInt()
 	delete _env;
 }
 
-void FilterInt::init(std::vector<std::vector<double> >& firstFrame, std::vector<std::string>& posNames)
+template<class Observations>
+void FilterInt<Observations>::init(std::vector<std::vector<double> >& firstFrame, std::vector<std::string>& posNames)
 {
 	YamlBodyJoint ymlBJ("../Model_simple.ymd");//Yaml parser
 	ymlBJ.createModel();
@@ -174,7 +177,8 @@ void FilterInt::init(std::vector<std::vector<double> >& firstFrame, std::vector<
 	}
 }
 
-void FilterInt::update(std::vector<std::vector<double> >& frame)
+template<class Observations>
+void FilterInt<Observations>::update(std::vector<std::vector<double> >& frame)
 {
 	if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
 	{
@@ -189,7 +193,8 @@ void FilterInt::update(std::vector<std::vector<double> >& frame)
 	}
 }
 
-std::vector<std::vector<double> > FilterInt::getPosture()
+template<class Observations>
+std::vector<std::vector<double> > FilterInt<Observations>::getPosture()
 {
 	std::vector<std::vector<double> > posture;
 	
@@ -248,7 +253,8 @@ std::vector<std::vector<double> > FilterInt::getPosture()
 	return posture;
 }
 
-bool FilterInt::isEnvOk()
+template<class Observations>
+bool FilterInt<Observations>::isEnvOk()
 {
 	return _env->confOk();
 }

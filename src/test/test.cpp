@@ -23,6 +23,7 @@
 
 #include "Config.h"*/
 
+#include "../observations/ObsMonoKinect.h"
 #include "FilterInt.h"
 
 using namespace std;
@@ -30,7 +31,7 @@ using namespace std;
 //../bin/filtering -N 500 -type "partMMSE"
 int main(int argc, char ** argv)
 {
-	FilterInt filter(argc, argv);
+	FilterInt<ObsMonoKinect> filter(argc, argv);
 	
 	if (filter.isEnvOk())
 	{

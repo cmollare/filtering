@@ -25,6 +25,7 @@
 
 #include "Config.h"
 
+template<class Observations>
 class FilterInt
 {
 	public:
@@ -42,5 +43,7 @@ class FilterInt
 		S3DModelQRS *modsQRS;
 		std::string filterType;
 };
+
+#include "FilterInt.cpp"
 
 #endif

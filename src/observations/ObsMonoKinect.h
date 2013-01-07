@@ -1,6 +1,8 @@
 #ifndef OBSMONOKINECT_H
 #define OBSMONOKINECT_H
 
+#include <vector>
+
 class ObsMonoKinect
 {
 	public:
