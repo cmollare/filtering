@@ -21,8 +21,6 @@
  * The class S3DModel contains the Joint hierarchy and can be used as an interface to work on the model.
  * This class also map some informations for efficiency.
  */
- 
-class _Observation;
 
 class S3DModel : public _Particle, public _Stats
 {

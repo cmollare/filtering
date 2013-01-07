@@ -3,12 +3,11 @@
 
 #include "_Filter.h"
 
-template<class Particles>
-class Partitionned : public _Filter<Particles>
+class Partitionned : public _Filter
 {
 	public:
 		Partitionned(int& nbParticles);
-		Partitionned(int& nbParticles, Particles& model);
+		Partitionned(int& nbParticles, _Particle& model);
 		virtual ~Partitionned();
 		
 		virtual void init(_Observation obs);
@@ -24,25 +23,21 @@ class Partitionned : public _Filter<Particles>
 /* *******************Implementation************************ */
 /* ********************************************************* */
 
-template<class Particles>
-Partitionned<Particles>::Partitionned(int& nbParticles) : _Filter<Particles>(nbParticles)
+Partitionned::Partitionned(int& nbParticles) : _Filter(nbParticles)
 {
 	mNumberOfPartitions = this->mParticles[0]->getNumberOfPartitions();
 }
 
-template<class Particles>
-Partitionned<Particles>::Partitionned(int& nbParticles, Particles& model) : _Filter<Particles>(nbParticles, model)
+Partitionned::Partitionned(int& nbParticles, _Particle& model) : _Filter<Particles>(nbParticles, model)
 {
 	mNumberOfPartitions = this->mParticles[0]->getNumberOfPartitions();
 }
 
-template<class Particles>
-Partitionned<Particles>::~Partitionned()
+Partitionned::~Partitionned()
 {
 }
 
-template<class Particles>
-void Partitionned<Particles>::init(_Observation obs)
+void Partitionned::init(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -54,8 +49,7 @@ void Partitionned<Particles>::init(_Observation obs)
 	}
 }
 
-template<class Particles>
-void Partitionned<Particles>::step(_Observation obs)
+void Partitionned::step(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -76,8 +70,7 @@ void Partitionned<Particles>::step(_Observation obs)
 	this->saveResults();
 }
 
-template<class Particles>
-void Partitionned<Particles>::resample()
+void Partitionned::resample()
 {
 	double invNbSamp = 1./this->mNbParticles;
 	Eigen::VectorXf cdf(this->mNbParticles);
@@ -108,8 +101,7 @@ void Partitionned<Particles>::resample()
 	}
 }
 
-template<class Particles>
-void Partitionned<Particles>::updateWeights()
+void Partitionned::updateWeights()
 {
 	double sum=0;
 	for (int i=0 ; i<this->mNbParticles ; i++)

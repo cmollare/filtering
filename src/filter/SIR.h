@@ -3,12 +3,11 @@
 
 #include "_Filter.h"
 
-template<class Particles>
-class SIR : public _Filter<Particles>
+class SIR : public _Filter
 {
 	public:
 		SIR(int& nbParticles);
-		SIR(int& nbParticles, Particles& model);
+		SIR(int& nbParticles, _Particle& model);
 		virtual ~SIR();
 		
 		virtual void init(_Observation obs);
@@ -21,23 +20,19 @@ class SIR : public _Filter<Particles>
 /* *******************Implementation************************ */
 /* ********************************************************* */
 
-template<class Particles>
-SIR<Particles>::SIR(int& nbParticles) : _Filter<Particles>(nbParticles)
+SIR::SIR(int& nbParticles) : _Filter(nbParticles)
 {
 }
 
-template<class Particles>
-SIR<Particles>::SIR(int& nbParticles, Particles& model) : _Filter<Particles>(nbParticles, model)
+SIR::SIR(int& nbParticles, _Particle& model) : _Filter(nbParticles, model)
 {
 }
 
-template<class Particles>
-SIR<Particles>::~SIR()
+SIR::~SIR()
 {
 }
 
-template<class Particles>
-void SIR<Particles>::init(_Observation obs)
+void SIR::init(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -49,8 +44,7 @@ void SIR<Particles>::init(_Observation obs)
 	}
 }
 
-template<class Particles>
-void SIR<Particles>::step(_Observation obs)
+void SIR::step(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -67,8 +61,7 @@ void SIR<Particles>::step(_Observation obs)
 
 }
 
-template<class Particles>
-void SIR<Particles>::resample()
+void SIR::resample()
 {
 	double invNbSamp = 1./this->mNbParticles;
 	Eigen::VectorXf cdf(this->mNbParticles);
@@ -99,8 +92,7 @@ void SIR<Particles>::resample()
 	}
 }
 
-template<class Particles>
-void SIR<Particles>::updateWeights()
+void SIR::updateWeights()
 {
 	double sum=0;
 	for (int i=0 ; i<this->mNbParticles ; i++)

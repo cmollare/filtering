@@ -3,12 +3,11 @@
 
 #include "_Filter.h"
 
-template<class Particles>
-class PartitionnedMMSE : public _Filter<Particles>
+class PartitionnedMMSE : public _Filter
 {
 	public:
 		PartitionnedMMSE(int& nbParticles);
-		PartitionnedMMSE(int& nbParticles, Particles& model);
+		PartitionnedMMSE(int& nbParticles, _Particle& model);
 		virtual ~PartitionnedMMSE();
 		
 		virtual void init(_Observation obs);
@@ -24,25 +23,21 @@ class PartitionnedMMSE : public _Filter<Particles>
 /* *******************Implementation************************ */
 /* ********************************************************* */
 
-template<class Particles>
-PartitionnedMMSE<Particles>::PartitionnedMMSE(int& nbParticles) : _Filter<Particles>(nbParticles)
+PartitionnedMMSE::PartitionnedMMSE(int& nbParticles) : _Filter(nbParticles)
 {
 	mNumberOfPartitions = this->mParticles[0]->getNumberOfPartitions();
 }
 
-template<class Particles>
-PartitionnedMMSE<Particles>::PartitionnedMMSE(int& nbParticles, Particles& model) : _Filter<Particles>(nbParticles, model)
+PartitionnedMMSE::PartitionnedMMSE(int& nbParticles, _Particle& model) : _Filter(nbParticles, model)
 {
 	mNumberOfPartitions = this->mParticles[0]->getNumberOfPartitions();
 }
 
-template<class Particles>
-PartitionnedMMSE<Particles>::~PartitionnedMMSE()
+PartitionnedMMSE::~PartitionnedMMSE()
 {
 }
 
-template<class Particles>
-void PartitionnedMMSE<Particles>::init(_Observation obs)
+void PartitionnedMMSE::init(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -54,8 +49,7 @@ void PartitionnedMMSE<Particles>::init(_Observation obs)
 	}
 }
 
-template<class Particles>
-void PartitionnedMMSE<Particles>::step(_Observation obs)
+void PartitionnedMMSE::step(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -74,8 +68,7 @@ void PartitionnedMMSE<Particles>::step(_Observation obs)
 	
 }
 
-template<class Particles>
-void PartitionnedMMSE<Particles>::resample()
+void PartitionnedMMSE::resample()
 {
 	double invNbSamp = 1./this->mNbParticles;
 	
@@ -88,8 +81,7 @@ void PartitionnedMMSE<Particles>::resample()
 	}
 }
 
-template<class Particles>
-void PartitionnedMMSE<Particles>::updateWeights()
+void PartitionnedMMSE::updateWeights()
 {
 	double sum=0;
 	for (int i=0 ; i<this->mNbParticles ; i++)
