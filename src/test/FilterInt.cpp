@@ -1,4 +1,4 @@
-#include "FilterInt.h"
+#ifdef FILTERINT_H
 
 template<class Observations>
 FilterInt<Observations>::FilterInt(int argc, char ** argv)
@@ -33,7 +33,7 @@ FilterInt<Observations>::~FilterInt()
 }
 
 template<class Observations>
-void FilterInt<Observations>::init(std::vector<std::vector<double> >& firstFrame, std::vector<std::string>& posNames)
+void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::string>& posNames)
 {
 	YamlBodyJoint ymlBJ("../Model_simple.ymd");//Yaml parser
 	ymlBJ.createModel();
@@ -41,7 +41,7 @@ void FilterInt<Observations>::init(std::vector<std::vector<double> >& firstFrame
 	Joint* model = ymlBJ.getModel();//temporary model
 	
 	//std::vector<std::vector<double> > frame = fileParser->getFirstFrame();
-	std::vector<std::vector<double> > frame = firstFrame;
+	Observations frame = firstFrame;
 	std::map<std::string, std::string> jtsToPos; //A mettre dans un fichier
 	
 	
@@ -76,11 +76,11 @@ void FilterInt<Observations>::init(std::vector<std::vector<double> >& firstFrame
 		
 		if (filterType.compare("partMMSE") == 0)
 		{
-			filter = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new PartitionnedMMSE<S3DModel, Observations>(nbParticles, *mods);
 		}
 		else if (filterType.compare("part") == 0)
 		{
-			filter = new Partitionned<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new Partitionned<S3DModel, Observations>(nbParticles, *mods);
 		}
 		std::vector<S3DModel*> particles = filter->getParticleVector();
 		
@@ -131,11 +131,11 @@ void FilterInt<Observations>::init(std::vector<std::vector<double> >& firstFrame
 		
 		if (filterType.compare("partMMSEQRS") == 0)
 		{
-			filterQRS = new PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *modsQRS);
+			filterQRS = new PartitionnedMMSE<S3DModelQRS, Observations>(nbParticles, *modsQRS);
 		}
 		else if (filterType.compare("partQRS") == 0)
 		{
-			filterQRS = new Partitionned<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *modsQRS);
+			filterQRS = new Partitionned<S3DModelQRS, Observations>(nbParticles, *modsQRS);
 		}
 		std::vector<S3DModelQRS*> particles = filterQRS->getParticleVector();
 		
@@ -178,7 +178,7 @@ void FilterInt<Observations>::init(std::vector<std::vector<double> >& firstFrame
 }
 
 template<class Observations>
-void FilterInt<Observations>::update(std::vector<std::vector<double> >& frame)
+void FilterInt<Observations>::update(Observations frame)
 {
 	if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
 	{
@@ -258,3 +258,5 @@ bool FilterInt<Observations>::isEnvOk()
 {
 	return _env->confOk();
 }
+
+#endif

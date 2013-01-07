@@ -31,19 +31,19 @@ class FilterInt
 	public:
 		FilterInt(int argc, char ** argv);
 		~FilterInt();
-		void init(std::vector<std::vector<double> >& firstFrame, std::vector<std::string>& posNames);
-		void update(std::vector<std::vector<double> >& frame);
+		void init(Observations firstFrame, std::vector<std::string>& posNames);
+		void update(Observations frame);
 		std::vector<std::vector<double> > getPosture();
 		bool isEnvOk();
 		
 		Config* _env;
-		_Filter<S3DModel, std::vector<std::vector<double> > > *filter;
-		_Filter<S3DModelQRS, std::vector<std::vector<double> > > *filterQRS;
+		_Filter<S3DModel, Observations> *filter;
+		_Filter<S3DModelQRS, Observations> *filterQRS;
 		S3DModel *mods;
 		S3DModelQRS *modsQRS;
 		std::string filterType;
 };
 
-#include "FilterInt.cpp"
+#include "FilterInt.cpp" //To separate implementation from declaration
 
 #endif

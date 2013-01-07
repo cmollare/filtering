@@ -1,3 +1,5 @@
+en cours : mettre la class observation dans S3DModel
+
 intégrer la class Observation dans les particules.
 faire une class pour les observations multi-kinect
 
