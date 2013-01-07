@@ -1,6 +1,6 @@
 #include "S3DModel.h"
 
-S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double > > >(), _Stats()
+S3DModel::S3DModel(const Joint* jt) : _Particle(), _Stats()
 {
 	mRootJoint = new Joint(*jt);
 	mNbJoints = -1;
@@ -17,7 +17,7 @@ S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double >
 	
 }
 
-S3DModel::S3DModel(const S3DModel& model) : _Particle<std::vector<std::vector<double > > >(model)
+S3DModel::S3DModel(const S3DModel& model) : _Particle(model)
 {
 	mRootJoint = new Joint(*(model.mRootJoint));
 	mId = -2;
@@ -131,7 +131,7 @@ std::map<std::string, int> S3DModel::getJointToIntMap()
 
 void S3DModel::setColor(float R, float G, float B, float alpha)
 {
-	_Particle<std::vector<std::vector<double > > >::setColor(R, G, B, alpha);
+	_Particle::setColor(R, G, B, alpha);
 	for(int i=0 ; i<=mNbJoints ; i++)
 	{
 		mIntToJoint[i]->setColor(R, G, B, alpha);
