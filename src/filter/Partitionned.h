@@ -3,16 +3,16 @@
 
 #include "_Filter.h"
 
-template<class Particles, class Observations>
-class Partitionned : public _Filter<Particles, Observations>
+template<class Particles>
+class Partitionned : public _Filter<Particles>
 {
 	public:
 		Partitionned(int& nbParticles);
 		Partitionned(int& nbParticles, Particles& model);
 		virtual ~Partitionned();
 		
-		virtual void init(Observations& obs);
-		virtual void step(Observations& obs);
+		virtual void init(_Observation obs);
+		virtual void step(_Observation obs);
 		virtual void resample();
 		virtual void updateWeights();
 		
@@ -24,25 +24,25 @@ class Partitionned : public _Filter<Particles, Observations>
 /* *******************Implementation************************ */
 /* ********************************************************* */
 
-template<class Particles, class Observations>
-Partitionned<Particles, Observations>::Partitionned(int& nbParticles) : _Filter<Particles, Observations>(nbParticles)
+template<class Particles>
+Partitionned<Particles>::Partitionned(int& nbParticles) : _Filter<Particles>(nbParticles)
 {
 	mNumberOfPartitions = this->mParticles[0]->getNumberOfPartitions();
 }
 
-template<class Particles, class Observations>
-Partitionned<Particles, Observations>::Partitionned(int& nbParticles, Particles& model) : _Filter<Particles, Observations>(nbParticles, model)
+template<class Particles>
+Partitionned<Particles>::Partitionned(int& nbParticles, Particles& model) : _Filter<Particles>(nbParticles, model)
 {
 	mNumberOfPartitions = this->mParticles[0]->getNumberOfPartitions();
 }
 
-template<class Particles, class Observations>
-Partitionned<Particles, Observations>::~Partitionned()
+template<class Particles>
+Partitionned<Particles>::~Partitionned()
 {
 }
 
-template<class Particles, class Observations>
-void Partitionned<Particles, Observations>::init(Observations& obs)
+template<class Particles>
+void Partitionned<Particles>::init(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -54,8 +54,8 @@ void Partitionned<Particles, Observations>::init(Observations& obs)
 	}
 }
 
-template<class Particles, class Observations>
-void Partitionned<Particles, Observations>::step(Observations& obs)
+template<class Particles>
+void Partitionned<Particles>::step(_Observation obs)
 {
 	this->mCurrentObservations = obs;
 	
@@ -76,8 +76,8 @@ void Partitionned<Particles, Observations>::step(Observations& obs)
 	this->saveResults();
 }
 
-template<class Particles, class Observations>
-void Partitionned<Particles, Observations>::resample()
+template<class Particles>
+void Partitionned<Particles>::resample()
 {
 	double invNbSamp = 1./this->mNbParticles;
 	Eigen::VectorXf cdf(this->mNbParticles);
@@ -108,8 +108,8 @@ void Partitionned<Particles, Observations>::resample()
 	}
 }
 
-template<class Particles, class Observations>
-void Partitionned<Particles, Observations>::updateWeights()
+template<class Particles>
+void Partitionned<Particles>::updateWeights()
 {
 	double sum=0;
 	for (int i=0 ; i<this->mNbParticles ; i++)

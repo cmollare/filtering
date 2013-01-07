@@ -73,11 +73,11 @@ void FilterInt::init(std::vector<std::vector<double> >& firstFrame, std::vector<
 		
 		if (filterType.compare("partMMSE") == 0)
 		{
-			filter = new PartitionnedMMSE<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new PartitionnedMMSE<S3DModel>(nbParticles, *mods);
 		}
 		else if (filterType.compare("part") == 0)
 		{
-			filter = new Partitionned<S3DModel, std::vector<std::vector<double> > >(nbParticles, *mods);
+			filter = new Partitionned<S3DModel>(nbParticles, *mods);
 		}
 		std::vector<S3DModel*> particles = filter->getParticleVector();
 		
@@ -128,11 +128,11 @@ void FilterInt::init(std::vector<std::vector<double> >& firstFrame, std::vector<
 		
 		if (filterType.compare("partMMSEQRS") == 0)
 		{
-			filterQRS = new PartitionnedMMSE<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *modsQRS);
+			filterQRS = new PartitionnedMMSE<S3DModelQRS>(nbParticles, *modsQRS);
 		}
 		else if (filterType.compare("partQRS") == 0)
 		{
-			filterQRS = new Partitionned<S3DModelQRS, std::vector<std::vector<double> > >(nbParticles, *modsQRS);
+			filterQRS = new Partitionned<S3DModelQRS>(nbParticles, *modsQRS);
 		}
 		std::vector<S3DModelQRS*> particles = filterQRS->getParticleVector();
 		

@@ -20,7 +20,7 @@
 #include "../particles/_Particle.h"
 #include "../tools/_Stats.h"
 
-template<class Particles, class Observations>
+template<class Particles>
 class _Filter : public _Stats
 {
 	public:
@@ -28,8 +28,8 @@ class _Filter : public _Stats
 		_Filter(int& nbParticles, Particles& model);
 		virtual ~_Filter();
 		
-		virtual void init(Observations& obs) =0;
-		virtual void step(Observations& obs) =0;
+		virtual void init(_Observation obs) =0;
+		virtual void step(_Observation obs) =0;
 		virtual void resample() =0;
 		virtual void updateWeights() =0;
 		virtual void estimateMMSE();
@@ -44,15 +44,15 @@ class _Filter : public _Stats
 		Particles** mParticles;
 		Particles* mParticleMMSE;
 		Particles* mParticleMAP;
-		Observations mCurrentObservations;
+		_Observation mCurrentObservations;
 		
 		#ifdef SAVE_MATLAB
 		ResultParser *mResParser; //For Matlab results
 		#endif
 };
 
-template<class Particles, class Observations>
-_Filter<Particles, Observations>::_Filter(int& nbParticles) : _Stats()
+template<class Particles>
+_Filter<Particles>::_Filter(int& nbParticles) : _Stats()
 {
 	mNbParticles = nbParticles;
 	mParticles = new Particles*[mNbParticles];
@@ -75,8 +75,8 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles) : _Stats()
 	#endif
 }
 
-template<class Particles, class Observations>
-_Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model) : _Stats()
+template<class Particles>
+_Filter<Particles>::_Filter(int& nbParticles, Particles& model) : _Stats()
 {
 	mNbParticles = nbParticles;
 	mParticles = new Particles*[mNbParticles];
@@ -100,8 +100,8 @@ _Filter<Particles, Observations>::_Filter(int& nbParticles, Particles& model) : 
 	#endif
 }
 
-template<class Particles, class Observations>
-_Filter<Particles, Observations>::~_Filter()
+template<class Particles>
+_Filter<Particles>::~_Filter()
 {
 	for (int i=0 ; i<mNbParticles ; i++)
 	{
@@ -116,8 +116,8 @@ _Filter<Particles, Observations>::~_Filter()
 	#endif
 }
 
-template<class Particles, class Observations>
-std::vector<Particles*> _Filter<Particles, Observations>::getParticleVector()
+template<class Particles>
+std::vector<Particles*> _Filter<Particles>::getParticleVector()
 {
 	std::vector<Particles*> parts;
 	for (int i=0 ; i<mNbParticles ; i++)
@@ -130,8 +130,8 @@ std::vector<Particles*> _Filter<Particles, Observations>::getParticleVector()
 	return parts;
 }
 
-template<class Particles, class Observations>
-void _Filter<Particles, Observations>::estimateMMSE()
+template<class Particles>
+void _Filter<Particles>::estimateMMSE()
 {
 	this->mParticleMMSE->estimateMMSE(mCurrentWeights, mParticles, mNbParticles);
 	
@@ -140,8 +140,8 @@ void _Filter<Particles, Observations>::estimateMMSE()
 	//#endif
 }
 
-template<class Particles, class Observations>
-void _Filter<Particles, Observations>::saveResults()
+template<class Particles>
+void _Filter<Particles>::saveResults()
 {
 	#ifdef SAVE_MATLAB
 		this->mParticleMMSE->saveResults(mResParser);

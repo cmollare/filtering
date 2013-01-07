@@ -36,8 +36,8 @@ class FilterInt
 		bool isEnvOk();
 		
 		Config* _env;
-		_Filter<S3DModel, std::vector<std::vector<double> > > *filter;
-		_Filter<S3DModelQRS, std::vector<std::vector<double> > > *filterQRS;
+		_Filter<S3DModel> *filter;
+		_Filter<S3DModelQRS> *filterQRS;
 		S3DModel *mods;
 		S3DModelQRS *modsQRS;
 		std::string filterType;
