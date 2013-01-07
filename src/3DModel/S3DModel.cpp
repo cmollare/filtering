@@ -972,6 +972,8 @@ S3DModel& S3DModel::operator =(const S3DModel& part)
 		(*this->mOrientationVec[j])=(*(part.mOrientationVec[j]));
 		(*this->mOffsetVec[j])=(*(part.mOffsetVec[j]));
 	}
+	
+	return *this;
 }
 
 void S3DModel::createMaps(vector<Joint*>& jts)

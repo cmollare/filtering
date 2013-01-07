@@ -77,6 +77,8 @@ class _Particle
 		{
 			this->mCurrentLikelihood = part.mCurrentLikelihood;
 			this->mObservations = part.mObservations;
+			
+			return *this;
 		}
 		
 		virtual int getNumberOfPartitions()
