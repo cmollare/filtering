@@ -1,3 +1,6 @@
+#ifndef SOBOL_H
+#define SOBOL_H
+
 /*!
  * \file sobol.h
  * \brief Functions for QRS, extracted from Mathias Fontmarty's thesis.
@@ -24,4 +27,6 @@ double r8_abs ( double x );
 int r8_nint ( double x );
 double r8_uniform_01 ( int *seed );
 void timestamp ( void );
+
+#endif
 
