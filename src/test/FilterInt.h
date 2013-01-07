@@ -15,7 +15,7 @@
 
 #include "../solver/IKSolverPFOrient.h"
 
-//#include "../3DModel/S3DModel.h"
+#include "../3DModel/S3DModel.h"
 #include "../3DModel/S3DModelQRS.h"
 
 #include "../filter/SIR.h"

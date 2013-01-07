@@ -1,10 +1,12 @@
 #ifndef _PARTICLE_H
 #define _PARTICLE_H
 
+#include "../particles/_Observation.h"
+
 #include <Eigen/Dense>
 #include <vector>
 #include "../FileParsers/ResultParser.h"
-#include "../particles/_Observation.h"
+
 
 class _Particle
 {

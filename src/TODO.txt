@@ -1,0 +1,1 @@
+changer les templates en héritage simple
