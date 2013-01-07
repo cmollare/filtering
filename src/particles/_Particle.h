@@ -3,91 +3,32 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include "_Observation.h"
 #include "../FileParsers/ResultParser.h"
 
-template<class Observations>
+//template<class Observations>
 class _Particle
 {
 	public:
-		_Particle()
-		{
-			mColor = std::vector<float>(4,1);
-			this->mCurrentLikelihood=0;
-			mIsVisible = true;
-			mNumberOfPartitions=0;
-		}
-		_Particle(const _Particle& particle) //copy constructor
-		{
-			this->mColor = particle.mColor;
-			this->mCurrentLikelihood = particle.mCurrentLikelihood;
-			this->mIsVisible = particle.mIsVisible;
-			this->mNumberOfPartitions = particle.mNumberOfPartitions;
-			this->mObservations = particle.mObservations;
-		}
+		_Particle();
+		_Particle(const _Particle& particle); //copy constructor
 		
 		virtual void update(int partition=-1) =0;
-		virtual void estimateLikelihood(Observations& obs, int partition=-1) =0;
-		virtual void saveResults(ResultParser* resParser)
-		{
-		}
+		virtual void estimateLikelihood(_Observation& obs, int partition=-1) =0;
 		
-		virtual void estimateMMSE(Eigen::VectorXd& weights, _Particle** particles, int nbParticles)
-		{
-		}
+		virtual void saveResults(ResultParser* resParser);
+		virtual void estimateMMSE(Eigen::VectorXd& weights, _Particle** particles, int nbParticles);
 		
-		virtual double getLikelihood()
-		{
-			return this->mCurrentLikelihood;
-		}
-		
-		virtual void setLikelihood(double likelihood)
-		{
-			this->mCurrentLikelihood = likelihood;
-		}
-		
-		virtual void setId(int id)
-		{
-			mId = id;
-		}
-		
-		virtual int getId()
-		{
-			return mId;
-		}
-		
-		virtual void setColor(float R=1, float G=0, float B=1, float alpha=0.1)
-		{
-			mColor[0] = R;
-			mColor[1] = G;
-			mColor[2] = B;
-			mColor[3] = alpha;
-		}
-		
-		virtual void setVisible(bool visible)
-		{
-			mIsVisible = visible;
-		}
-		
-		virtual bool isVisible()
-		{
-			return mIsVisible;
-		}
-		
-		virtual _Particle<Observations>& operator =(const _Particle<Observations>& part)
-		{
-			this->mCurrentLikelihood = part.mCurrentLikelihood;
-			this->mObservations = part.mObservations;
-		}
-		
-		virtual int getNumberOfPartitions()
-		{
-			return mNumberOfPartitions;
-		}
-		
-		virtual Observations& getCurrentObservations()
-		{
-			return mObservations;
-		}
+		virtual double getLikelihood();
+		virtual void setLikelihood(double likelihood);
+		virtual void setId(int id);
+		virtual int getId();
+		virtual void setColor(float R=1, float G=0, float B=1, float alpha=0.1);
+		virtual void setVisible(bool visible);
+		virtual bool isVisible();
+		virtual _Particle& operator =(const _Particle& part);
+		virtual int getNumberOfPartitions();
+		virtual _Observation& getCurrentObservations();
 	
 	protected:
 		double mCurrentLikelihood;
@@ -96,7 +37,7 @@ class _Particle
 		bool mIsVisible;
 		
 		int mNumberOfPartitions;
-		Observations mObservations;
+		_Observation mObservations;
 };
 
 #endif
