@@ -1,7 +1,7 @@
 #ifdef FILTERINT_H
 
-template<class Observations>
-FilterInt<Observations>::FilterInt(int argc, char ** argv)
+template<class Observations, class Particles>
+FilterInt<Observations, Particles>::FilterInt(int argc, char ** argv)
 {
 	_env = new Config(argc, argv);
 	
@@ -16,24 +16,20 @@ FilterInt<Observations>::FilterInt(int argc, char ** argv)
 	}
 	
 	filter=NULL;
-	filterQRS=NULL;
 	mods=NULL;
-	modsQRS=NULL;
 }
 
-template<class Observations>
-FilterInt<Observations>::~FilterInt()
+template<class Observations, class Particles>
+FilterInt<Observations, Particles>::~FilterInt()
 {
 	if (filter) delete filter;
-	if (filterQRS) delete filterQRS;
 	if (mods) delete mods;
-	if (modsQRS) delete modsQRS;
 	
 	delete _env;
 }
 
-template<class Observations>
-void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::string>& posNames)
+template<class Observations, class Particles>
+void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vector<std::string>& posNames)
 {
 	YamlBodyJoint ymlBJ("../Model_simple.ymd");//Yaml parser
 	ymlBJ.createModel();
@@ -66,25 +62,25 @@ void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::str
 	int nbParticles = _env->getParticleNumber();
 	filterType = _env->getFilterType();
 	
-	if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
+	//if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
 	{
 		//S3DViewer<S3DModel> viewer;//Declaration of viewer
 		//viewer.setOptions(true, false, true);
-		mods= new S3DModel<Observations>(model);
+		mods= new Particles(model);
 		mods->mapJointToObs(posNames, jtsToPos);
 		
 		
 		if (filterType.compare("partMMSE") == 0)
 		{
-			filter = new PartitionnedMMSE<S3DModel<Observations>, Observations>(nbParticles, *mods);
+			filter = new PartitionnedMMSE<Particles, Observations>(nbParticles, *mods);
 		}
 		else if (filterType.compare("part") == 0)
 		{
-			filter = new Partitionned<S3DModel<Observations>, Observations>(nbParticles, *mods);
+			filter = new Partitionned<Particles, Observations>(nbParticles, *mods);
 		}
-		std::vector<S3DModel<Observations>*> particles = filter->getParticleVector();
+		std::vector<Particles*> particles = filter->getParticleVector();
 		
-		IKSolverPFOrient<S3DModel<Observations> > iksol(particles, posNames, frame.getFrame());//Declaration of solver
+		IKSolverPFOrient<Particles> iksol(particles, posNames, frame.getFrame());//Declaration of solver
 		
 		iksol.mapJointToObs(jtsToPos);
 		iksol.initFilter();
@@ -120,7 +116,7 @@ void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::str
 			}
 		}
 	}
-	else if ((filterType.compare("partQRS") == 0) || (filterType.compare("partMMSEQRS") == 0))
+	/*else if ((filterType.compare("partQRS") == 0) || (filterType.compare("partMMSEQRS") == 0))
 	{
 		//S3DViewer<S3DModelQRS> viewer;//Declaration of viewer
 		//viewer.setOptions(true, false, true);
@@ -174,27 +170,17 @@ void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::str
 				continuer = false;
 			}
 		}
-	}
+	}*/
 }
 
-template<class Observations>
-void FilterInt<Observations>::update(Observations frame)
+template<class Observations, class Particles>
+void FilterInt<Observations, Particles>::update(Observations frame)
 {
-	if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
-	{
-		filter->step(frame);
-	}
-	else if ((filterType.compare("partQRS") == 0) || (filterType.compare("partMMSEQRS") == 0))
-	{
-		filterQRS->step(frame);
-
-		//viewer.update(particles, frame);
-		//continuer = viewer.isRendering();
-	}
+	filter->step(frame);
 }
 
-template<class Observations>
-std::vector<std::vector<double> > FilterInt<Observations>::getPosture()
+template<class Observations, class Particles>
+std::vector<std::vector<double> > FilterInt<Observations, Particles>::getPosture()
 {
 	std::vector<std::vector<double> > posture;
 	
@@ -202,59 +188,34 @@ std::vector<std::vector<double> > FilterInt<Observations>::getPosture()
 	std::vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > offset;
 	std::map<std::string, int> map;
 	
-	if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
+
+	//filter->getParticleVector().back() => get last particle = MMSE estimate of filter
+	orient = filter->getParticleVector().back()->getOrientationVec();
+	offset = filter->getParticleVector().back()->getOffsetVector();
+	map = filter->getParticleVector().back()->getJointToIntMap();//Mapping between joint names and index in vector
+	
+	
+	posture.resize(map.size());
+	std::map<std::string, int>::iterator it;
+	for (it=map.begin() ; it!=map.end() ; it++)
 	{
-		//filter->getParticleVector().back() => get last particle = MMSE estimate of filter
-		orient = filter->getParticleVector().back()->getOrientationVec();
-		offset = filter->getParticleVector().back()->getOffsetVector();
-		map = filter->getParticleVector().back()->getJointToIntMap();//Mapping between joint names and index in vector
-		
-		
-		posture.resize(map.size());
-		std::map<std::string, int>::iterator it;
-		for (it=map.begin() ; it!=map.end() ; it++)
-		{
-			Eigen::Vector3d pos = filter->getParticleVector().back()->getJoint((*it).first)->getXYZVect();
-			posture[(*it).second].push_back(pos[0]);
-			posture[(*it).second].push_back(pos[1]);
-			posture[(*it).second].push_back(pos[2]);
-			posture[(*it).second].push_back(offset[(*it).second]->x());
-			posture[(*it).second].push_back(offset[(*it).second]->y());
-			posture[(*it).second].push_back(offset[(*it).second]->z());
-			posture[(*it).second].push_back(orient[(*it).second]->w());
-			posture[(*it).second].push_back(orient[(*it).second]->x());
-			posture[(*it).second].push_back(orient[(*it).second]->y());
-			posture[(*it).second].push_back(orient[(*it).second]->z());
-		}
-	}
-	else if ((filterType.compare("partQRS") == 0) || (filterType.compare("partMMSEQRS") == 0))
-	{
-		orient = filterQRS->getParticleVector().back()->getOrientationVec();
-		offset = filterQRS->getParticleVector().back()->getOffsetVector();
-		map = filterQRS->getParticleVector().back()->getJointToIntMap();
-		
-		posture.resize(map.size());
-		std::map<std::string, int>::iterator it;
-		for (it=map.begin() ; it!=map.end() ; it++)
-		{
-			Eigen::Vector3d pos = filter->getParticleVector().back()->getJoint((*it).first)->getXYZVect();
-			posture[(*it).second].push_back(pos[0]);//position 3D
-			posture[(*it).second].push_back(pos[1]);
-			posture[(*it).second].push_back(pos[2]);
-			posture[(*it).second].push_back(offset[(*it).second]->x());//offset d'un joint par rapport à son parent
-			posture[(*it).second].push_back(offset[(*it).second]->y());
-			posture[(*it).second].push_back(offset[(*it).second]->z());
-			posture[(*it).second].push_back(orient[(*it).second]->w());//orientation des joints
-			posture[(*it).second].push_back(orient[(*it).second]->x());
-			posture[(*it).second].push_back(orient[(*it).second]->y());
-			posture[(*it).second].push_back(orient[(*it).second]->z());
-		}
+		Eigen::Vector3d pos = filter->getParticleVector().back()->getJoint((*it).first)->getXYZVect();
+		posture[(*it).second].push_back(pos[0]);
+		posture[(*it).second].push_back(pos[1]);
+		posture[(*it).second].push_back(pos[2]);
+		posture[(*it).second].push_back(offset[(*it).second]->x());
+		posture[(*it).second].push_back(offset[(*it).second]->y());
+		posture[(*it).second].push_back(offset[(*it).second]->z());
+		posture[(*it).second].push_back(orient[(*it).second]->w());
+		posture[(*it).second].push_back(orient[(*it).second]->x());
+		posture[(*it).second].push_back(orient[(*it).second]->y());
+		posture[(*it).second].push_back(orient[(*it).second]->z());
 	}
 	return posture;
 }
 
-template<class Observations>
-bool FilterInt<Observations>::isEnvOk()
+template<class Observations, class Particles>
+bool FilterInt<Observations, Particles>::isEnvOk()
 {
 	return _env->confOk();
 }

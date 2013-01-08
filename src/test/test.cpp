@@ -24,6 +24,7 @@
 #include "Config.h"*/
 
 #include "../observations/ObsMonoKinect.h"
+#include "../3DModel/S3DModelQRS.h"
 #include "FilterInt.h"
 
 using namespace std;
@@ -31,7 +32,7 @@ using namespace std;
 //../bin/filtering -N 500 -type "partMMSE"
 int main(int argc, char ** argv)
 {
-	FilterInt<ObsMonoKinect> filter(argc, argv);
+	FilterInt<ObsMonoKinect, S3DModel<ObsMonoKinect> > filter(argc, argv);
 	
 	if (filter.isEnvOk())
 	{

@@ -25,7 +25,7 @@
 
 #include "Config.h"
 
-template<class Observations>
+template<class Observations, class Particles>
 class FilterInt
 {
 	public:
@@ -37,10 +37,10 @@ class FilterInt
 		bool isEnvOk();
 		
 		Config* _env;
-		_Filter<S3DModel<Observations>, Observations> *filter;
-		_Filter<S3DModelQRS<Observations>, Observations> *filterQRS;
-		S3DModel<ObsMonoKinect> *mods;
-		S3DModelQRS<ObsMonoKinect> *modsQRS;
+		_Filter<Particles, Observations> *filter;
+		//_Filter<Particles, Observations> *filterQRS;
+		Particles *mods;
+
 		std::string filterType;
 };
 
