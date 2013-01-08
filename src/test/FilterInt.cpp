@@ -62,117 +62,59 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	int nbParticles = _env->getParticleNumber();
 	filterType = _env->getFilterType();
 	
-	//if ((filterType.compare("part") == 0) || (filterType.compare("partMMSE") == 0))
+
+	//S3DViewer<S3DModel> viewer;//Declaration of viewer
+	//viewer.setOptions(true, false, true);
+	mods= new Particles(model);
+	mods->mapJointToObs(posNames, jtsToPos);
+		
+		
+	if (filterType.compare("partMMSE") == 0)
 	{
-		//S3DViewer<S3DModel> viewer;//Declaration of viewer
-		//viewer.setOptions(true, false, true);
-		mods= new Particles(model);
-		mods->mapJointToObs(posNames, jtsToPos);
-		
-		
-		if (filterType.compare("partMMSE") == 0)
+		filter = new PartitionnedMMSE<Particles, Observations>(nbParticles, *mods);
+	}
+	else if (filterType.compare("part") == 0)
+	{
+		filter = new Partitionned<Particles, Observations>(nbParticles, *mods);
+	}
+	std::vector<Particles*> particles = filter->getParticleVector();
+	
+	IKSolverPFOrient<Particles> iksol(particles, posNames, frame.getFrame());//Declaration of solver
+	
+	iksol.mapJointToObs(jtsToPos);
+	iksol.initFilter();
+	//viewer.init();
+	
+	//viewer.initModels(particles);
+	//viewer.initObservations(fileParser->getJointNames(), frame);
+	iksol.computeLikelihood();
+	
+	bool continuer = true;
+	std::string step = "InitFilter";
+	while (continuer)
+	{
+		//frame = fileParser->getNextFrame();//Observation update
+		if (step == "IK")
 		{
-			filter = new PartitionnedMMSE<Particles, Observations>(nbParticles, *mods);
-		}
-		else if (filterType.compare("part") == 0)
-		{
-			filter = new Partitionned<Particles, Observations>(nbParticles, *mods);
-		}
-		std::vector<Particles*> particles = filter->getParticleVector();
-		
-		IKSolverPFOrient<Particles> iksol(particles, posNames, frame.getFrame());//Declaration of solver
-		
-		iksol.mapJointToObs(jtsToPos);
-		iksol.initFilter();
-		//viewer.init();
-		
-		//viewer.initModels(particles);
-		//viewer.initObservations(fileParser->getJointNames(), frame);
-		iksol.computeLikelihood();
-		
-		bool continuer = true;
-		std::string step = "InitFilter";
-		while (continuer)
-		{
-			//frame = fileParser->getNextFrame();//Observation update
-			if (step == "IK")
+			if (iksol.stepAlt() < 0.60)
 			{
-				if (iksol.stepAlt() < 0.60)
-				{
-					iksol.save();
-					step = "InitFilter";
-				}
-				//viewer.update(particles, frame);
-				//continuer = viewer.isRendering();
+				iksol.save();
+				step = "InitFilter";
 			}
-			else if (step == "InitFilter")
-			{
-				filter->init(frame);
-				step = "Filter";
-				//nbFrames--;
-				//viewer.update(particles, frame);
-				//continuer = viewer.isRendering();
-				continuer=false;
-			}
+			//viewer.update(particles, frame);
+			//continuer = viewer.isRendering();
+		}
+		else if (step == "InitFilter")
+		{
+			filter->init(frame);
+			step = "Filter";
+			//nbFrames--;
+			//viewer.update(particles, frame);
+			//continuer = viewer.isRendering();
+			continuer=false;
 		}
 	}
-	/*else if ((filterType.compare("partQRS") == 0) || (filterType.compare("partMMSEQRS") == 0))
-	{
-		//S3DViewer<S3DModelQRS> viewer;//Declaration of viewer
-		//viewer.setOptions(true, false, true);
-	
-		modsQRS= new S3DModelQRS<Observations>(model);
-		modsQRS->mapJointToObs(posNames, jtsToPos);
-		
-		
-		if (filterType.compare("partMMSEQRS") == 0)
-		{
-			filterQRS = new PartitionnedMMSE<S3DModelQRS<Observations>, Observations>(nbParticles, *modsQRS);
-		}
-		else if (filterType.compare("partQRS") == 0)
-		{
-			filterQRS = new Partitionned<S3DModelQRS<Observations>, Observations>(nbParticles, *modsQRS);
-		}
-		std::vector<S3DModelQRS<Observations>*> particles = filterQRS->getParticleVector();
-		
-		IKSolverPFOrient<S3DModelQRS<Observations> > iksol(particles, posNames, frame.getFrame());//Declaration of solver
-		
-		iksol.mapJointToObs(jtsToPos);
-		iksol.initFilter();
-		//viewer.init();
-		
-		//viewer.initModels(particles);
-		//viewer.initObservations(fileParser->getJointNames(), frame);
-		iksol.computeLikelihood();
-		
-		bool continuer = true;
-		std::string step = "InitFilter";
-		while (continuer)
-		{
-			//frame = fileParser->getNextFrame();//Observation update
-			if (step == "IK")
-			{
-				if (iksol.stepAlt() < 0.60)
-				{
-					iksol.save();
-					step = "InitFilter";
-				}
-				//viewer.update(particles, frame);
-				//continuer = viewer.isRendering();
-			}
-			else if (step == "InitFilter")
-			{
-				filterQRS->init(frame);
-				step = "Filter";
-				//nbFrames--;
-				//viewer.update(particles, frame);
-				//continuer = viewer.isRendering();
-				continuer = false;
-			}
-		}
-	}*/
 }
-
 template<class Observations, class Particles>
 void FilterInt<Observations, Particles>::update(Observations frame)
 {
