@@ -151,7 +151,7 @@ std::map<std::string, int> S3DModel<Observations>::getJointToIntMap()
 template<class Observations>
 void S3DModel<Observations>::setColor(float R, float G, float B, float alpha)
 {
-	_Particle<std::vector<std::vector<double > > >::setColor(R, G, B, alpha);
+	_Particle<Observations>::setColor(R, G, B, alpha);
 	for(int i=0 ; i<=mNbJoints ; i++)
 	{
 		mIntToJoint[i]->setColor(R, G, B, alpha);

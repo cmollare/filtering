@@ -37,10 +37,10 @@ class FilterInt
 		bool isEnvOk();
 		
 		Config* _env;
-		_Filter<S3DModel, Observations> *filter;
-		_Filter<S3DModelQRS, Observations> *filterQRS;
-		S3DModel *mods;
-		S3DModelQRS *modsQRS;
+		_Filter<S3DModel<Observations>, Observations> *filter;
+		_Filter<S3DModelQRS<Observations>, Observations> *filterQRS;
+		S3DModel<ObsMonoKinect> *mods;
+		S3DModelQRS<ObsMonoKinect> *modsQRS;
 		std::string filterType;
 };
 

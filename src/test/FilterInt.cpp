@@ -70,21 +70,21 @@ void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::str
 	{
 		//S3DViewer<S3DModel> viewer;//Declaration of viewer
 		//viewer.setOptions(true, false, true);
-		mods= new S3DModel(model);
+		mods= new S3DModel<Observations>(model);
 		mods->mapJointToObs(posNames, jtsToPos);
 		
 		
 		if (filterType.compare("partMMSE") == 0)
 		{
-			filter = new PartitionnedMMSE<S3DModel, Observations>(nbParticles, *mods);
+			filter = new PartitionnedMMSE<S3DModel<Observations>, Observations>(nbParticles, *mods);
 		}
 		else if (filterType.compare("part") == 0)
 		{
-			filter = new Partitionned<S3DModel, Observations>(nbParticles, *mods);
+			filter = new Partitionned<S3DModel<Observations>, Observations>(nbParticles, *mods);
 		}
-		std::vector<S3DModel*> particles = filter->getParticleVector();
+		std::vector<S3DModel<Observations>*> particles = filter->getParticleVector();
 		
-		IKSolverPFOrient<S3DModel> iksol(particles, posNames, frame.getFrame());//Declaration of solver
+		IKSolverPFOrient<S3DModel<Observations> > iksol(particles, posNames, frame.getFrame());//Declaration of solver
 		
 		iksol.mapJointToObs(jtsToPos);
 		iksol.initFilter();
@@ -125,21 +125,21 @@ void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::str
 		//S3DViewer<S3DModelQRS> viewer;//Declaration of viewer
 		//viewer.setOptions(true, false, true);
 	
-		modsQRS= new S3DModelQRS(model);
+		modsQRS= new S3DModelQRS<Observations>(model);
 		modsQRS->mapJointToObs(posNames, jtsToPos);
 		
 		
 		if (filterType.compare("partMMSEQRS") == 0)
 		{
-			filterQRS = new PartitionnedMMSE<S3DModelQRS, Observations>(nbParticles, *modsQRS);
+			filterQRS = new PartitionnedMMSE<S3DModelQRS<Observations>, Observations>(nbParticles, *modsQRS);
 		}
 		else if (filterType.compare("partQRS") == 0)
 		{
-			filterQRS = new Partitionned<S3DModelQRS, Observations>(nbParticles, *modsQRS);
+			filterQRS = new Partitionned<S3DModelQRS<Observations>, Observations>(nbParticles, *modsQRS);
 		}
-		std::vector<S3DModelQRS*> particles = filterQRS->getParticleVector();
+		std::vector<S3DModelQRS<Observations>*> particles = filterQRS->getParticleVector();
 		
-		IKSolverPFOrient<S3DModelQRS> iksol(particles, posNames, frame.getFrame());//Declaration of solver
+		IKSolverPFOrient<S3DModelQRS<Observations> > iksol(particles, posNames, frame.getFrame());//Declaration of solver
 		
 		iksol.mapJointToObs(jtsToPos);
 		iksol.initFilter();
