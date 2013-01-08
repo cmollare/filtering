@@ -13,7 +13,7 @@ void ObsMonoKinect::update(std::vector<std::vector<double> >& newObs)
 	mObs=newObs;
 }
 
-int ObsMonoKinect::ObsPerJoint()
+int ObsMonoKinect::obsPerJoint()
 {
 	return 1;
 }

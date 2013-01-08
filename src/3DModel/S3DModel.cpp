@@ -850,54 +850,68 @@ void S3DModel<Observations>::update(int partition)
 template<class Observations>
 void S3DModel<Observations>::estimateLikelihoodAll(Observations& obs)
 {
-	std::map<std::string, int>::iterator it;
-	double distance=0;
-	for (it = mJointNameToPos.begin() ; it != mJointNameToPos.end() ; it++)
+	if(obs.obsPerJoint() == 1)
 	{
-		if ((*it).second != -1)
+		std::vector<std::vector<double> > frame = obs.getFrame();
+		
+		std::map<std::string, int>::iterator it;
+		double distance=0;
+		for (it = mJointNameToPos.begin() ; it != mJointNameToPos.end() ; it++)
 		{
-			double distTemp=0;
-			// Mahalanobis distance
-			Eigen::Vector3d jtPos = this->getJoint((*it).first)->getXYZVect();
-			Eigen::Vector3d jtObs(obs[(*it).second][1], obs[(*it).second][2], obs[(*it).second][3]);
-			Eigen::Vector3d diff = jtPos - jtObs;
-			Eigen::Matrix3d cov;
-			cov.setIdentity();
-			distTemp = diff.transpose()*(cov*diff);
-			distTemp = sqrt(distTemp);
-			distance += distTemp;
+			if ((*it).second != -1)
+			{
+				double distTemp=0;
+				// Mahalanobis distance
+				Eigen::Vector3d jtPos = this->getJoint((*it).first)->getXYZVect();
+				Eigen::Vector3d jtObs(frame[(*it).second][1], frame[(*it).second][2], frame[(*it).second][3]);
+				Eigen::Vector3d diff = jtPos - jtObs;
+				Eigen::Matrix3d cov;
+				cov.setIdentity();
+				distTemp = diff.transpose()*(cov*diff);
+				distTemp = sqrt(distTemp);
+				distance += distTemp;
+			}
 		}
+		this->mCurrentLikelihood = exp(-abs(distance));
 	}
-	this->mCurrentLikelihood = exp(-abs(distance));
+	else
+	{
+		std::cout << "Warning : no defined likelihood for this kind of observation" << std::endl;
+	}
 }
 
 template<class Observations>
 void S3DModel<Observations>::estimateLikelihoodPart(Observations& obs, int partition)
 {
-	std::multimap<int, std::string>::iterator it;
-	double distance=0;
-	it = mOffsetPartToName.find(partition);
-	for (it = mOffsetPartToName.equal_range(partition).first ; it != mOffsetPartToName.equal_range(partition).second ; ++it)
+	if(obs.obsPerJoint() == 1)
 	{
-		if (mJointNameToPos[(*it).second] != -1)
+		std::vector<std::vector<double> > frame = obs.getFrame();
+		
+		std::multimap<int, std::string>::iterator it;
+		double distance=0;
+		it = mOffsetPartToName.find(partition);
+		for (it = mOffsetPartToName.equal_range(partition).first ; it != mOffsetPartToName.equal_range(partition).second ; ++it)
 		{
-			int pos = mJointNameToPos[(*it).second];
-			double distTemp=0;
-			// Mahalanobis distance
-			//cout << (*it).second << "=>" << mPosNames[pos] << endl;
-			Eigen::Vector3d jtPos = this->getJoint((*it).second)->getXYZVect();
-			Eigen::Vector3d jtObs(obs[pos][1], obs[pos][2], obs[pos][3]);
-			Eigen::Vector3d diff = jtPos - jtObs;
-			Eigen::Matrix3d cov;
-			cov.setIdentity();
-			distTemp = diff.transpose()*(cov*diff);
-			distance += distTemp;
+			if (mJointNameToPos[(*it).second] != -1)
+			{
+				int pos = mJointNameToPos[(*it).second];
+				double distTemp=0;
+				// Mahalanobis distance
+				//cout << (*it).second << "=>" << mPosNames[pos] << endl;
+				Eigen::Vector3d jtPos = this->getJoint((*it).second)->getXYZVect();
+				Eigen::Vector3d jtObs(frame[pos][1], frame[pos][2], frame[pos][3]);
+				Eigen::Vector3d diff = jtPos - jtObs;
+				Eigen::Matrix3d cov;
+				cov.setIdentity();
+				distTemp = diff.transpose()*(cov*diff);
+				distance += distTemp;
+			}
 		}
+		if (partition==1)
+			this->mCurrentLikelihood = exp(-abs(distance)*20);
+		else
+			this->mCurrentLikelihood *= exp(-abs(distance)*20);
 	}
-	if (partition==1)
-		this->mCurrentLikelihood = exp(-abs(distance)*20);
-	else
-		this->mCurrentLikelihood *= exp(-abs(distance)*20);
 		
 }
 
@@ -957,7 +971,10 @@ void S3DModel<Observations>::saveResults(ResultParser* resParser)
 	
 	for (int i=0 ; i<mPosNames.size() ; i++)
 	{
-		resParser->saveObs("Obs_" + mPosNames[i], this->mObservations[i]);
+		if (this->mObservations.obsPerJoint() == 1)
+			resParser->saveObs("Obs_" + mPosNames[i], this->mObservations.getFrame()[i]);
+		else
+			std::cout << "Warning no recording defined" << std::endl;
 	}
 }
 

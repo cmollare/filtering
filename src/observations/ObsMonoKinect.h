@@ -9,7 +9,7 @@ class ObsMonoKinect
 		ObsMonoKinect();
 		ObsMonoKinect(std::vector<std::vector<double> >& obs);
 		void update(std::vector<std::vector<double> >& newObs);
-		virtual int ObsPerJoint();
+		virtual int obsPerJoint();
 		std::vector<std::vector<double> > getFrame();
 		
 	protected:
