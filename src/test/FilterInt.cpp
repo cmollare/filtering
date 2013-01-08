@@ -84,7 +84,7 @@ void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::str
 		}
 		std::vector<S3DModel*> particles = filter->getParticleVector();
 		
-		IKSolverPFOrient<S3DModel> iksol(particles, posNames, frame);//Declaration of solver
+		IKSolverPFOrient<S3DModel> iksol(particles, posNames, frame.getFrame());//Declaration of solver
 		
 		iksol.mapJointToObs(jtsToPos);
 		iksol.initFilter();
@@ -139,7 +139,7 @@ void FilterInt<Observations>::init(Observations firstFrame, std::vector<std::str
 		}
 		std::vector<S3DModelQRS*> particles = filterQRS->getParticleVector();
 		
-		IKSolverPFOrient<S3DModelQRS> iksol(particles, posNames, frame);//Declaration of solver
+		IKSolverPFOrient<S3DModelQRS> iksol(particles, posNames, frame.getFrame());//Declaration of solver
 		
 		iksol.mapJointToObs(jtsToPos);
 		iksol.initFilter();
