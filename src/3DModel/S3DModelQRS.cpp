@@ -1,118 +1,122 @@
-#include "S3DModelQRS.h"
+//#include "S3DModelQRS.h"
+#ifdef S3DMODELQRS_H
 
-S3DModelQRS::S3DModelQRS(const Joint* jt) : S3DModel(jt)
+template<class Observations>
+S3DModelQRS<Observations>::S3DModelQRS(const Joint* jt) : S3DModel<Observations>(jt)
 {
-	this->initStatsTool((mNbJoints+1)*6);
+	this->initStatsTool((this->mNbJoints+1)*6);
 }
 
-S3DModelQRS::S3DModelQRS(const S3DModelQRS& model) : S3DModel(model)
+template<class Observations>
+S3DModelQRS<Observations>::S3DModelQRS(const S3DModelQRS<Observations>& model) : S3DModel<Observations>(model)
 {
 }
 
-S3DModelQRS::~S3DModelQRS()
+template<class Observations>
+S3DModelQRS<Observations>::~S3DModelQRS()
 {
 }
 
-
-void S3DModelQRS::sampleFromPrior()
+template<class Observations>
+void S3DModelQRS<Observations>::sampleFromPrior()
 {
 	#if SAMPLING == USE_QUATERNION
 		this->sampleQRS();
-		for (int j=0 ; j < mOrientationVec.size() ; j++)
+		for (int j=0 ; j < this->mOrientationVec.size() ; j++)
 		{
-			mDefaultOrientationVec[j] = (*mOrientationVec[j]); // Base orientation becomes default orientation
-			mDefaultOffsetVec[j] = (*mOffsetVec[j]);  // Base offset becomes default offset
+			this->mDefaultOrientationVec[j] = (*this->mOrientationVec[j]); // Base orientation becomes default orientation
+			this->mDefaultOffsetVec[j] = (*this->mOffsetVec[j]);  // Base offset becomes default offset
 			
-			Eigen::Quaterniond quat = mDefaultOrientationVec[j]; // Mean of orientations == default orientation
+			Eigen::Quaterniond quat = this->mDefaultOrientationVec[j]; // Mean of orientations == default orientation
 			bool invalide = false;
-			Eigen::Vector3d offs = mDefaultOffsetVec[j].vector(); // Mean of offset == default offset
+			Eigen::Vector3d offs = this->mDefaultOffsetVec[j].vector(); // Mean of offset == default offset
 			do
 			{
 				invalide = false;
-				if (mConstOrientVec[j] == ORIENT_CONST_FREE)
+				if (this->mConstOrientVec[j] == ORIENT_CONST_FREE)
 				{
-					(*mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 1, 1);//A modifier suivant les contraintes
+					(*this->mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 1, 1);//A modifier suivant les contraintes
 				}
-				else if(mConstOrientVec[j] == ORIENT_CONST_TWIST)
+				else if(this->mConstOrientVec[j] == ORIENT_CONST_TWIST)
 				{
-					(*mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 0.1, 0.05);
+					(*this->mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 0.1, 0.05);
 				}
-				else if(mConstOrientVec[j] == ORIENT_CONST_FLEX)
+				else if(this->mConstOrientVec[j] == ORIENT_CONST_FLEX)
 				{
-					(*mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 0.1, 1, 0.05);
+					(*this->mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 0.1, 1, 0.05);
 				}
-				else if(mConstOrientVec[j] == ORIENT_CONST_TFLEX)
+				else if(this->mConstOrientVec[j] == ORIENT_CONST_TFLEX)
 				{
-					(*mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 1, 0.1);
+					(*this->mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 1, 0.1);
 				}
-				else if(mConstOrientVec[j] == ORIENT_CONST_BIFLEX)
+				else if(this->mConstOrientVec[j] == ORIENT_CONST_BIFLEX)
 				{
-					(*mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 0.1, 1, 1);
+					(*this->mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 0.1, 1, 1);
 				}
-				else if(mConstOrientVec[j] == ORIENT_CONST_FIXED)
+				else if(this->mConstOrientVec[j] == ORIENT_CONST_FIXED)
 				{
-					(*mOrientationVec[j]) = (*mOrientationVec[j]);
+					(*this->mOrientationVec[j]) = (*this->mOrientationVec[j]);
 				}
 				else
 				{
-					(*mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 1, 1);
+					(*this->mOrientationVec[j])=this->sampleQuasiQuTEM(quat, VARQUATERNION, 1, 1, 1);
 				}
-				mOrientationVec[j]->normalize(); // NORMALIZATION STEP EXTREMELY IMPORTANT
+				this->mOrientationVec[j]->normalize(); // NORMALIZATION STEP EXTREMELY IMPORTANT
 				
 				Eigen::Vector3d tempo;
-				if (mConstOffsetVec[j] == OFFSET_CONST_FREE)
+				if (this->mConstOffsetVec[j] == OFFSET_CONST_FREE)
 				{
 					do
 					{
 						tempo = Eigen::Vector3d(this->quasiRandn()*VAROFFSETFREE, this->quasiRandn()*VAROFFSETFREE, this->quasiRandn()*VAROFFSETFREE) + offs;
 					}
-					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+					while(!this->getJoint(this->mNameVec[j])->checkValidity(tempo));
 				}
-				else if (mConstOffsetVec[j] == OFFSET_CONST_BONE)
+				else if (this->mConstOffsetVec[j] == OFFSET_CONST_BONE)
 				{
 
 					do
 					{
 						tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), 0, 0) + offs;
 					}
-					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+					while(!this->getJoint(this->mNameVec[j])->checkValidity(tempo));
 				}
-				else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARXY)
+				else if (this->mConstOffsetVec[j] == OFFSET_CONST_PLANARXY)
 				{
 					int i=0;
 					do
 					{
 						tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), this->quasiRandn(VAROFFSET), 0) + offs;
 					}
-					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+					while(!this->getJoint(this->mNameVec[j])->checkValidity(tempo));
 				}
-				else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARYZ)
+				else if (this->mConstOffsetVec[j] == OFFSET_CONST_PLANARYZ)
 				{
 					do
 					{
 						tempo = Eigen::Vector3d(0, this->quasiRandn(VAROFFSET), this->quasiRandn(VAROFFSET)) + offs;
 					}
-					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+					while(!this->getJoint(this->mNameVec[j])->checkValidity(tempo));
 				}
-				else if (mConstOffsetVec[j] == OFFSET_CONST_PLANARXZ)
+				else if (this->mConstOffsetVec[j] == OFFSET_CONST_PLANARXZ)
 				{
 					do
 					{
 						tempo = Eigen::Vector3d(this->quasiRandn(VAROFFSET), 0, this->quasiRandn(VAROFFSET)) + offs;
 					}
-					while(!this->getJoint(mNameVec[j])->checkValidity(tempo));
+					while(!this->getJoint(this->mNameVec[j])->checkValidity(tempo));
 				}
-				else if (mConstOffsetVec[j] == OFFSET_CONST_FIXED)
+				else if (this->mConstOffsetVec[j] == OFFSET_CONST_FIXED)
 				{
 					tempo = Eigen::Vector3d(0, 0, 0) + offs;
 				}
-				(*mOffsetVec[j])=Eigen::Translation3d(tempo);//A modifier suivant les contraintes
+				(*this->mOffsetVec[j])=Eigen::Translation3d(tempo);//A modifier suivant les contraintes
 
 				//To avoid infinite and NaN cases
-				invalide |= ((mOffsetVec[j]->x() == std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->y() == std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->z() == std::numeric_limits<double>::infinity()));
-				invalide |= ((mOffsetVec[j]->x() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->y() == -std::numeric_limits<double>::infinity()) || (mOffsetVec[j]->z() == -std::numeric_limits<double>::infinity()));
-				invalide |= ((mOffsetVec[j]->x() != mOffsetVec[j]->x()) || (mOffsetVec[j]->y() != mOffsetVec[j]->y()) || (mOffsetVec[j]->z() != mOffsetVec[j]->z()));
-				invalide |= (mOrientationVec[j]->w() != mOrientationVec[j]->w());
+				invalide |= ((this->mOffsetVec[j]->x() == std::numeric_limits<double>::infinity()) || (this->mOffsetVec[j]->y() == std::numeric_limits<double>::infinity()) || (this->mOffsetVec[j]->z() == std::numeric_limits<double>::infinity()));
+				invalide |= ((this->mOffsetVec[j]->x() == -std::numeric_limits<double>::infinity()) || (this->mOffsetVec[j]->y() == -std::numeric_limits<double>::infinity()) || (this->mOffsetVec[j]->z() == -std::numeric_limits<double>::infinity()));
+				invalide |= ((this->mOffsetVec[j]->x() != this->mOffsetVec[j]->x()) || (this->mOffsetVec[j]->y() != this->mOffsetVec[j]->y()) || (this->mOffsetVec[j]->z() != this->mOffsetVec[j]->z()));
+				invalide |= (this->mOrientationVec[j]->w() != this->mOrientationVec[j]->w());
 			}
 			while(invalide);
 			
@@ -223,22 +227,23 @@ void S3DModelQRS::sampleFromPrior()
 	#endif
 }
 
-void S3DModelQRS::updatePart(int partition)
+template<class Observations>
+void S3DModelQRS<Observations>::updatePart(int partition)
 {
 	#if SAMPLING == USE_QUATERNION
 		this->sampleQRS();
-			std::multimap<int, std::string>::iterator itOff = mOffsetPartToName.find(partition);
-			std::multimap<int, std::string>::iterator itOrient = mOrientPartToName.find(partition);
+			std::multimap<int, std::string>::iterator itOff = this->mOffsetPartToName.find(partition);
+			std::multimap<int, std::string>::iterator itOrient = this->mOrientPartToName.find(partition);
 			
 			//Quaternion sampling
 			for (itOrient = mOrientPartToName.equal_range(partition).first ; itOrient != mOrientPartToName.equal_range(partition).second ; ++itOrient)
 			{
-				int pos = mJointNameToInt[(*itOrient).second];// Retrieve position of the Joint in orientation vectors
+				int pos = this->mJointNameToInt[(*itOrient).second];// Retrieve position of the Joint in orientation vectors
 				
 
 				bool invalide = false;
 				//Eigen::Quaterniond quat = mDefaultOrientationVec[i][pos];
-				Eigen::Quaterniond quat = (*mOrientationVec[pos]); // Mean orientation is the previous orientation
+				Eigen::Quaterniond quat = (*this->mOrientationVec[pos]); // Mean orientation is the previous orientation
 				
 				do
 				{
@@ -493,7 +498,8 @@ void S3DModelQRS::updatePart(int partition)
 		#endif
 }
 
-void S3DModelQRS::estimateMMSE(Eigen::VectorXd& weights, S3DModelQRS** particles, int nbParticles)
+template<class Observations>
+void S3DModelQRS<Observations>::estimateMMSE(Eigen::VectorXd& weights, S3DModelQRS<Observations>** particles, int nbParticles)
 {
 	mObservations = particles[0]->getCurrentObservations();
 	
@@ -517,4 +523,6 @@ void S3DModelQRS::estimateMMSE(Eigen::VectorXd& weights, S3DModelQRS** particles
 		(*offset[i]) = Eigen::Translation3d(tempo);
 	}
 }
+
+#endif
 

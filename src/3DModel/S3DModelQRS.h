@@ -3,7 +3,8 @@
 
 #include "S3DModel.h"
 
-class S3DModelQRS : public S3DModel
+template<class Observations>
+class S3DModelQRS : public S3DModel<Observations>
 {
 	public:
 		S3DModelQRS(const Joint* jt);
@@ -14,5 +15,7 @@ class S3DModelQRS : public S3DModel
 		virtual void updatePart(int partition);
 		virtual void estimateMMSE(Eigen::VectorXd& weights, S3DModelQRS** particles, int nbParticles);
 };
+
+#include "S3DModelQRS.cpp"
 
 #endif

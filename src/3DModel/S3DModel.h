@@ -22,7 +22,8 @@
  * This class also map some informations for efficiency.
  */
 
-class S3DModel : public _Particle<std::vector<std::vector<double > > >, public _Stats
+template<class Observations>
+class S3DModel : public _Particle<Observations>, public _Stats
 {
 	public:
 		EIGEN_MAKE_ALIGNED_OPERATOR_NEW	//For Eigen3
@@ -44,7 +45,7 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, public _
 		 * 
 		 * \param model S3DModel to be copied.
 		 */
-		S3DModel(const S3DModel& model);
+		S3DModel(const S3DModel<Observations>& model);
 		
 		/*!
 		 * \fn ~S3DModel()
@@ -193,16 +194,16 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, public _
 		virtual void updateAll();
 		virtual void updatePart(int partition);
 		virtual void update(int partition=-1);
-		virtual void estimateLikelihoodAll(std::vector<std::vector<double > >& obs);
-		virtual void estimateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition);
-		virtual void estimateLikelihood(std::vector<std::vector<double > >& obs, int partition=-1);
+		virtual void estimateLikelihoodAll(Observations& obs);
+		virtual void estimateLikelihoodPart(Observations& obs, int partition);
+		virtual void estimateLikelihood(Observations& obs, int partition=-1);
 		virtual void estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles);
 		
 		virtual void saveResults(ResultParser* resParser);
 		
 		void mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName);
 		
-		virtual S3DModel& operator =(const S3DModel& part);
+		virtual S3DModel<Observations>& operator =(const S3DModel<Observations>& part);
 		
 	protected:
 	
@@ -291,5 +292,7 @@ class S3DModel : public _Particle<std::vector<std::vector<double > > >, public _
 		std::map<std::string, int> mJointNameToInt; /*!< Name of the Joint to its position in the orientation vector */
 		std::vector<std::string> mPosNames; /*!< Names of observations */
 };
+
+#include "S3DModel.cpp"
 
 #endif

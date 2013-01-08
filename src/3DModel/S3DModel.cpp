@@ -1,11 +1,14 @@
-#include "S3DModel.h"
+//#include "S3DModel.h"
 
-S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double > > >(), _Stats()
+#ifdef S3DMODEL_H
+
+template<class Observations>
+S3DModel<Observations>::S3DModel(const Joint* jt) : _Particle<Observations>(), _Stats()
 {
-	mRootJoint = new Joint(*jt);
-	mNbJoints = -1;
-	mNumberOfPartitions = 0;
-	mIsVisible = true;
+	this->mRootJoint = new Joint(*jt);
+	this->mNbJoints = -1;
+	this->mNumberOfPartitions = 0;
+	this->mIsVisible = true;
 	createMaps();
 	createOrientationVec();
 	createOffsetVec();
@@ -17,13 +20,14 @@ S3DModel::S3DModel(const Joint* jt) : _Particle<std::vector<std::vector<double >
 	
 }
 
-S3DModel::S3DModel(const S3DModel& model) : _Particle<std::vector<std::vector<double > > >(model)
+template<class Observations>
+S3DModel<Observations>::S3DModel(const S3DModel<Observations>& model) : _Particle<Observations>(model)
 {
 	mRootJoint = new Joint(*(model.mRootJoint));
-	mId = -2;
-	mNbJoints = -1;
-	mNumberOfPartitions = 0;
-	mIsVisible = model.mIsVisible;
+	this->mId = -2;
+	this->mNbJoints = -1;
+	this->mNumberOfPartitions = 0;
+	this->mIsVisible = model.mIsVisible;
 	mJointNameToPosName = model.mJointNameToPosName;
 	mJointNameToPos = model.mJointNameToPos;
 	mJointNameToInt = model.mJointNameToInt;
@@ -38,17 +42,20 @@ S3DModel::S3DModel(const S3DModel& model) : _Particle<std::vector<std::vector<do
 	//std::cout << "S3DModel : model index successfully created !" << std::endl;
 }
 
-S3DModel::~S3DModel()
+template<class Observations>
+S3DModel<Observations>::~S3DModel()
 {
 	delete mRootJoint;
 }
 
-Joint* S3DModel::getRootJoint()
+template<class Observations>
+Joint* S3DModel<Observations>::getRootJoint()
 {
 	return mRootJoint;
 }
 
-void S3DModel::createMaps()
+template<class Observations>
+void S3DModel<Observations>::createMaps()
 {
 	mStringToJoint.clear();
 	mIntToJoint.clear();
@@ -69,67 +76,80 @@ void S3DModel::createMaps()
 	}
 }
 
-int S3DModel::getNumberJoint()
+template<class Observations>
+int S3DModel<Observations>::getNumberJoint()
 {
 	return mNbJoints+1;
 }
 
-Joint* S3DModel::getJoint(std::string jtName)
+template<class Observations>
+Joint* S3DModel<Observations>::getJoint(std::string jtName)
 {
 	return mStringToJoint[jtName];
 }
 
-vector<Eigen::Quaterniond*, Eigen::aligned_allocator<Eigen::Quaterniond*> > S3DModel::getOrientationVec()
+template<class Observations>
+vector<Eigen::Quaterniond*, Eigen::aligned_allocator<Eigen::Quaterniond*> > S3DModel<Observations>::getOrientationVec()
 {
 	return mOrientationVec;
 }
 
-vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > S3DModel::getOffsetVector()
+template<class Observations>
+vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > S3DModel<Observations>::getOffsetVector()
 {
 	return mOffsetVec;
 }
 
-vector<Eigen::Quaterniond, Eigen::aligned_allocator<Eigen::Quaterniond> > S3DModel::getDefaultOrientationVec()
+template<class Observations>
+vector<Eigen::Quaterniond, Eigen::aligned_allocator<Eigen::Quaterniond> > S3DModel<Observations>::getDefaultOrientationVec()
 {
 	return mDefaultOrientationVec;
 }
-		
-vector<Eigen::Translation3d, Eigen::aligned_allocator<Eigen::Translation3d> > S3DModel::getDefaultOffsetVector()
+
+template<class Observations>		
+vector<Eigen::Translation3d, Eigen::aligned_allocator<Eigen::Translation3d> > S3DModel<Observations>::getDefaultOffsetVector()
 {
 	return mDefaultOffsetVec;
 }
 
-vector<std::string> S3DModel::getNameVec()
+template<class Observations>
+vector<std::string> S3DModel<Observations>::getNameVec()
 {
 	return mNameVec;
 }
 
-vector<std::string> S3DModel::getConstOffsetVec()
+template<class Observations>
+vector<std::string> S3DModel<Observations>::getConstOffsetVec()
 {
 	return mConstOffsetVec;
 }
 
-vector<std::string> S3DModel::getConstOrientVec()
+template<class Observations>
+vector<std::string> S3DModel<Observations>::getConstOrientVec()
 {
 	return mConstOrientVec;
 }
 
-std::multimap<int, std::string> S3DModel::getOffsetPartitionMultimap()
+template<class Observations>
+std::multimap<int, std::string> S3DModel<Observations>::getOffsetPartitionMultimap()
 {
 	return mOffsetPartToName;
 }
 
-std::multimap<int, std::string> S3DModel::getOrientPartitionMultimap()
+template<class Observations>
+std::multimap<int, std::string> S3DModel<Observations>::getOrientPartitionMultimap()
 {
 	return mOrientPartToName;
 }
 
-std::map<std::string, int> S3DModel::getJointToIntMap()
+template<class Observations>
+std::map<std::string, int> S3DModel<Observations>::getJointToIntMap()
 {
 	return mJointNameToInt;
 }
 
-void S3DModel::setColor(float R, float G, float B, float alpha)
+template<class Observations>
+void S3DModel<Observations>::setColor(float R, float G, float B, float alpha)
 {
 	_Particle<std::vector<std::vector<double > > >::setColor(R, G, B, alpha);
 	for(int i=0 ; i<=mNbJoints ; i++)
@@ -138,7 +158,8 @@ void S3DModel::setColor(float R, float G, float B, float alpha)
 	}
 }
 
-void S3DModel::sampleFromPrior()
+template<class Observations>
+void S3DModel<Observations>::sampleFromPrior()
 {
 	#if SAMPLING == USE_QUATERNION
 		for (int j=0 ; j < mOrientationVec.size() ; j++)
@@ -333,7 +354,8 @@ void S3DModel::sampleFromPrior()
 	#endif
 }
 
-void S3DModel::updateAll()
+template<class Observations>
+void S3DModel<Observations>::updateAll()
 {
 	#if SAMPLING == USE_QUATERNION
 	
@@ -542,7 +564,8 @@ void S3DModel::updateAll()
 	#endif
 }
 
-void S3DModel::updatePart(int partition)
+template<class Observations>
+void S3DModel<Observations>::updatePart(int partition)
 {
 	#if SAMPLING == USE_QUATERNION
 		//cout << "WHOOT" << endl;
@@ -811,7 +834,8 @@ void S3DModel::updatePart(int partition)
 	#endif
 }
 
-void S3DModel::update(int partition)
+template<class Observations>
+void S3DModel<Observations>::update(int partition)
 {
 	if (partition==-1)
 	{
@@ -823,7 +847,8 @@ void S3DModel::update(int partition)
 	}
 }
 
-void S3DModel::estimateLikelihoodAll(std::vector<std::vector<double > >& obs)
+template<class Observations>
+void S3DModel<Observations>::estimateLikelihoodAll(Observations& obs)
 {
 	std::map<std::string, int>::iterator it;
 	double distance=0;
@@ -843,10 +868,11 @@ void S3DModel::estimateLikelihoodAll(std::vector<std::vector<double > >& obs)
 			distance += distTemp;
 		}
 	}
-	mCurrentLikelihood = exp(-abs(distance));
+	this->mCurrentLikelihood = exp(-abs(distance));
 }
 
-void S3DModel::estimateLikelihoodPart(std::vector<std::vector<double > >& obs, int partition)
+template<class Observations>
+void S3DModel<Observations>::estimateLikelihoodPart(Observations& obs, int partition)
 {
 	std::multimap<int, std::string>::iterator it;
 	double distance=0;
@@ -869,15 +895,16 @@ void S3DModel::estimateLikelihoodPart(std::vector<std::vector<double > >& obs, i
 		}
 	}
 	if (partition==1)
-		mCurrentLikelihood = exp(-abs(distance)*20);
+		this->mCurrentLikelihood = exp(-abs(distance)*20);
 	else
-		mCurrentLikelihood *= exp(-abs(distance)*20);
+		this->mCurrentLikelihood *= exp(-abs(distance)*20);
 		
 }
 
-void S3DModel::estimateLikelihood(std::vector<std::vector<double > >& obs, int partition)
+template<class Observations>
+void S3DModel<Observations>::estimateLikelihood(Observations& obs, int partition)
 {
-	mObservations = obs;
+	this->mObservations = obs;
 	if (partition==-1)
 	{
 		this->estimateLikelihoodAll(obs);
@@ -888,9 +915,10 @@ void S3DModel::estimateLikelihood(std::vector<std::vector<double > >& obs, int p
 	}
 }
 
-void S3DModel::estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles)
+template<class Observations>
+void S3DModel<Observations>::estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int nbParticles)
 {
-	mObservations = particles[0]->getCurrentObservations();
+	this->mObservations = particles[0]->getCurrentObservations();
 	
 	std::vector<Eigen::Quaterniond*, Eigen::aligned_allocator<Eigen::Quaterniond*> > orient = this->getOrientationVec();
 	std::vector<Eigen::Translation3d*, Eigen::aligned_allocator<Eigen::Translation3d*> > offset = this->getOffsetVector();
@@ -913,7 +941,8 @@ void S3DModel::estimateMMSE(Eigen::VectorXd& weights, S3DModel** particles, int 
 	}
 }
 
-void S3DModel::saveResults(ResultParser* resParser)
+template<class Observations>
+void S3DModel<Observations>::saveResults(ResultParser* resParser)
 {
 	std::map<std::string, int>::iterator it;
 	
@@ -928,11 +957,12 @@ void S3DModel::saveResults(ResultParser* resParser)
 	
 	for (int i=0 ; i<mPosNames.size() ; i++)
 	{
-		resParser->saveObs("Obs_" + mPosNames[i], mObservations[i]);
+		resParser->saveObs("Obs_" + mPosNames[i], this->mObservations[i]);
 	}
 }
 
-void S3DModel::mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName)
+template<class Observations>
+void S3DModel<Observations>::mapJointToObs(std::vector<std::string> posNames, std::map<std::string, std::string> jointNameToPosName)
 {
 	mPosNames = posNames;
 	
@@ -964,9 +994,10 @@ void S3DModel::mapJointToObs(std::vector<std::string> posNames, std::map<std::st
 	}
 }
 
-S3DModel& S3DModel::operator =(const S3DModel& part)
+template<class Observations>
+S3DModel<Observations>& S3DModel<Observations>::operator =(const S3DModel<Observations>& part)
 {
-	_Particle<std::vector<std::vector<double > > >::operator =(part);
+	_Particle<Observations>::operator =(part);
 	for (int j=0 ; j < this->mOrientationVec.size() ; j++)
 	{
 		(*this->mOrientationVec[j])=(*(part.mOrientationVec[j]));
@@ -976,7 +1007,8 @@ S3DModel& S3DModel::operator =(const S3DModel& part)
 	return *this;
 }
 
-void S3DModel::createMaps(vector<Joint*>& jts)
+template<class Observations>
+void S3DModel<Observations>::createMaps(vector<Joint*>& jts)
 {
 	if (jts.size() > 0)
 	{
@@ -996,7 +1028,8 @@ void S3DModel::createMaps(vector<Joint*>& jts)
 	}
 }
 
-void S3DModel::createOrientationVec()
+template<class Observations>
+void S3DModel<Observations>::createOrientationVec()
 {
 	if (mNbJoints != -1)
 	{
@@ -1007,7 +1040,8 @@ void S3DModel::createOrientationVec()
 	}
 }
 
-void S3DModel::createOffsetVec()
+template<class Observations>
+void S3DModel<Observations>::createOffsetVec()
 {
 	if (mNbJoints != -1)
 	{
@@ -1018,7 +1052,8 @@ void S3DModel::createOffsetVec()
 	}
 }
 
-void S3DModel::createNameVec()
+template<class Observations>
+void S3DModel<Observations>::createNameVec()
 {
 	if (mNbJoints != -1)
 	{
@@ -1029,7 +1064,8 @@ void S3DModel::createNameVec()
 	}
 }
 
-void S3DModel::createConstraintVecs()
+template<class Observations>
+void S3DModel<Observations>::createConstraintVecs()
 {
 	if (mNbJoints != -1)
 	{
@@ -1041,7 +1077,8 @@ void S3DModel::createConstraintVecs()
 	}
 }
 
-void S3DModel::createDefaultVecs()
+template<class Observations>
+void S3DModel<Observations>::createDefaultVecs()
 {
 	if (mNbJoints != -1)
 	{
@@ -1053,7 +1090,8 @@ void S3DModel::createDefaultVecs()
 	}
 }
 
-void S3DModel::createPartitionMultimaps()
+template<class Observations>
+void S3DModel<Observations>::createPartitionMultimaps()
 {
 	if (mNbJoints != -1)
 	{
@@ -1064,10 +1102,12 @@ void S3DModel::createPartitionMultimaps()
 			mOffsetPartToName.insert(pair<int, std::string>(offsetPart, mIntToJoint[i]->getName()));
 			mOrientPartToName.insert(pair<int, std::string>(orientPart, mIntToJoint[i]->getName()));
 			
-			if(offsetPart > mNumberOfPartitions)
-				mNumberOfPartitions = offsetPart;
-			if(orientPart > mNumberOfPartitions)
-				mNumberOfPartitions = orientPart;
+			if(offsetPart > this->mNumberOfPartitions)
+				this->mNumberOfPartitions = offsetPart;
+			if(orientPart > this->mNumberOfPartitions)
+				this->mNumberOfPartitions = orientPart;
 		}
 	}
 }
+
+#endif
