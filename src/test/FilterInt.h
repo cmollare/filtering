@@ -38,7 +38,7 @@ class FilterInt
 		
 		Config* _env;
 		_Filter<Particles, Observations> *filter;
-		//_Filter<Particles, Observations> *filterQRS;
+		S3DViewer<Particles, Observations> *viewer;
 		Particles *mods;
 
 		std::string filterType;

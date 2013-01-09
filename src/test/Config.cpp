@@ -2,7 +2,7 @@
 
 Config::Config(int argc, char ** argv)
 {
-	if (argc<=4)
+	/*if (argc<=4)
 		_confok = false;
 	else
 	{
@@ -35,8 +35,11 @@ Config::Config(int argc, char ** argv)
 			
 			numArg+=2;
 		}
-	}
+	}*/
 	
+	_nbParticles=200;//TEMPO
+	_typeFilter="partMMSE";//TEMPO
+	_confok=true;
 	
 	//cout << "argc = " << argc << endl;
 }

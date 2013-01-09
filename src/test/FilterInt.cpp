@@ -17,6 +17,7 @@ FilterInt<Observations, Particles>::FilterInt(int argc, char ** argv)
 	
 	filter=NULL;
 	mods=NULL;
+	viewer=NULL;
 }
 
 template<class Observations, class Particles>
@@ -24,6 +25,7 @@ FilterInt<Observations, Particles>::~FilterInt()
 {
 	if (filter) delete filter;
 	if (mods) delete mods;
+	if (viewer) delete viewer;
 	
 	delete _env;
 }
@@ -63,8 +65,8 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	filterType = _env->getFilterType();
 	
 
-	//S3DViewer<S3DModel> viewer;//Declaration of viewer
-	//viewer.setOptions(true, false, true);
+	viewer = new S3DViewer<Particles, Observations>();//Declaration of viewer
+	viewer->setOptions(true, false, true);
 	mods= new Particles(model);
 	mods->mapJointToObs(posNames, jtsToPos);
 		
@@ -83,10 +85,10 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	
 	iksol.mapJointToObs(jtsToPos);
 	iksol.initFilter();
-	//viewer.init();
+	viewer->init();
 	
-	//viewer.initModels(particles);
-	//viewer.initObservations(fileParser->getJointNames(), frame);
+	viewer->initModels(particles);
+	//viewer->initObservations(posNames, frame);
 	iksol.computeLikelihood();
 	
 	bool continuer = true;

@@ -24,7 +24,7 @@ using namespace Ogre;
  * 
  */
 
-template<class Model>
+template<class Model, class Observations>
 class S3DViewer
 {
 public:

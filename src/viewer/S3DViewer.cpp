@@ -1,15 +1,15 @@
 #ifdef S3DVIEWER_H
 
-template<class Model>
-S3DViewer<Model>::S3DViewer() : mRoot(0)
+template<class Model, class Observations>
+S3DViewer<Model, Observations>::S3DViewer() : mRoot(0)
 {
 	this->mDisplayJoint = true;
 	this->mDisplayBone = true;
 	this->mDisplayAxis = true;
 }
 
-template<class Model>
-S3DViewer<Model>::~S3DViewer()
+template<class Model, class Observations>
+S3DViewer<Model, Observations>::~S3DViewer()
 {
 	//ajouter les destructions des Line3D !!!
 	delete this->mInputListener;
@@ -17,8 +17,8 @@ S3DViewer<Model>::~S3DViewer()
     delete this->mLogMgr;
 }
 
-template<class Model>
-bool S3DViewer<Model>::init()
+template<class Model, class Observations>
+bool S3DViewer<Model, Observations>::init()
 {
 	this->mLogMgr = new Ogre::LogManager();
 	Ogre::LogManager::getSingleton().createLog("../config/Ogre.log", true, false, false);
@@ -78,8 +78,8 @@ bool S3DViewer<Model>::init()
 	return true;
 }
 
-template<class Model>
-bool S3DViewer<Model>::start()
+template<class Model, class Observations>
+bool S3DViewer<Model, Observations>::start()
 {
 	
 	while(true)
@@ -96,8 +96,8 @@ bool S3DViewer<Model>::start()
     return true;
 }
 
-template<class Model>
-bool S3DViewer<Model>::isRendering()
+template<class Model, class Observations>
+bool S3DViewer<Model, Observations>::isRendering()
 {
 	Ogre::WindowEventUtilities::messagePump();
 	 
@@ -110,15 +110,15 @@ bool S3DViewer<Model>::isRendering()
 	return true;
 }
 
-template<class Model>
-void S3DViewer<Model>::createFrameListener()
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::createFrameListener()
 {
     this->mInputListener = new InputListener(mSceneMgr, mWindow, mCamera);
     this->mRoot->addFrameListener(mInputListener);
 }
 
-template<class Model>
-void S3DViewer<Model>::displaySampling(Eigen::Quaternionf quat)
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::displaySampling(Eigen::Quaternionf quat)
 {
 	std::ostringstream oss;
 	Ogre::Vector3 vec(quat.x(), quat.y(), quat.z());
@@ -129,16 +129,16 @@ void S3DViewer<Model>::displaySampling(Eigen::Quaternionf quat)
 	node->attachObject(createAxis(oss.str(),1));
 }
 
-template<class Model>
-void S3DViewer<Model>::setOptions(bool displayJoint, bool displayAxis, bool displayBone)
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::setOptions(bool displayJoint, bool displayAxis, bool displayBone)
 {
 	this->mDisplayJoint = displayJoint;
 	this->mDisplayBone = displayBone;
 	this->mDisplayAxis = displayAxis;
 }
 
-template<class Model>
-void S3DViewer<Model>::initModels(std::vector<Model*>& models)
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::initModels(std::vector<Model*>& models)
 {
 	this->mLine3DToSNName.clear();
 	this->mModelSNNames.clear();
@@ -208,8 +208,8 @@ void S3DViewer<Model>::initModels(std::vector<Model*>& models)
 
 }
 
-template<class Model>
-void S3DViewer<Model>::initObservations(std::vector<std::string> jtNames, std::vector<std::vector<double> > frame)
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::initObservations(std::vector<std::string> jtNames, std::vector<std::vector<double> > frame)
 {
 	this->mObsNameVec = jtNames;
 	this->mObsCurrentFrame = frame;
@@ -230,8 +230,8 @@ void S3DViewer<Model>::initObservations(std::vector<std::string> jtNames, std::v
 	}
 }
 
-template<class Model>
-void S3DViewer<Model>::update(std::vector<Model*>& models, std::vector<std::vector<double> >& frame)
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::update(std::vector<Model*>& models, std::vector<std::vector<double> >& frame)
 {
 	for (int i=0 ; i < models.size() ; i++)
 	{
@@ -261,8 +261,8 @@ void S3DViewer<Model>::update(std::vector<Model*>& models, std::vector<std::vect
 	this->updateObs(frame);
 }
 
-template<class Model>
-void S3DViewer<Model>::initModels(std::vector<Joint*>& jts, SceneNode *node, int modelNum, std::map<std::string, std::string>& snNames)
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::initModels(std::vector<Joint*>& jts, SceneNode *node, int modelNum, std::map<std::string, std::string>& snNames)
 {
 	if (jts.size()>0)
 	{
@@ -317,8 +317,8 @@ void S3DViewer<Model>::initModels(std::vector<Joint*>& jts, SceneNode *node, int
 	}
 }
 
-template<class Model>
-void S3DViewer<Model>::defineMaterials()
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::defineMaterials()
 {	
 	ResourceGroupManager::getSingleton().createResourceGroup("axis");
 	MaterialPtr myManualObjectMaterial = MaterialManager::getSingleton().create("Red","axis", true);
@@ -355,8 +355,8 @@ void S3DViewer<Model>::defineMaterials()
 	myManualObjectMaterial->setSceneBlending(SBF_SOURCE_ALPHA, SBF_ONE);
 }
 
-template<class Model>
-ManualObject* S3DViewer<Model>::createAxis(const std::string& strName, float scale)
+template<class Model, class Observations>
+ManualObject* S3DViewer<Model, Observations>::createAxis(const std::string& strName, float scale)
 {
 	ManualObject* manual = this->mSceneMgr->createManualObject(strName);
  
@@ -379,8 +379,8 @@ ManualObject* S3DViewer<Model>::createAxis(const std::string& strName, float sca
 	return manual;
 }
 
-template<class Model>
-void S3DViewer<Model>::updateLine3D()
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::updateLine3D()
 {
 	std::map<Line3D*, std::string>::iterator it;
 	for (it = this->mLine3DToSNName.begin() ; it != this->mLine3DToSNName.end() ; it++)
@@ -392,8 +392,8 @@ void S3DViewer<Model>::updateLine3D()
 	}
 }
 
-template<class Model>
-void S3DViewer<Model>::updateObs(std::vector<std::vector<double> >& frame)
+template<class Model, class Observations>
+void S3DViewer<Model, Observations>::updateObs(std::vector<std::vector<double> >& frame)
 {
 	this->mObsCurrentFrame = frame;
 	
