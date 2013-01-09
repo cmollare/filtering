@@ -92,20 +92,20 @@ public:
     void initModels(std::vector<Model*>& models);
     
     /*!
-     * \fn void initObservations(std::vector<std::string> jtNames, std::vector<std::vector<double> > frame)
+     * \fn void initObservations(std::vector<std::string> jtNames, Observations& obs)
      * \brief Initiate display of observations.
      * \param jtNames Joint names.
-     * \param frame First frame.
+     * \param obs First frame.
      */
-    void initObservations(std::vector<std::string> jtNames, std::vector<std::vector<double> > frame);
+    void initObservations(std::vector<std::string> jtNames,  Observations& obs);
     
     /*!
-     * \fn void update(std::vector<Model*>& models, std::vector<std::vector<double> >& frame)
+     * \fn void update(std::vector<Model*>& models,  Observations& obs)
      * \brief Update diplaying.
      * \param models Updated models.
-     * \param frame New frame.
+     * \param obs New frame.
      */
-    void update(std::vector<Model*>& models, std::vector<std::vector<double> >& frame);
+    void update(std::vector<Model*>& models, Observations& obs);
     
     //debug functions
     /*!
@@ -159,11 +159,11 @@ private:
 	void updateLine3D();
 	
 	/*!
-	 * \fn void updateObs(std::vector<std::vector<double> >& frame)
+	 * \fn void updateObs(Observations& obs)
 	 * \brief Update observations.
-	 * \param frame Nw frame.
+	 * \param obs New frame.
 	 */
-	void updateObs(std::vector<std::vector<double> >& frame);
+	void updateObs(Observations& obs);
 	
     Ogre::Root *mRoot; /*!< Ogre::Root */
     Ogre::RenderWindow* mWindow; /*!< Ogre::RenderWindow */

@@ -3,6 +3,7 @@
 fonction estimateLikelihoodAll (S3DModel) : ajouter la prise en comtpe du cas multi-kinects
 fonction estimateLikelihoodPart (S3DModel) : idem
 fonction saveResults (S3DModel) : idem
+fonction updateObs et initObservations (S3DViewer) : idem
 
 intégrer la class Observation dans les particules.
 faire une class pour les observations multi-kinect

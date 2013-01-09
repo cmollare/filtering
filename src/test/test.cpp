@@ -30,7 +30,7 @@
 using namespace std;
 
 //../bin/filtering -N 500 -type "partMMSE"
-int main(int argc, char ** argv)
+int main(int argc, char** argv)
 {
 	FilterInt<ObsMonoKinect, S3DModel<ObsMonoKinect> > filter(argc, argv);
 	
@@ -41,8 +41,11 @@ int main(int argc, char ** argv)
 		
 		filter.init(fileParser->getFirstFrame(), fileParser->getJointNames());
 		
-		filter.update(fileParser->getNextFrame());
-		
+		for (int i=0 ; i<nbFrames ; i++)
+		{
+			std::cout << "frame : " << i << std::endl;
+			filter.update(fileParser->getNextFrame());
+		}
 	}
 	return 0;
 }

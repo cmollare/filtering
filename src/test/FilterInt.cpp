@@ -88,7 +88,7 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	viewer->init();
 	
 	viewer->initModels(particles);
-	//viewer->initObservations(posNames, frame);
+	viewer->initObservations(posNames, frame);
 	iksol.computeLikelihood();
 	
 	bool continuer = true;
@@ -111,8 +111,9 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 			filter->init(frame);
 			step = "Filter";
 			//nbFrames--;
-			//viewer.update(particles, frame);
+			viewer->update(particles, frame);
 			//continuer = viewer.isRendering();
+			viewer->isRendering();
 			continuer=false;
 		}
 	}
@@ -121,6 +122,9 @@ template<class Observations, class Particles>
 void FilterInt<Observations, Particles>::update(Observations frame)
 {
 	filter->step(frame);
+	std::vector<Particles*> particles = filter->getParticleVector();
+	viewer->update(particles, frame);
+	viewer->isRendering();
 }
 
 template<class Observations, class Particles>

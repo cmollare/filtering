@@ -209,29 +209,38 @@ void S3DViewer<Model, Observations>::initModels(std::vector<Model*>& models)
 }
 
 template<class Model, class Observations>
-void S3DViewer<Model, Observations>::initObservations(std::vector<std::string> jtNames, std::vector<std::vector<double> > frame)
+void S3DViewer<Model, Observations>::initObservations(std::vector<std::string> jtNames, Observations& obs)
 {
-	this->mObsNameVec = jtNames;
-	this->mObsCurrentFrame = frame;
-	this->mObservationSNNames.clear();
-	
-	Ogre::SceneNode *obsNode = mSceneMgr->getSceneNode("Observations");
-	
-	for (int i=0 ; i<mObsNameVec.size() ; i++)
+	if(obs.obsPerJoint() == 1)
 	{
-		ostringstream oss;
-		this->mObsMap[mObsNameVec[i]]=i;
-		oss << "obs_" << mObsNameVec[i];
-		Ogre::SceneNode *tempoNode = obsNode->createChildSceneNode(oss.str(), Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
-		this->mObservationSNNames.push_back(oss.str());
-		oss.clear();
-		oss << "axisObs_" << this->mObsNameVec[i];
-		tempoNode->attachObject(createAxis(oss.str()));
+		std::vector<std::vector<double> > frame = obs.getFrame();
+		
+		this->mObsNameVec = jtNames;
+		this->mObsCurrentFrame = frame;
+		this->mObservationSNNames.clear();
+		
+		Ogre::SceneNode *obsNode = mSceneMgr->getSceneNode("Observations");
+		
+		for (int i=0 ; i<mObsNameVec.size() ; i++)
+		{
+			ostringstream oss;
+			this->mObsMap[mObsNameVec[i]]=i;
+			oss << "obs_" << mObsNameVec[i];
+			Ogre::SceneNode *tempoNode = obsNode->createChildSceneNode(oss.str(), Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
+			this->mObservationSNNames.push_back(oss.str());
+			oss.clear();
+			oss << "axisObs_" << this->mObsNameVec[i];
+			tempoNode->attachObject(createAxis(oss.str()));
+		}
+	}
+	else
+	{
+		std::cout << "Warning : observations not supported by the viewer" << std::endl;
 	}
 }
 
 template<class Model, class Observations>
-void S3DViewer<Model, Observations>::update(std::vector<Model*>& models, std::vector<std::vector<double> >& frame)
+void S3DViewer<Model, Observations>::update(std::vector<Model*>& models, Observations& obs)
 {
 	for (int i=0 ; i < models.size() ; i++)
 	{
@@ -258,7 +267,7 @@ void S3DViewer<Model, Observations>::update(std::vector<Model*>& models, std::ve
 		}
 	}
 	this->updateLine3D();
-	this->updateObs(frame);
+	this->updateObs(obs);
 }
 
 template<class Model, class Observations>
@@ -393,16 +402,24 @@ void S3DViewer<Model, Observations>::updateLine3D()
 }
 
 template<class Model, class Observations>
-void S3DViewer<Model, Observations>::updateObs(std::vector<std::vector<double> >& frame)
+void S3DViewer<Model, Observations>::updateObs(Observations& obs)
 {
-	this->mObsCurrentFrame = frame;
-	
-	Ogre::SceneNode *obsNode = this->mSceneMgr->getSceneNode("Observations");
-	
-	for (int i=0 ; i<this->mObservationSNNames.size() ; i++)
+	if (obs.obsPerJoint() == 1)
 	{
-		Ogre::SceneNode *obsNode = this->mSceneMgr->getSceneNode(mObservationSNNames[i]);
-		obsNode->setPosition(Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
+		std::vector<std::vector<double> > frame = obs.getFrame();
+		this->mObsCurrentFrame = frame;
+		
+		Ogre::SceneNode *obsNode = this->mSceneMgr->getSceneNode("Observations");
+		
+		for (int i=0 ; i<this->mObservationSNNames.size() ; i++)
+		{
+			Ogre::SceneNode *obsNode = this->mSceneMgr->getSceneNode(mObservationSNNames[i]);
+			obsNode->setPosition(Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
+		}
+	}
+	else
+	{
+		std::cout << "Warning : observation not supported by viewer" << std::endl;
 	}
 }
 
