@@ -29,7 +29,7 @@ template<class Observations, class Particles>
 class FilterInt
 {
 	public:
-		FilterInt(int argc, char ** argv);
+		FilterInt(int argc, char** argv);
 		~FilterInt();
 		void init(Observations firstFrame, std::vector<std::string>& posNames);
 		void update(Observations frame);
