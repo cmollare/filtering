@@ -1,4 +1,4 @@
-
+faire la classe interace pour le parsing .yjt
 
 fonction estimateLikelihoodAll (S3DModel) : ajouter la prise en comtpe du cas multi-kinects
 fonction estimateLikelihoodPart (S3DModel) : idem
