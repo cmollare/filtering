@@ -294,3 +294,125 @@ int CheckSum(int* pData,int DataSizex4B)
 	}
 	return XorRes;
 }
+
+float TabAverage(const std::vector<float> &Src)
+{
+	double Sum = 0;
+	for(int i=0;i<Src.size();i++)
+	{
+		Sum += Src[i];
+	}
+	if(Src.size() != 0)
+	{
+		Sum /= Src.size();
+	}
+	return (float)Sum;
+}
+
+void TabPrintf(float* pVals,int NbVals)
+{
+	for(int i=0;i<NbVals;i++)printf("%1.2f ",pVals[i]);printf("\n");
+}
+
+void TabPrintf(std::vector<float> DistsAll,const char *VarName,bool isReturn,const char separator,int precision)
+{
+	char pFormat[32];
+	char pFormatAll[128];
+	sprintf(pFormat,"%%1.%df",precision);
+	sprintf(pFormatAll,"%s%c",pFormat,separator);
+	if(VarName)
+	{
+		printf("%s%c",VarName,separator);
+	}
+	for(int i=0;i<DistsAll.size();i++)printf(pFormatAll,DistsAll[i]);
+	if(isReturn)printf("\n");
+}
+//--------------------------------------------------------------------------------------------------------------
+void TabPrintf(std::vector<double> DistsAll,const char *VarName,bool isReturn,const char separator,int precision)
+{
+	char pFormat[32];
+	char pFormatAll[128];
+	sprintf(pFormat,"%%1.%df",precision);
+	sprintf(pFormatAll,"%s%c",pFormat,separator);
+	if(VarName)
+	{
+		printf("%s%c",VarName,separator);
+	}
+	for(int i=0;i<DistsAll.size();i++)printf(pFormatAll,DistsAll[i]);
+	if(isReturn)printf("\n");
+}
+//--------------------------------------------------------------------------------------------------------------
+void TabPrintf(std::vector<int> DistsAll,const char *VarName,bool isReturn,const char separator)
+{
+	for(int i=0;i<DistsAll.size();i++)printf("%d%c",DistsAll[i],separator);
+	if(isReturn)printf("\n");
+}
+//--------------------------------------------------------------------------------------------------------------
+void TabPrintf(std::vector<unsigned char> DistsAll,const char *VarName,bool isReturn,const char separator)
+{
+	for(int i=0;i<DistsAll.size();i++)printf("%d%c",DistsAll[i],separator);
+	if(isReturn)printf("\n");
+}
+//--------------------------------------------------------------------------------------------------------------
+void TabPrintf(std::vector<std::string> Names,const char *VarName,const char separator,bool isReturn)
+{
+	cout << VarName << separator;
+	for(int i=0;i<Names.size();i++)
+	{
+		cout << Names[i] << separator;
+	}
+	if(isReturn)
+	{
+		cout << endl;
+	}
+}
+
+string TabStream(std::vector<float> DistsAll,const char *VarName,bool isReturn,const char separator,int precision)
+{
+	stringstream sstr;
+	if(VarName)
+	{
+		sstr << VarName << separator;
+	}
+	if(DistsAll.size() > 0)
+	{
+		sstr << fixed << setprecision(precision) << DistsAll[0];
+	}
+	for(int i=1;i<DistsAll.size();i++)
+	{
+		sstr << separator << fixed << setprecision(precision) << DistsAll[i];
+	}
+	if(isReturn)
+	{
+		sstr << endl;
+	}
+	return sstr.str();
+}
+//--------------------------------------------------------------------------------------------------------------
+string TabStream(std::vector<string> DistsAll,const char separator)
+{
+	stringstream sstr;
+	if(DistsAll.size() > 0)
+	{
+		sstr << DistsAll[0];
+	}
+	for(int i=1;i<DistsAll.size();i++)
+	{
+		sstr << separator << DistsAll[i];
+	}
+	return sstr.str();
+}
+//--------------------------------------------------------------------------------------------------------------
+string TabStream(std::vector<int> DistsAll,const char separator)
+{
+	stringstream sstr;
+	if(DistsAll.size() > 0)
+	{
+		sstr << DistsAll[0];
+	}
+	for(int i=1;i<DistsAll.size();i++)
+	{
+		sstr << separator << DistsAll[i];
+	}
+	return sstr.str();
+}

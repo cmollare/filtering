@@ -2,6 +2,7 @@
 #define MIXEDFILEMANAGER_C_H
 
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -87,5 +88,17 @@ std::ostream& operator<<(std::ostream& out, const std::vector<myType>& Vector)
 	}
 	return out;
 }
+
+float TabAverage(const std::vector<float> &Src);
+
+void TabPrintf(float* pVals,int NbVals);
+//void TabPrintf(std::vector<float> DistsAll);
+void TabPrintf(std::vector<unsigned char> DistsAll,const char *VarName = NULL,bool isReturn = true,const char separator = ',');
+void TabPrintf(std::vector<int> DistsAll,const char *VarName = NULL,bool isReturn = true,const char separator = ',');
+void TabPrintf(std::vector<float> DistsAll,const char *VarName = NULL,bool isReturn = true,const char separator = ',',int precision = 3);
+
+string TabStream(std::vector<float> DistsAll,const char *VarName,bool isReturn,const char separator,int precision);
+string TabStream(std::vector<string> DistsAll,const char separator);
+string TabStream(std::vector<int> DistsAll,const char separator);//can templetise int string but not float
 
 #endif
