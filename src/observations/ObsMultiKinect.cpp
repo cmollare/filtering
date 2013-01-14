@@ -24,6 +24,5 @@ std::vector<std::vector<std::vector<double> > > ObsMultiKinect::getMultiFrame()
 
 std::vector<std::vector<double> > ObsMultiKinect::getFrame()
 {
-	std::vector<std::vector<double> > dummy;
-	return dummy;
+	return mObs[0];
 }

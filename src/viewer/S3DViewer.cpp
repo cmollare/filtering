@@ -235,7 +235,36 @@ void S3DViewer<Model, Observations>::initObservations(std::vector<std::string> j
 	}
 	else
 	{
-		std::cout << "Warning : observations not supported by the viewer" << std::endl;
+		std::vector<std::vector<std::vector<double> > > frame = obs.getMultiFrame();
+		this->mObsCurrentFrame.clear();
+		for (int i=0 ; i<3 ; i++)
+		{
+			for (int j=0 ; j<jtNames.size() ; j++)
+			{
+				ostringstream oss;
+				oss << jtNames[j] << "_" << i;
+				this->mObsNameVec.push_back(oss.str());
+				this->mObsCurrentFrame.push_back(frame[i][j]);
+			}
+			
+		}
+		this->mObservationSNNames.clear();
+		
+		Ogre::SceneNode *obsNode = mSceneMgr->getSceneNode("Observations");
+		
+		for (int i=0 ; i<mObsNameVec.size() ; i++)
+		{
+			ostringstream oss;
+			this->mObsMap[mObsNameVec[i]]=i;
+			oss << "obs_" << mObsNameVec[i];
+			Ogre::SceneNode *tempoNode = obsNode->createChildSceneNode(oss.str(), Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
+			this->mObservationSNNames.push_back(oss.str());
+			oss.clear();
+			oss << "axisObs_" << this->mObsNameVec[i];
+			tempoNode->attachObject(createAxis(oss.str()));
+		}
+		
+		//std::cout << "Warning : observations not supported by the viewer" << std::endl;
 	}
 }
 
@@ -419,7 +448,25 @@ void S3DViewer<Model, Observations>::updateObs(Observations& obs)
 	}
 	else
 	{
-		std::cout << "Warning : observation not supported by viewer" << std::endl;
+		std::vector<std::vector<std::vector<double> > > frame = obs.getMultiFrame();
+		this->mObsCurrentFrame.clear();
+		for (int i=0 ; i<3 ; i++)
+		{
+			for (int j=0 ; j<frame[i].size() ; j++)
+			{	
+				this->mObsCurrentFrame.push_back(frame[i][j]);
+			}
+			
+		}
+		
+		Ogre::SceneNode *obsNode = this->mSceneMgr->getSceneNode("Observations");
+		
+		for (int i=0 ; i<this->mObservationSNNames.size() ; i++)
+		{
+			Ogre::SceneNode *obsNode = this->mSceneMgr->getSceneNode(mObservationSNNames[i]);
+			obsNode->setPosition(Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
+		}
+		//std::cout << "Warning : observation not supported by viewer" << std::endl;
 	}
 }
 

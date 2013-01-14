@@ -67,6 +67,7 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	jtsToPos["AnkleRight"] = "AnkleRight";//*/
 	
 	//*	
+	//for ONI model !!!
 	jtsToPos["Spine"] = "TORSO";
 	jtsToPos["Head"] = "HEAD";
 	jtsToPos["ShoulderCenter"] = "NECK";
@@ -76,7 +77,6 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	jtsToPos["ElbowRight"] = "RIGHT_ELBOW";
 	jtsToPos["WristLeft"] = "LEFT_WRIST";
 	jtsToPos["WristRight"] = "RIGHT_WRIST";
-	//jtsToPos["HipCenter"] = "HipCenter";
 	jtsToPos["HipLeft"] = "LEFT_HIP";
 	jtsToPos["HipRight"] = "RIGHT_HIP";
 	jtsToPos["KneeLeft"] = "LEFT_KNEE";
