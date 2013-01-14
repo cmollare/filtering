@@ -36,12 +36,6 @@ YjtParserInt::YjtParserInt(std::string skel0, std::string skel1, std::string ske
 	std::cout << mVideoSequence[0].size() << std::endl;
 	std::cout << mVideoSequence[0][0].size() << std::endl;
 	std::cout << mVideoSequence[0][0][0].size() << std::endl;
-	
-	for (int i=0 ; i<3 ; i++)
-	{
-		mCurrentFrame.push_back(mVideoSequence[i][mFrameInd]);
-	}
-	mFrameInd++;
 }
 
 YjtParserInt::~YjtParserInt()
@@ -51,6 +45,19 @@ YjtParserInt::~YjtParserInt()
 	if(mFileManager0) delete mFileManager0;
 	if(mFileManager1) delete mFileManager1;
 	if(mFileManager2) delete mFileManager2;
+}
+
+std::vector<std::vector<std::vector<double> > >& YjtParserInt::getFirstFrame()
+{
+	mCurrentFrame.clear();
+	mFrameInd=0;
+	for (int i=0 ; i<3 ; i++)
+	{
+		mCurrentFrame.push_back(mVideoSequence[i][mFrameInd]);
+	}
+	mFrameInd++;
+	
+	return mCurrentFrame;
 }
 
 std::vector<std::vector<std::vector<double> > >& YjtParserInt::getCurrentFrame()
@@ -65,6 +72,11 @@ std::vector<std::vector<std::vector<double> > >& YjtParserInt::getNextFrame()
 		mCurrentFrame[i] = mVideoSequence[i][mFrameInd];
 	}
 	mFrameInd;
+}
+
+std::vector<std::string>& YjtParserInt::getJointNames()
+{
+	return mJointNames[0];
 }
 
 void YjtParserInt::loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* fileManager)

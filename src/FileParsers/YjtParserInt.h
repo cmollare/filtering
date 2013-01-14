@@ -11,8 +11,10 @@ class YjtParserInt
 		YjtParserInt(std::string fileName);
 		YjtParserInt(std::string skel0, std::string skel1, std::string skel2);
 		~YjtParserInt();
+		std::vector<std::vector<std::vector<double> > >& getFirstFrame();
 		std::vector<std::vector<std::vector<double> > >& getCurrentFrame();
 		std::vector<std::vector<std::vector<double> > >& getNextFrame();
+		std::vector<std::string>& getJointNames();
 		
 	protected:
 		void loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* fileManager);

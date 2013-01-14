@@ -4,7 +4,7 @@ ObsMultiKinect::ObsMultiKinect()
 {
 }
 
-ObsMultiKinect::ObsMultiKinect(std::vector<std::vector<double> >& kinect1, std::vector<std::vector<double> >& kinect2, std::vector<std::vector<double> >& kinect3)
+ObsMultiKinect::ObsMultiKinect(std::vector<std::vector<std::vector<double> > >& obs) : mObs(obs)
 {
 }
 
@@ -15,4 +15,15 @@ ObsMultiKinect::~ObsMultiKinect()
 int ObsMultiKinect::obsPerJoint()
 {
 	return 3;
+}
+
+std::vector<std::vector<std::vector<double> > > ObsMultiKinect::getMultiFrame()
+{
+	return mObs;
+}
+
+std::vector<std::vector<double> > ObsMultiKinect::getFrame()
+{
+	std::vector<std::vector<double> > dummy;
+	return dummy;
 }

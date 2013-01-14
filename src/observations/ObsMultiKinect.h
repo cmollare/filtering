@@ -7,10 +7,16 @@ class ObsMultiKinect
 {
 	public:
 		ObsMultiKinect();
-		ObsMultiKinect(std::vector<std::vector<double> >& kinect1, std::vector<std::vector<double> >& kinect2, std::vector<std::vector<double> >& kinect3);
+		ObsMultiKinect(std::vector<std::vector<std::vector<double> > >& obs);
 		~ObsMultiKinect();
 		
+		std::vector<std::vector<std::vector<double> > > getMultiFrame();
+		std::vector<std::vector<double> > getFrame();
+		
 		virtual int obsPerJoint();
+		
+	protected:
+		std::vector<std::vector<std::vector<double> > > mObs;
 };
 
 #endif

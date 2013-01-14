@@ -24,6 +24,7 @@
 #include "Config.h"*/
 
 #include "../observations/ObsMonoKinect.h"
+#include "../observations/ObsMultiKinect.h"
 #include "../3DModel/S3DModelQRS.h"
 #include "../FileParsers/YjtParserInt.h"
 #include "FilterInt.h"
@@ -51,10 +52,11 @@ int main(int argc, char** argv)
 		delete fileParser;
 	}*/
 	
-	FilterInt<ObsMonoKinect, S3DModel<ObsMonoKinect> > filter(argc, argv);
+	FilterInt<ObsMultiKinect, S3DModel<ObsMultiKinect> > filter(argc, argv);
 	if (filter.isEnvOk())
 	{
 		YjtParserInt *fileParser = new YjtParserInt("../skelYjt/ONI_SkelWorld0.yjt", "../skelYjt/ONI_SkelWorld1.yjt", "../skelYjt/ONI_SkelWorld2.yjt");
+		filter.init(fileParser->getFirstFrame(), fileParser->getJointNames());
 	}
 	
 	return 0;
