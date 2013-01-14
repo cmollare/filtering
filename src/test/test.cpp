@@ -57,6 +57,14 @@ int main(int argc, char** argv)
 	{
 		YjtParserInt *fileParser = new YjtParserInt("../skelYjt/ONI_SkelWorld0.yjt", "../skelYjt/ONI_SkelWorld1.yjt", "../skelYjt/ONI_SkelWorld2.yjt");
 		filter.init(fileParser->getFirstFrame(), fileParser->getJointNames());
+		
+		std::cout << fileParser->getNbFrames() << std::endl;
+		
+		for (int i=0 ; i<fileParser->getNbFrames() ; i++)
+		{
+			std::cout << "frame : " << i << std::endl;
+			filter.update(fileParser->getNextFrame());
+		}
 	}
 	
 	return 0;

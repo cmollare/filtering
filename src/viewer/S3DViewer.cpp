@@ -257,7 +257,7 @@ void S3DViewer<Model, Observations>::initObservations(std::vector<std::string> j
 			ostringstream oss;
 			this->mObsMap[mObsNameVec[i]]=i;
 			oss << "obs_" << mObsNameVec[i];
-			Ogre::SceneNode *tempoNode = obsNode->createChildSceneNode(oss.str(), Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
+			Ogre::SceneNode *tempoNode = obsNode->createChildSceneNode(oss.str(), Ogre::Vector3(this->mObsCurrentFrame[i][0], this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2]));
 			this->mObservationSNNames.push_back(oss.str());
 			oss.clear();
 			oss << "axisObs_" << this->mObsNameVec[i];
@@ -464,7 +464,8 @@ void S3DViewer<Model, Observations>::updateObs(Observations& obs)
 		for (int i=0 ; i<this->mObservationSNNames.size() ; i++)
 		{
 			Ogre::SceneNode *obsNode = this->mSceneMgr->getSceneNode(mObservationSNNames[i]);
-			obsNode->setPosition(Ogre::Vector3(this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2], this->mObsCurrentFrame[i][3]));
+			//Warning ! Not the same order indices for multi kinect : indice 3 == confidence
+			obsNode->setPosition(Ogre::Vector3(this->mObsCurrentFrame[i][0], this->mObsCurrentFrame[i][1], this->mObsCurrentFrame[i][2]));
 		}
 		//std::cout << "Warning : observation not supported by viewer" << std::endl;
 	}

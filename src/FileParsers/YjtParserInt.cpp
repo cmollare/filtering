@@ -71,12 +71,19 @@ std::vector<std::vector<std::vector<double> > >& YjtParserInt::getNextFrame()
 	{
 		mCurrentFrame[i] = mVideoSequence[i][mFrameInd];
 	}
-	mFrameInd;
+	mFrameInd++;
+	
+	return mCurrentFrame;
 }
 
 std::vector<std::string>& YjtParserInt::getJointNames()
 {
 	return mJointNames[0];
+}
+
+int YjtParserInt::getNbFrames()
+{
+	return mNbPoses;
 }
 
 void YjtParserInt::loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* fileManager)
@@ -94,6 +101,7 @@ void YjtParserInt::loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* f
 	
 	int nbPoses;
 	doc["NbPoses"] >> nbPoses;
+	mNbPoses = nbPoses;
 	
 	bool useConfidence;
 	if(doc.FindValue("useConfidence"))//in the case where the motion doesn't start at Frame 0

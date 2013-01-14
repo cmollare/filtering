@@ -16,6 +16,8 @@ class YjtParserInt
 		std::vector<std::vector<std::vector<double> > >& getNextFrame();
 		std::vector<std::string>& getJointNames();
 		
+		int getNbFrames();
+		
 	protected:
 		void loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* fileManager);
 		
