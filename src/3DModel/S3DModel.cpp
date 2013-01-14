@@ -912,6 +912,45 @@ void S3DModel<Observations>::estimateLikelihoodPart(Observations& obs, int parti
 		else
 			this->mCurrentLikelihood *= exp(-abs(distance)*20);
 	}
+	else
+	{
+		std::vector<std::vector<std::vector<double> > > frame = obs.getMultiFrame();
+		
+		std::multimap<int, std::string>::iterator it;
+		double distance=0;
+		it = mOffsetPartToName.find(partition);
+		for (it = mOffsetPartToName.equal_range(partition).first ; it != mOffsetPartToName.equal_range(partition).second ; ++it)
+		{
+			if (mJointNameToPos[(*it).second] != -1)
+			{
+				for (int i=0 ; i<3 ; i++)
+				{
+					int pos = mJointNameToPos[(*it).second];
+					double distTemp=0;
+					// Mahalanobis distance
+					//cout << (*it).second << "=>" << mPosNames[pos] << endl;
+					Eigen::Vector3d jtPos = this->getJoint((*it).second)->getXYZVect();
+					Eigen::Vector3d jtObs(frame[i][pos][0], frame[i][pos][1], frame[i][pos][2]);
+					Eigen::Vector3d diff = jtPos - jtObs;
+					Eigen::Matrix3d cov;
+					cov.setIdentity();
+					distTemp = diff.transpose()*(cov*diff);
+					if (frame[i][pos][0]==0) distTemp=0;
+					distance += distTemp;
+				}
+			}
+		}
+		if (partition==1)
+		{
+			this->mCurrentLikelihood = exp(-abs(distance));
+			//std::cout << this->mCurrentLikelihood << std::endl;
+		}
+		else
+		{
+			this->mCurrentLikelihood *= exp(-abs(distance));
+			//std::cout << this->mCurrentLikelihood << std::endl;
+		}
+	}
 		
 }
 

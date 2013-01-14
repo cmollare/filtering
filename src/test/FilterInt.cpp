@@ -144,10 +144,8 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 template<class Observations, class Particles>
 void FilterInt<Observations, Particles>::update(Observations frame)
 {
-	//filter->step(frame);
-	std::cout << "lol" << std::endl;
+	filter->step(frame);
 	std::vector<Particles*> particles = filter->getParticleVector();
-	std::cout << "lol" << std::endl;
 	viewer->update(particles, frame);
 	viewer->isRendering();
 }

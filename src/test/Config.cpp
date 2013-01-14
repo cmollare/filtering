@@ -38,7 +38,7 @@ Config::Config(int argc, char ** argv)
 	}*/
 	
 	_nbParticles=200;//TEMPO
-	_typeFilter="partMMSE";//TEMPO
+	_typeFilter="part";//TEMPO
 	_confok=true;
 	
 	//cout << "argc = " << argc << endl;

@@ -66,11 +66,14 @@ void PartitionnedMMSE<Particles, Observations>::step(Observations& obs)
 			this->mParticles[i]->update(l);
 			this->mParticles[i]->estimateLikelihood(this->mCurrentObservations, l);
 		}
+		//std::cout << "pouet" << std::endl;
 		this->updateWeights();
+		//std::cout << "pouet2" << std::endl;
 		this->resample();
+		//std::cout << "pouet3" << std::endl;
 	}
 	
-	this->saveResults();
+	//this->saveResults();
 	
 }
 

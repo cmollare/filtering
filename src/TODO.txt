@@ -11,3 +11,7 @@ faire une class pour les observations multi-kinect
 
 
 A terme, faire les calculs de distance dans le modèle d'observation ???
+
+
+PROBLEMS :
+si boucle infinie, regarder dans la fonction de calcule de la vraisemblance (ponderation de l'expo peut etre trop importante)
