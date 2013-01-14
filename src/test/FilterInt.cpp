@@ -33,7 +33,7 @@ FilterInt<Observations, Particles>::~FilterInt()
 template<class Observations, class Particles>
 void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vector<std::string>& posNames)
 {
-	YamlBodyJoint ymlBJ("../Model_simple.ymd");//Yaml parser
+	YamlBodyJoint ymlBJ("../Model_ONI.ymd");//Yaml parser
 	ymlBJ.createModel();
 	
 	Joint* model = ymlBJ.getModel();//temporary model
@@ -42,8 +42,13 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	Observations frame = firstFrame;
 	std::map<std::string, std::string> jtsToPos; //A mettre dans un fichier
 	
+	for(int i=0 ; i<posNames.size() ; i++)
+	{
+		std::cout << posNames[i] << std::endl;
+	}
 	
-	//*	
+	
+	/*	
 	jtsToPos["Spine"] = "Spine";
 	jtsToPos["Head"] = "Head";
 	jtsToPos["ShoulderCenter"] = "ShoulderCenter";
@@ -60,6 +65,24 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	jtsToPos["KneeRight"] = "KneeRight";
 	jtsToPos["AnkleLeft"] = "AnkleLeft";
 	jtsToPos["AnkleRight"] = "AnkleRight";//*/
+	
+	//*	
+	jtsToPos["Spine"] = "TORSO";
+	jtsToPos["Head"] = "HEAD";
+	jtsToPos["ShoulderCenter"] = "NECK";
+	jtsToPos["ShoulderLeft"] = "LEFT_SHOULDER";
+	jtsToPos["ShoulderRight"] = "RIGHT_SHOULDER";
+	jtsToPos["ElbowLeft"] = "LEFT_ELBOW";
+	jtsToPos["ElbowRight"] = "RIGHT_ELBOW";
+	jtsToPos["WristLeft"] = "LEFT_WRIST";
+	jtsToPos["WristRight"] = "RIGHT_WRIST";
+	//jtsToPos["HipCenter"] = "HipCenter";
+	jtsToPos["HipLeft"] = "LEFT_HIP";
+	jtsToPos["HipRight"] = "RIGHT_HIP";
+	jtsToPos["KneeLeft"] = "LEFT_KNEE";
+	jtsToPos["KneeRight"] = "RIGHT_KNEE";
+	jtsToPos["AnkleLeft"] = "LEFT_ANKLE";
+	jtsToPos["AnkleRight"] = "RIGHT_ANKLE";//*/
 	
 	int nbParticles = _env->getParticleNumber();
 	filterType = _env->getFilterType();

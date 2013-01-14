@@ -1,0 +1,206 @@
+
+NbPoses: 0
+NbJoints: 19
+FirstIndex: 1
+BJoints:
+   - Joint: Spine
+     Parent: _Root
+     Offset: 
+        Mean: {X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Free
+        SignConst: {X: NULL, Y: NULL, Z: NULL}
+        Partition: 1
+     Orientation: 
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Flex
+        Partition: 1
+        
+   - Joint: ShoulderCenter
+     Parent: Spine
+     Offset: 
+        Mean: {X: 0.0, Y: 0.1, Z: 0.0}
+        Dof: Fixed
+        SignConst: {X: NULL, Y: Pos, Z: NULL}
+        Partition: 1
+     Orientation: 
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        Partition: 1
+        
+   - Joint: Head
+     Parent: ShoulderCenter
+     Offset:
+        Mean: {X: 0.0, Y: 0.05, Z: 0.0}
+        Dof: Fixed
+        SignConst: {X: NULL, Y: Pos, Z: NULL}
+        Partition: 2
+     Orientation: 
+        Mean: {W: 0.707, X: 0.0, Y: 0.0, Z: 0.707}
+        Dof: Fixed
+        Partition: 2
+        
+   - Joint: ShoulderLeft
+     Parent: ShoulderCenter
+     Offset: 
+        Mean: {X: -0.05, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        SignConst: {X: Neg, Y: Neg, Z: NULL}
+        Partition: 1
+     Orientation: 
+        Mean: {W: 0.0, X: 0.0, Y: 1.0, Z: 0.0}
+        Dof: Free
+        Partition: 3
+        
+   - Joint: ElbowLeft
+     Parent: ShoulderLeft
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 3
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Flex
+        Partition: 3
+        
+   - Joint: WristLeft
+     Parent: ElbowLeft
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 3
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        Partition: 3
+        
+   - Joint: ShoulderRight
+     Parent: ShoulderCenter
+     Offset:
+        Mean: {X: 0.05, Y: -0.05, Z: 0.0}
+        Dof: Fixed
+        SignConst: {X: Pos, Y: Neg, Z: NULL}
+        Partition: 1
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Free
+        Partition: 4
+        
+   - Joint: ElbowRight
+     Parent: ShoulderRight
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 4
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Flex
+        Partition: 4
+        
+   - Joint: WristRight
+     Parent: ElbowRight
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 4
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        Partition: 4
+        
+   - Joint: HipLeft
+     Parent: Spine
+     Offset:
+        Mean: {X: -0.1, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        SignConst: {X: Neg, Y: Neg, Z: NULL}
+        Partition: 1
+     Orientation:
+        Mean: {W: 0.0, X: 0.707, Y: -0.707, Z: 0.0}
+        Dof: Free
+        Partition: 5
+        
+   - Joint: KneeLeft
+     Parent: HipLeft
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 5
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Flex
+        Partition: 5
+        
+   - Joint: AnkleLeft
+     Parent: KneeLeft
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 5
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        Partition: 5
+        
+   - Joint: HipRight
+     Parent: Spine
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        SignConst: {X: Pos, Y: Neg, Z: NULL}
+        Partition: 1
+     Orientation:
+        Mean: {W: 0.707, X: 0.0, Y: 0.0, Z: -0.707}
+        Dof: Free
+        Partition: 6
+        
+   - Joint: KneeRight
+     Parent: HipRight
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 6
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Flex
+        Partition: 6
+        
+   - Joint: AnkleRight
+     Parent: KneeRight
+     Offset:
+        Mean: {X: 0.1, Y: 0.0, Z: 0.0}
+        Dof: Bone
+        SignConst: {X: Pos, Y: NULL, Z: NULL}
+        Partition: 6
+     Orientation:
+        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Dof: Fixed
+        Partition: 6
+        
+BPartsColors:
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 0}
+   - {b: 0, g: 0, r: 255}
+   - {b: 0, g: 255, r: 0}
+   - {b: 255, g: 0, r: 0}
+
