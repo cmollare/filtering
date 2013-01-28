@@ -12,11 +12,11 @@
 #define PART_MMSE
 
 //Variances
-#define VARQUATERNION 0.2 //variance for quaternions (0.2 for MMSE)
+#define VARQUATERNION 0.4 //variance for quaternions (0.2 for MMSE) 0.002
 #define VAREULER 0.2 //variance for euler angles
 
-#define VAROFFSET 0.01 //variance for offset
-#define VAROFFSETFREE 0.1 //variance for offset with Free dof
+#define VAROFFSET 0.05 //variance for offset
+#define VAROFFSETFREE 0.05 //variance for offset with Free dof
 //End variance definitions
 
 #define EVOLVEOFFSET //Enable offset filtering

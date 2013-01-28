@@ -55,7 +55,7 @@ bool S3DViewer<Model, Observations>::init()
 	this->mSceneMgr->setAmbientLight(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
 
 	this->mCamera = mSceneMgr->createCamera("Default Camera");
-	this->mCamera->setPosition(Ogre::Vector3(0,0,-5));
+	this->mCamera->setPosition(Ogre::Vector3(0,0,-4));
 	this->mCamera->lookAt(Ogre::Vector3(0,0,0));
 	this->mCamera->setNearClipDistance(0.1);
 

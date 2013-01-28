@@ -11,7 +11,7 @@ BJoints:
         SignConst: {X: NULL, Y: NULL, Z: NULL}
         Partition: 1
      Orientation: 
-        Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
+        Mean: {W: 0.707, X: 0.707, Y: 0.0, Z: 0.0}
         Dof: Flex
         Partition: 1
         
@@ -19,8 +19,8 @@ BJoints:
      Parent: Spine
      Offset: 
         Mean: {X: 0.0, Y: 0.1, Z: 0.0}
-        Dof: Fixed
-        SignConst: {X: NULL, Y: Pos, Z: NULL}
+        Dof: Free
+        SignConst: {X: NULL, Y: NULL, Z: NULL}
         Partition: 1
      Orientation: 
         Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
@@ -43,8 +43,8 @@ BJoints:
      Parent: ShoulderCenter
      Offset: 
         Mean: {X: -0.05, Y: 0.0, Z: 0.0}
-        Dof: Fixed
-        SignConst: {X: Neg, Y: Neg, Z: NULL}
+        Dof: Free
+        SignConst: {X: NULL, Y: NULL, Z: NULL}
         Partition: 1
      Orientation: 
         Mean: {W: 0.0, X: 0.0, Y: 1.0, Z: 0.0}
@@ -79,8 +79,8 @@ BJoints:
      Parent: ShoulderCenter
      Offset:
         Mean: {X: 0.05, Y: -0.05, Z: 0.0}
-        Dof: Fixed
-        SignConst: {X: Pos, Y: Neg, Z: NULL}
+        Dof: Free
+        SignConst: {X: NULL, Y: NULL, Z: NULL}
         Partition: 1
      Orientation:
         Mean: {W: 1.0, X: 0.0, Y: 0.0, Z: 0.0}
@@ -115,8 +115,8 @@ BJoints:
      Parent: Spine
      Offset:
         Mean: {X: -0.1, Y: 0.0, Z: 0.0}
-        Dof: Fixed
-        SignConst: {X: Neg, Y: Neg, Z: NULL}
+        Dof: Free
+        SignConst: {X: NULL, Y: NULL, Z: NULL}
         Partition: 1
      Orientation:
         Mean: {W: 0.0, X: 0.707, Y: -0.707, Z: 0.0}
@@ -151,8 +151,8 @@ BJoints:
      Parent: Spine
      Offset:
         Mean: {X: 0.1, Y: 0.0, Z: 0.0}
-        Dof: Fixed
-        SignConst: {X: Pos, Y: Neg, Z: NULL}
+        Dof: Free
+        SignConst: {X: NULL, Y: NULL, Z: NULL}
         Partition: 1
      Orientation:
         Mean: {W: 0.707, X: 0.0, Y: 0.0, Z: -0.707}

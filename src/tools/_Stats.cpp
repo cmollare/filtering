@@ -45,6 +45,7 @@ void _Stats::initStatsTool(int dim)
 		
 		mIsInitialized=true;
 	}
+	mIndexQMC=0;
 }
 
 _Stats::~_Stats()
@@ -162,6 +163,7 @@ void _Stats::initQMC()
 
 void _Stats::sampleQRS()
 {
+	//std::cout << mIndexQMC << std::endl;
 	i4_sobol(mDimQMCVec,&mSeedQMC,mVectorQMC);
 	mIndexQMC=0;
 }
@@ -176,6 +178,9 @@ double _Stats::quasiRandn(double sigma)
 
 Eigen::Quaterniond _Stats::sampleQuasiQuTEM(Eigen::Quaterniond mean, double sigma, double sigma1, double sigma2, double sigma3)
 {
+	//std::cout << mIndexQMC << std::endl;
+	//if (mIndexQMC >= mDimQMCVec)
+		//mIndexQMC=0;
 	int n[4];
 	double x[4];
 	

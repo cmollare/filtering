@@ -12,8 +12,8 @@ InputListener::InputListener(Ogre::SceneManager* scMgr, Ogre::RenderWindow *wnd,
     
     
     mYaw = 0;
-    mPitch = 0;
-    mZoom = mCamera->getPosition().z;
+    mPitch = -1.57;
+    mZoom = -4;//mCamera->getPosition().z;
     
 	mMouseLPressed = false;
     mMouseRPressed = false;

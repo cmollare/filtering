@@ -14,6 +14,7 @@
 #include "../FileParsers/FileParser.h"
 
 #include "../solver/IKSolverPFOrient.h"
+#include "../solver/IKSolverMathias.h"
 
 #include "../3DModel/S3DModel.h"
 #include "../3DModel/S3DModelQRS.h"
@@ -42,6 +43,8 @@ class FilterInt
 		Particles *mods;
 
 		std::string filterType;
+		std::map<std::string, std::string> jtsToPos;
+		std::vector<std::string> jointVector;
 };
 
 #include "FilterInt.cpp" //To separate implementation from declaration

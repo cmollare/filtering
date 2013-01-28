@@ -942,12 +942,12 @@ void S3DModel<Observations>::estimateLikelihoodPart(Observations& obs, int parti
 		}
 		if (partition==1)
 		{
-			this->mCurrentLikelihood = exp(-abs(distance));
+			this->mCurrentLikelihood = exp(-abs(distance)*2.);
 			//std::cout << this->mCurrentLikelihood << std::endl;
 		}
 		else
 		{
-			this->mCurrentLikelihood *= exp(-abs(distance));
+			this->mCurrentLikelihood *= exp(-abs(distance)*2.);
 			//std::cout << this->mCurrentLikelihood << std::endl;
 		}
 	}
@@ -1008,13 +1008,13 @@ void S3DModel<Observations>::saveResults(ResultParser* resParser)
 		resParser->saveJoint("Joint_" + (*it).first, pos, *offset[(*it).second], *orient[(*it).second]);
 	}
 	
-	for (int i=0 ; i<mPosNames.size() ; i++)
+	/*for (int i=0 ; i<mPosNames.size() ; i++)
 	{
 		if (this->mObservations.obsPerJoint() == 1)
 			resParser->saveObs("Obs_" + mPosNames[i], this->mObservations.getFrame()[i]);
 		else
 			std::cout << "Warning no recording defined" << std::endl;
-	}
+	}*/
 }
 
 template<class Observations>

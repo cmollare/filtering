@@ -4,7 +4,8 @@
 template<class Observations>
 S3DModelQRS<Observations>::S3DModelQRS(const Joint* jt) : S3DModel<Observations>(jt)
 {
-	this->initStatsTool((this->mNbJoints+1)*6);
+	this->initStatsTool(10*(this->mNbJoints+1)*6);
+	
 }
 
 template<class Observations>

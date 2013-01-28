@@ -11,10 +11,17 @@ YjtParserInt::YjtParserInt(std::string fileName)
 	mFileManager0 = NULL;
 	mFileManager1 = NULL;
 	mFileManager2 = NULL;
+	
+	mSNbPoses=0;
+	mSavedData=NULL;
 }
 
 YjtParserInt::YjtParserInt(std::string skel0, std::string skel1, std::string skel2)
 {
+	mSNbPoses=0;
+	mSavedData=NULL;
+	
+	
 	mVideoSequence.reserve(3);
 	mFrameInd=0;
 	
@@ -32,10 +39,6 @@ YjtParserInt::YjtParserInt(std::string skel0, std::string skel1, std::string ske
 	this->loadYaml(YamlHeader1, mFileManager1);
 	this->loadYaml(YamlHeader2, mFileManager2);
 	
-	std::cout << mVideoSequence.size() << std::endl;
-	std::cout << mVideoSequence[0].size() << std::endl;
-	std::cout << mVideoSequence[0][0].size() << std::endl;
-	std::cout << mVideoSequence[0][0][0].size() << std::endl;
 }
 
 YjtParserInt::~YjtParserInt()
@@ -45,12 +48,15 @@ YjtParserInt::~YjtParserInt()
 	if(mFileManager0) delete mFileManager0;
 	if(mFileManager1) delete mFileManager1;
 	if(mFileManager2) delete mFileManager2;
+	
+	if(mSavedData) delete mSavedData;
 }
 
-std::vector<std::vector<std::vector<double> > >& YjtParserInt::getFirstFrame()
+std::vector<std::vector<std::vector<double> > >& YjtParserInt::getFirstFrame(int firstIndex)
 {
 	mCurrentFrame.clear();
-	mFrameInd=0;
+	mFirstInd=firstIndex;
+	mFrameInd=mFirstInd;
 	for (int i=0 ; i<3 ; i++)
 	{
 		mCurrentFrame.push_back(mVideoSequence[i][mFrameInd]);
@@ -83,7 +89,7 @@ std::vector<std::string>& YjtParserInt::getJointNames()
 
 int YjtParserInt::getNbFrames()
 {
-	return mNbPoses;
+	return mLastInd-mFirstInd;
 }
 
 void YjtParserInt::loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* fileManager)
@@ -120,6 +126,16 @@ void YjtParserInt::loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* f
 		std::cout << BJointsNames[i] << std::endl;
 	}*/
 	mJointNames.push_back(BJointsNames);
+	
+	if(doc.FindValue("FirstIndex"))//in the case where the motion doesn't start at Frame 0
+	{
+		doc["FirstIndex"] >> mFirstInd;
+	}
+	else
+	{
+		mFirstInd = 0;
+	}
+	mLastInd = mFirstInd + mNbPoses - 1;
 	
 	//AJOUTER les indices éventuellement
 	
@@ -170,4 +186,62 @@ void YjtParserInt::loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* f
 	
 	//FromVectTab(vectTab);
 	//remplacer si besoin
+}
+
+void YjtParserInt::saveFile(std::string filename, std::vector<std::string> jointNames)
+{
+	YAML::Emitter Yout;
+	Yout << YAML::BeginDoc;
+	Yout << YAML::BeginMap;
+	Yout << YAML::Key << "NbPoses";
+	Yout << YAML::Value	<< mSNbPoses;//Vector<std::string>
+	Yout << YAML::Key << "FirstIndex";
+	Yout << YAML::Value	<< mFirstInd;
+	Yout << YAML::Key << "NbJoints";
+	Yout << YAML::Value	<< jointNames.size();
+	Yout << YAML::Key << "useConfidence";
+	bool useConfidence = false;
+	Yout << YAML::Value	<< useConfidence;
+	
+	Yout << YAML::Key << "BJointsNames";
+	Yout << YAML::Value	<< jointNames;//Vector<std::string>
+	
+	std::vector<cv::Scalar_<unsigned char> > BPartsColors(jointNames.size(), cv::Scalar(150, 150, 150));
+	
+
+	Yout << YAML::Key << "BPartsColors";
+	Yout << YAML::Value	<< BPartsColors;//Vector<cv::Scalar_<unsigned char> >*/
+	
+	Yout << YAML::EndDoc;
+	
+	MixedFileManager_c FManager;
+	FManager.Save(filename,(char*)&mSavedData->Data[0],mSavedData->Data.size()*4,  Yout.c_str()  );
+}
+
+void YjtParserInt::save(std::vector<std::vector<double> > currentFrame)
+{
+	if (mSNbPoses==0)
+	{
+		mSavedData = new VectorsTable_c();
+		mSavedData->Reset((int)currentFrame.size()*(int)currentFrame[0].size());
+		std::vector<float> nullVec((int)currentFrame.size()*(int)currentFrame[0].size(), 0);
+		for(int i=0 ; i<mFirstInd ; i++)
+		{
+			mSavedData->push(nullVec);
+		}
+			
+	}
+	
+	std::vector<float> tempo;
+	for (int i=0 ; i<currentFrame.size() ; i++)
+	{
+		for (int j=0 ; j<currentFrame[i].size() ; j++)
+		{
+			tempo.push_back((float)currentFrame[i][i]);
+		}
+	}
+	mSavedData->push(tempo);
+	
+	mSNbPoses++;
+	
 }

@@ -73,7 +73,7 @@ void Partitionned<Particles, Observations>::step(Observations& obs)
 	}
 	this->estimateMMSE();
 
-	//this->saveResults();
+	this->saveResults();
 }
 
 template<class Particles, class Observations>

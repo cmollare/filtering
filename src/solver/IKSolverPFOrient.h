@@ -73,7 +73,8 @@ void IKSolverPFOrient<Model>::initFilter()
 				if (this->mConstOrientVec[i][j] == ORIENT_CONST_FREE)
 				{
 					(*this->mOrientationVec[i][j])=this->sampleQuTEM(quat, PI, 1, 1, 1);//A modifier suivant les contraintes
-				}
+					//(*this->mOrientationVec[i][j])=quat;
+				}	
 				else if(this->mConstOrientVec[i][j] == ORIENT_CONST_TWIST)
 				{
 					(*this->mOrientationVec[i][j])=this->sampleQuTEM(quat, PI, 1, 0.1, 0.05);
@@ -81,6 +82,7 @@ void IKSolverPFOrient<Model>::initFilter()
 				else if(this->mConstOrientVec[i][j] == ORIENT_CONST_FLEX)
 				{
 					(*this->mOrientationVec[i][j])=this->sampleQuTEM(quat, PI, 0.1, 1, 0.05);
+					(*this->mOrientationVec[i][j])=quat;
 				}
 				else if(this->mConstOrientVec[i][j] == ORIENT_CONST_TFLEX)
 				{

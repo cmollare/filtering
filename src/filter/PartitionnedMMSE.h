@@ -73,7 +73,7 @@ void PartitionnedMMSE<Particles, Observations>::step(Observations& obs)
 		//std::cout << "pouet3" << std::endl;
 	}
 	
-	//this->saveResults();
+	this->saveResults();
 	
 }
 

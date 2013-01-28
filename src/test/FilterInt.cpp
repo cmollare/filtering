@@ -40,7 +40,7 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	
 	//std::vector<std::vector<double> > frame = fileParser->getFirstFrame();
 	Observations frame = firstFrame;
-	std::map<std::string, std::string> jtsToPos; //A mettre dans un fichier
+	//std::map<std::string, std::string> jtsToPos; //A mettre dans un fichier
 	
 	for(int i=0 ; i<posNames.size() ; i++)
 	{
@@ -104,7 +104,7 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	}
 	std::vector<Particles*> particles = filter->getParticleVector();
 	
-	IKSolverPFOrient<Particles> iksol(particles, posNames, frame.getFrame());//Declaration of solver
+	IKSolverMathias<Particles> iksol(particles, posNames, frame.getFrame());//Declaration of solver
 	
 	iksol.mapJointToObs(jtsToPos);
 	iksol.initFilter();
@@ -112,7 +112,6 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 	
 	viewer->initModels(particles);
 	viewer->initObservations(posNames, frame);
-	iksol.computeLikelihood();
 	
 	bool continuer = true;
 	std::string step = "InitFilter";
@@ -121,11 +120,11 @@ void FilterInt<Observations, Particles>::init(Observations firstFrame, std::vect
 		//frame = fileParser->getNextFrame();//Observation update
 		if (step == "IK")
 		{
-			if (iksol.stepAlt() < 0.60)
+			/*if (iksol.stepAlt() < 0.60)
 			{
 				iksol.save();
 				step = "InitFilter";
-			}
+			}*/
 			//viewer.update(particles, frame);
 			//continuer = viewer.isRendering();
 		}
@@ -165,22 +164,24 @@ std::vector<std::vector<double> > FilterInt<Observations, Particles>::getPosture
 	offset = filter->getParticleVector().back()->getOffsetVector();
 	map = filter->getParticleVector().back()->getJointToIntMap();//Mapping between joint names and index in vector
 	
-	
+	jointVector.clear();
 	posture.resize(map.size());
 	std::map<std::string, int>::iterator it;
 	for (it=map.begin() ; it!=map.end() ; it++)
 	{
+		//std::cout << jtsToPos[it->first] << std::endl;
+		jointVector.push_back(jtsToPos[it->first]);
 		Eigen::Vector3d pos = filter->getParticleVector().back()->getJoint((*it).first)->getXYZVect();
 		posture[(*it).second].push_back(pos[0]);
 		posture[(*it).second].push_back(pos[1]);
 		posture[(*it).second].push_back(pos[2]);
-		posture[(*it).second].push_back(offset[(*it).second]->x());
-		posture[(*it).second].push_back(offset[(*it).second]->y());
-		posture[(*it).second].push_back(offset[(*it).second]->z());
-		posture[(*it).second].push_back(orient[(*it).second]->w());
-		posture[(*it).second].push_back(orient[(*it).second]->x());
-		posture[(*it).second].push_back(orient[(*it).second]->y());
-		posture[(*it).second].push_back(orient[(*it).second]->z());
+		//posture[(*it).second].push_back(offset[(*it).second]->x());
+		//posture[(*it).second].push_back(offset[(*it).second]->y());
+		//posture[(*it).second].push_back(offset[(*it).second]->z());
+		//posture[(*it).second].push_back(orient[(*it).second]->w());
+		//posture[(*it).second].push_back(orient[(*it).second]->x());
+		//posture[(*it).second].push_back(orient[(*it).second]->y());
+		//posture[(*it).second].push_back(orient[(*it).second]->z());
 	}
 	return posture;
 }

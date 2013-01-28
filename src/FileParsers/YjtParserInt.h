@@ -11,12 +11,15 @@ class YjtParserInt
 		YjtParserInt(std::string fileName);
 		YjtParserInt(std::string skel0, std::string skel1, std::string skel2);
 		~YjtParserInt();
-		std::vector<std::vector<std::vector<double> > >& getFirstFrame();
+		std::vector<std::vector<std::vector<double> > >& getFirstFrame(int firstIndex);
 		std::vector<std::vector<std::vector<double> > >& getCurrentFrame();
 		std::vector<std::vector<std::vector<double> > >& getNextFrame();
 		std::vector<std::string>& getJointNames();
 		
 		int getNbFrames();
+		
+		void saveFile(std::string filename, std::vector<std::string> jointNames);
+		void save(std::vector<std::vector<double> > currentFrame);
 		
 	protected:
 		void loadYaml(std::stringstream &yamlHeader, MixedFileManager_c* fileManager);
@@ -30,6 +33,12 @@ class YjtParserInt
 		std::vector<std::vector<std::vector<std::vector<double> > > > mVideoSequence;
 		std::vector<std::vector<std::vector<double> > > mCurrentFrame;
 		int mFrameInd;
+		int mFirstInd;
+		int mLastInd;
+		
+		//For saving
+		VectorsTable_c* mSavedData;
+		int mSNbPoses;
 };
 
 #endif

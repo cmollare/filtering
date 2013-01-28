@@ -52,19 +52,34 @@ int main(int argc, char** argv)
 		delete fileParser;
 	}*/
 	
-	FilterInt<ObsMultiKinect, S3DModel<ObsMultiKinect> > filter(argc, argv);
+	FilterInt<ObsMultiKinect, S3DModelQRS<ObsMultiKinect> > filter(argc, argv);
 	if (filter.isEnvOk())
 	{
 		YjtParserInt *fileParser = new YjtParserInt("../skelYjt/ONI_SkelWorld0.yjt", "../skelYjt/ONI_SkelWorld1.yjt", "../skelYjt/ONI_SkelWorld2.yjt");
-		filter.init(fileParser->getFirstFrame(), fileParser->getJointNames());
+		filter.init(fileParser->getFirstFrame(500), fileParser->getJointNames());
 		
 		std::cout << fileParser->getNbFrames() << std::endl;
 		
-		for (int i=0 ; i<fileParser->getNbFrames() ; i++)
+
+		for (int i=0 ; i<100 ; i++)
 		{
 			std::cout << "frame : " << i << std::endl;
-			filter.update(fileParser->getNextFrame());
+			filter.update(fileParser->getFirstFrame(500));
 		}
+		fileParser->save(filter.getPosture());
+		
+		for (int i=0 ; i<fileParser->getNbFrames() ; i++)
+		//for (int i=0 ; i<50 ; i++)
+		{
+			std::cout << "frame : " << i << " on " << fileParser->getNbFrames() << std::endl;
+			filter.update(fileParser->getNextFrame());
+			fileParser->save(filter.getPosture());
+		}
+		std::cout << "lol" << std::endl;
+		
+		fileParser->saveFile("../skelYjt/result.yjt", filter.jointVector);
+		
+		std::cout << "end" << std::endl;
 	}
 	
 	return 0;
